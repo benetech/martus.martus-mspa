@@ -46,6 +46,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.core.MirrorServerMessageConverter;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
@@ -179,9 +180,14 @@ public class ManagingMirrorServersDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());		
 		
+	
+		loadAvailableServerButton = createButton("Load Available Server");	
 		viewComplainButton = createButton("View Compliance");			
 		updateButton = createButton("Update");				
 		cancelButton = createButton("Cancel");		
+				
+		if (serverManageType != ManagingMirrorServerConstants.ACT_AS_CLIENT)	
+			panel.add(loadAvailableServerButton);
 				
 		panel.add(viewComplainButton);
 		panel.add(updateButton);
@@ -260,6 +266,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	JButton viewComplainButton;
 	JButton updateButton;
 	JButton cancelButton;
+	JButton loadAvailableServerButton;
 	
 	Vector availableList;
 	Vector assignedList;

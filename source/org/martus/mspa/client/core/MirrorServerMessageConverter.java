@@ -40,8 +40,8 @@ public class MirrorServerMessageConverter implements ManagingMirrorServerConstan
 				return AMP_WHO_WE_CALL_ALLOWED_LABEL;
 			case WHO_CALLS_US:
 				return WHO_CALLS_US_ALLOWED_LABEL;
-			case CLIENT_LISTNER:
-				return ACT_AS_CLIENT_LISTNER_ALLOWED_LABEL;
+			case ACT_AS_CLIENT:
+				return ACT_AS_CLIENT_ALLOWED_LABEL;
 			default:
 				return "Unknown Label";
 		}
@@ -59,8 +59,8 @@ public class MirrorServerMessageConverter implements ManagingMirrorServerConstan
 				return AMP_WHO_CALLS_US_TITLE;
 			case WHO_CALLS_US:
 				return WHO_CALLS_US_TITLE;
-			case CLIENT_LISTNER:
-				return CLIENT_LISTNER_TITLE;
+			case ACT_AS_CLIENT:
+				return ACT_AS_CLIENT_TITLE;
 			default:
 				return "Unknown Title";
 		}
@@ -75,7 +75,7 @@ public class MirrorServerMessageConverter implements ManagingMirrorServerConstan
 			case AMP_WHO_CALLS_US:				
 			case WHO_CALLS_US:
 				return AVAILABLE_SERVER_LABEL;
-			case CLIENT_LISTNER:
+			case ACT_AS_CLIENT:
 				return AVAILABLE_MAGIC_LABEL;
 			default:
 				return "Unknown Label";
@@ -94,8 +94,8 @@ public class MirrorServerMessageConverter implements ManagingMirrorServerConstan
 				return AMP_WHO_WE_CALL_HEADER;
 			case WHO_CALLS_US:
 				return WHO_CALLS_US_HEADER;
-			case CLIENT_LISTNER:
-				return ACT_AS_CLIENT_LISTNER_HEADER;
+			case ACT_AS_CLIENT:
+				return ACT_AS_CLIENT_HEADER;
 			default:
 				return "Unknown Header";
 		}

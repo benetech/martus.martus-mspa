@@ -32,13 +32,13 @@ public interface ManagingMirrorServerConstants
 	public static int SERVER_WE_AMPLIFY		=101;
 	public static int AMP_WHO_CALLS_US		=102;
 	public static int WHO_CALLS_US			=103;
-	public static int CLIENT_LISTNER		=104;
+	public static int ACT_AS_CLIENT			=104;
 	
 	public static String SERVER_WHO_WE_CALL_TITLE			="Server Who We Call";
 	public static String SERVER_WE_AMPLIFY_TITLE			="Server We Amplify";
 	public static String AMP_WHO_CALLS_US_TITLE				="Amplify Who Calls Us";
 	public static String WHO_CALLS_US_TITLE					="Who Calls Us";
-	public static String CLIENT_LISTNER_TITLE				="Act as Client Listener";
+	public static String ACT_AS_CLIENT_TITLE				="Act as Client Listener";
 	
 	public static String SERVER_WHO_WE_CALL_HEADER			="Backup My Data to Other Server";
 	public static String SERVER_WHO_WE_CALL_ALLOWED_LABEL	="Can Backup My Data:";
@@ -48,8 +48,8 @@ public interface ManagingMirrorServerConstants
 	public static String AMP_WHO_WE_CALL_ALLOWED_LABEL		="Amplier Data:";
 	public static String WHO_CALLS_US_HEADER				="Act as A Backup For Other Server";
 	public static String WHO_CALLS_US_ALLOWED_LABEL			="Can Upload Data";	
-	public static String ACT_AS_CLIENT_LISTNER_HEADER		="Act as Client Backup Server";
-	public static String ACT_AS_CLIENT_LISTNER_ALLOWED_LABEL="Active Magic Words:";
+	public static String ACT_AS_CLIENT_HEADER				="Act as Client Backup Server";
+	public static String ACT_AS_CLIENT_ALLOWED_LABEL		="Active Magic Words:";
 	
 	public static String AVAILABLE_SERVER_LABEL				="Available Servers:";
 	public static String AVAILABLE_MAGIC_LABEL				="Available Magic Words:";	
