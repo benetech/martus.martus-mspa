@@ -42,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -104,9 +105,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		mirrorServerName = new JTextField(20);
 		addNewMirrorServer = createButton("add");	
 		panel.add(new JLabel("Which Port: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
-		panel.add(mirrorServerPort);	
-		panel.add(new JLabel("Mirror Server Name: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
-		panel.add(mirrorServerName);		
+		panel.add(mirrorServerPort);		
 				
 		panel.add(addNewMirrorServer);		
 		
@@ -132,8 +131,9 @@ public class ManagingMirrorServersDlg extends JDialog
 		
 		availableListModel = loadElementsToList(availableList);
 		availableServers = new JList(availableListModel);
-		availableServers.setFixedCellWidth(200);    
-		JScrollPane ps = new JScrollPane();
+		availableServers.setFixedCellWidth(200);   
+		 
+		JScrollPane ps = createScrollPane();			
 		ps.getViewport().add(availableServers);
 		JLabel availableLabel = new JLabel(msgLabelInfo.getAvailableLabel());
 				
@@ -150,8 +150,9 @@ public class ManagingMirrorServersDlg extends JDialog
 		
 		allowedListModel = loadElementsToList(assignedList);
 		allowedServers = new JList(allowedListModel);
-		allowedServers.setFixedCellWidth(200);    
-		JScrollPane ps = new JScrollPane();
+		allowedServers.setFixedCellWidth(200);
+		    
+		JScrollPane ps = createScrollPane();
 		ps.getViewport().add(allowedServers);
 		JLabel allowedLabel = new JLabel( msgLabelInfo.getAllowedLabel());
 				
@@ -159,6 +160,14 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(ps);
 
 		return panel;
+	}
+	
+	JScrollPane createScrollPane()
+	{
+		JScrollPane ps = new JScrollPane();		
+		ps.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		ps.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		return ps;
 	}
 	
 	private DefaultListModel loadElementsToList(Vector items)
@@ -211,6 +220,17 @@ public class ManagingMirrorServersDlg extends JDialog
 		return button;
 	}
 	
+	String generateFileName(String ip, String publicKey)
+	{
+		String fileName ="ip="+ip+"-code="+publicKey;
+		if (serverManageType == ManagingMirrorServerConstants.WHO_CALLS_US)
+			fileName+=".dat";
+		else 
+			fileName+=".txt";
+		
+		return fileName;	
+	}
+	
 	class ButtonHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
@@ -232,11 +252,11 @@ public class ManagingMirrorServersDlg extends JDialog
 			Vector mirrorServerInfo = new Vector();
 			String mirrorIP = manageIPAddr.getText();
 			String mirrorPublicCode = managePublicCode.getText();
-			String serverName = mirrorServerName.getText();
 			String port = mirrorServerPort.getText();
 			
 			if (mirrorIP.length()<=0 || 
-				mirrorPublicCode.length()<=0 || port.length()<=0)
+				mirrorPublicCode.length()<=0 || 
+				port.length()<=0)
 			{	
 				JOptionPane.showMessageDialog(parent, "Ip address, public code and port are required.", 
 					"Missing Infomation", JOptionPane.ERROR_MESSAGE);
@@ -246,20 +266,15 @@ public class ManagingMirrorServersDlg extends JDialog
 			mirrorServerInfo.add(mirrorIP);
 			mirrorServerInfo.add(mirrorPublicCode);		
 			mirrorServerInfo.add(port);	
-					
-			if (serverName.length()> 0)
-			{
-				serverName = serverName.replaceAll(" ","_");	
-				mirrorServerInfo.add(serverName);
-			}
-			else
-				mirrorServerInfo.add(mirrorPublicCode);								
+			
+			mirrorFileName = generateFileName(mirrorIP,mirrorPublicCode); 
+			mirrorServerInfo.add(mirrorFileName);										
 				
 			boolean result = parent.getMSPAApp().addMirrorServer(mirrorServerInfo);
 			if (result)
 			{			
-				availableList.add(serverName);
-				availableListModel.addElement(serverName);				
+				availableList.add(mirrorFileName);
+				availableListModel.addElement(mirrorFileName);				
 			}
 			else
 			{
@@ -269,7 +284,6 @@ public class ManagingMirrorServersDlg extends JDialog
 			
 			manageIPAddr.setText("");
 			managePublicCode.setText("");
-			mirrorServerName.setText("");
 			mirrorServerPort.setText("");					
 							
 		}		
@@ -295,17 +309,24 @@ public class ManagingMirrorServersDlg extends JDialog
 			for (int i=0;i<items.length;i++)
 				itemCollection.add(items[i]);
 				
-			items = availableListModel.toArray();	
-			for (int i=0;i<items.length;i++)
-			{
-				String itemString = (String) items[i];
-				if (serverManageType == MirrorServerLabelFinder.LISTEN_FOR_CLIENTS)	
-						itemCollection.add("#"+itemString);
-				else
-					itemCollection.add(itemString);
+			if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
+			{									
+				items = availableListModel.toArray();	
+				for (int i=0;i<items.length;i++)
+				{
+					String itemString = (String) items[i];
+					if (serverManageType == MirrorServerLabelFinder.LISTEN_FOR_CLIENTS)	
+							itemCollection.add("#"+itemString);
+					else
+						itemCollection.add(itemString);
+				}							
+				parent.getMSPAApp().updateMagicWords(itemCollection);
 			}
-							
-			parent.getMSPAApp().updateMagicWords(itemCollection);
+			else
+			{					
+				parent.getMSPAApp().updateManageMirrorAccounts(itemCollection, serverManageType);
+			}
+		
 			dispose();							
 		}
 		
@@ -320,7 +341,7 @@ public class ManagingMirrorServersDlg extends JDialog
 				if (!availableListModel.contains(item))								
 					availableListModel.addElement(item);
 			}							
-		}				
+		}					
 	}
 	
 	UiMainWindow parent; 	
@@ -347,5 +368,6 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	int serverManageType;
 	MirrorServerLabelInfo msgLabelInfo;
+	String mirrorFileName;
 	
 }

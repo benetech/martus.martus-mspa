@@ -3,6 +3,8 @@ package org.martus.mspa.network;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.martus.common.crypto.MartusCrypto;
@@ -171,6 +173,48 @@ public class ServerSideHandler implements NetworkInterface
 		}				
 	}
 	
+	public Vector getListOfAvailableAccounts(String myAccountId)
+	{			
+		Vector results = new Vector();		
+		File availableDir = MSPAServer.getAvailableMirrorServerDirectory();	
+		List list = Arrays.asList(availableDir.list());		
+					
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(new Vector(list));		
+
+		return results;		
+	}	
+	
+	public Vector getListOfAssignedAccounts(String myAccountId, int mirrorType)
+	{			
+		Vector results = new Vector();		
+		File mirrorDir = MSPAServer.getMirrorDirectory(mirrorType);	
+		List list = Arrays.asList(mirrorDir.list());		
+					
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(new Vector(list));		
+
+		return results;		
+	}	
+	
+	public Vector updateManagingMirrorServers(String myAccountId, Vector mirrorInfo, int mirrorType)
+	{
+		Vector results = new Vector();
+		try
+		{
+			server.updateManagingMirrorServerInfo(mirrorInfo, mirrorType);								
+			results.add(NetworkInterfaceConstants.OK);		
+			return results;
+		}
+
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}		
+	}
+	
 	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo)
 	{
 		Vector results = new Vector();
@@ -183,7 +227,7 @@ public class ServerSideHandler implements NetworkInterface
 				String port = (String) mirrorInfo.get(2);
 				String fileName = (String) mirrorInfo.get(3);
 				
-				File outputFileName = new File(server.getAvailableMirrorServerDirectory(), fileName.trim()+".txt");
+				File outputFileName = new File(MSPAServer.getAvailableMirrorServerDirectory(), fileName.trim());
 				
 				RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());
 				 

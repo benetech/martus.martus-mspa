@@ -1,9 +1,12 @@
 package org.martus.mspa.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.channels.FileChannel;
 import java.util.Vector;
 
 import org.martus.common.LoggerInterface;
@@ -17,6 +20,7 @@ import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.utilities.MartusServerUtilities;
+import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
@@ -85,22 +89,22 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return serverDirectory;
 	}		
 	
-	public File getServerWhoWeCallDirectory()
+	public static File getServerWhoWeCallDirectory()
 	{
 		return new File(getAppDirectoryPath(),"ServersWhoWeCall");
 	}
 	
-	public File getServerWhoCallUsDirectory()
+	public static File getServerWhoCallUsDirectory()
 	{
 		return new File(getAppDirectoryPath(),"ServersWhoCallUs");
 	}
 	
-	public File getAmplifyWhoCallUsDirectory()
+	public static File getAmplifyWhoCallUsDirectory()
 	{
 		return new File(getAppDirectoryPath(),"AmplifyWhoCallUs");
 	}
 	
-	public File getAvailableMirrorServerDirectory()
+	public static File getAvailableMirrorServerDirectory()
 	{
 		return new File(getAppDirectoryPath(),"AvailableMirrorServers");
 	}
@@ -124,6 +128,42 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return magicWords;
 	}
+	
+	public void updateManagingMirrorServerInfo(Vector mirrorInfo, int mirrorType)
+	{
+		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
+		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);	
+		deleteAllFiles(destDirectory.listFiles());
+		
+		try 
+		{			 
+			for (int i =0; i<mirrorInfo.size();i++)
+			{
+				String file = (String) mirrorInfo.get(i);
+				copyFile(new File(sourceDirectory, file), new File(destDirectory, file));
+			}	
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
+	}		
+	
+	void deleteAllFiles(File[] files)
+	{
+		for (int i=0;i<files.length;i++)
+			files[i].delete();
+	}
+	
+	void copyFile(File in, File out) throws Exception 
+	{
+		 FileChannel sourceChannel = new FileInputStream(in).getChannel();
+		 FileChannel destinationChannel = new FileOutputStream(out).getChannel();
+		 sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
+		
+		 sourceChannel.close();
+		 destinationChannel.close();
+	 }
 	
 	public void updateMagicWords(Vector words)
 	{				
@@ -253,6 +293,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		System.out.println("");
 	}
 	
+	public static File getMirrorDirectory(int type)
+	{		
+		if (type == ManagingMirrorServerConstants.SERVER_WHO_WE_CALL)
+			return getServerWhoWeCallDirectory();
+		
+		if (type == ManagingMirrorServerConstants.WHO_CALLS_US)
+			return getServerWhoCallUsDirectory();
+			
+		return getAmplifyWhoCallUsDirectory();		
+	}	
+	
 	public static void main(String[] args)
 	{
 		System.out.println("MSPA Server");
@@ -293,6 +344,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAServer/";
 	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAServer/";
 	
-	private final static int DEFAULT_PORT = 443;	
+	private final static int DEFAULT_PORT = 443;
 	
 }

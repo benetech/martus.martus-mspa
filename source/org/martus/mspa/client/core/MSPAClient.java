@@ -82,7 +82,7 @@ public class MSPAClient
 			MartusUtilities.PublicInformationInvalidException, 
 			SSLSocketSetupException, InvalidBase64Exception
 	{
-		portToUse = 443;					
+		portToUse = DEFAULT_PORT;					
 		File[] toCallFiles = getServerToCallDirectory().listFiles();
 		if(toCallFiles != null)
 		{
@@ -260,6 +260,40 @@ public class MSPAClient
 		}				
 	}	
 	
+	public Vector getAvailableAccounts()
+	{	
+		try
+		{					
+			Vector results = handler.getListOfAvailableAccounts(security.getPublicKeyString());
+			
+			if (results != null && !results.isEmpty())
+				return (Vector) results.get(1);
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return new Vector();
+	}	
+	
+	public Vector getListOfAssignedAccounts(int mirrorType)
+	{	
+		try
+		{					
+			Vector results = handler.getListOfAssignedAccounts(security.getPublicKeyString(), mirrorType);
+			
+			if (results != null && !results.isEmpty())
+				return (Vector) results.get(1);
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return new Vector();
+	}	
+	
 	public boolean addMirrorServer(Vector serverInfo)	
 	{	
 		try
@@ -279,6 +313,19 @@ public class MSPAClient
 			e.printStackTrace();
 		}			
 		return false;
+	}	
+	
+	public void updateManageMirrorAccounts(Vector mirrorInfo, int manageType)	
+	{	
+		try
+		{			
+			handler.updateManagingMirrorServers(security.getPublicKeyString(), mirrorInfo, manageType);			
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
 	}		
 		
 
