@@ -915,7 +915,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		files.add(getMagicWordsFile());
 		files.add(getHiddenPacketsFile());
 		files.add(getMartusServerDataComplianceFile());
-		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));					
+		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));	
+		files.add(new File(getMartusServerDataDirectory(), "webauthorized.txt"));				
 		
 		return files;		
 	}
