@@ -576,21 +576,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void backupFile(File from) throws IOException
 	{			
-		Date today = new Date();
-		
-		String targetFile = getFileFromBackupDir(from.getName());	
-		if (targetFile == "")
+		Date today = new Date();		
+
+		String file = from.getName()+"."+getBackupFileExtension(today);
+		File backupFile = new File(getMartusServerDataBackupDirectory(), file);
+		if (!backupFile.exists())			
 		{
-			String file = from.getName()+"."+getBackupFileExtension(today);
-			File backupFile = new File(getMartusServerDataBackupDirectory(), file);			
+			deletePreviousBackupFile(from.getName());	
 			FileTransfer.copyFile(from, backupFile);
-			return;
-		}	
-		
-		File currrentBackupFile = new File(getMartusServerDataBackupDirectory(), targetFile);
-		long lastModifyTime = currrentBackupFile.lastModified();					
-		if (today.getTime() > lastModifyTime)					
-			FileTransfer.copyFile(from, currrentBackupFile);
+		}
 	}
 	
 	private String getBackupFileExtension(Date today)
@@ -602,19 +596,18 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		int day = calendar.get(GregorianCalendar.DAY_OF_MONTH);
 		
 		return Integer.toString(year)+Integer.toString(month+1)+Integer.toString(day);
-	}
+	}	
 	
-	private String getFileFromBackupDir(String targetFileName)
+	private void deletePreviousBackupFile(String targetFileName)
 	{		
 		File backupDir = getMartusServerDataBackupDirectory();
-		String[] files = backupDir.list();
+		File[] files = backupDir.listFiles();
 		for (int i=0; i<files.length;++i)
 		{			
-			String filename = files[i];
+			String filename = files[i].getName();
 			if (filename.startsWith(targetFileName))
-				return filename;			
-		}			
-		return "";
+				files[i].delete();
+		}					
 	}
 	
 	private void logActions(String action, Vector data)
