@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,7 +59,8 @@ public class ServerConnectionDlg extends JDialog
 		mainPanel.add(new JLabel("Select a server to connect: "), BorderLayout.NORTH);	
 		mainPanel.add(createDisplayServerListPane(availableServers), BorderLayout.CENTER);
 		mainPanel.add(buildButtonsPanel(), BorderLayout.SOUTH);						
-				
+		mainPanel.setPreferredSize(new Dimension(300,250));		
+		
 		getContentPane().add(mainPanel);
 		Utilities.centerDlg(this);
 		setResizable(false);
