@@ -48,7 +48,7 @@ public class MenuItemServerCommands extends AbstractAction
 	{
 		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
 		{	
-			String msg = "Send Start command to MSPA server ...";
+			String msg = "Starting Server ...";
 			parent.setStatusText(msg);
 			JOptionPane.showMessageDialog(parent, msg, "Start Server", JOptionPane.INFORMATION_MESSAGE);
 			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");			
