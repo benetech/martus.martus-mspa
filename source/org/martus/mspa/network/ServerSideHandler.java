@@ -160,36 +160,37 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.REJECTED);
 				
 		return results;	
+	}
+	
+	public Vector removeHiddenBulletins(String myAccountId, String localId)
+	{			
+		Vector results = new Vector();
+		try
+		{							
+			results.add(NetworkInterfaceConstants.OK);
+			boolean result = server.hideBulletin(myAccountId, localId);
+			if (result)	
+				results.add(NetworkInterfaceConstants.OK);
+			else
+				results.add(NetworkInterfaceConstants.NOT_FOUND);
+	
+			return results;
+		}
+		
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}							
 	}	
 	
-	public Vector getNumOfHiddenBulletins(String myAccountId) 
+	public Vector getListOfHiddenBulletinIds(String myAccountId) 
 	{
-		class Collector implements Database.PacketVisitor
-		{
-			public void visit(DatabaseKey key)
-			{
-				try
-				{					
-					if (server.getDatabase().isHidden(key))
-					{					
-						++numOfHiddens;
-					}		
-				}
-				catch (Exception e)
-				{		
-					server.getLogger().log("ListBulletins: Problem when visited record for account."+ e.toString());
-				}
-			}			
-			int numOfHiddens=0;
-		}		
 		
-		Collector collector = new Collector();		
-		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);
-		String numOfHiddens = new Integer(collector.numOfHiddens).toString();
-		
-		Vector results = new Vector();								
+		Vector results = new Vector();											
 		results.add(NetworkInterfaceConstants.OK);
-		results.add(numOfHiddens);		
+		results.add(server.getListOfHiddenBulletins(myAccountId));		
 
 		return results;		
 	}
@@ -203,7 +204,7 @@ public class ServerSideHandler implements NetworkInterface
 			{
 				try
 				{					
-					Vector info = new Vector();
+					Vector info = new Vector();				
 					info.add(key.getLocalId().trim());				
 					if (key.isDraft())
 						info.add("Draft");
@@ -222,7 +223,7 @@ public class ServerSideHandler implements NetworkInterface
 		}
 
 		Collector collector = new Collector();		
-		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);
+		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);		
 		
 		Vector results = new Vector();										
 		results.add(NetworkInterfaceConstants.OK);

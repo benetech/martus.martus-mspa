@@ -20,6 +20,7 @@ import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
+import org.martus.common.packet.UniversalId;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
@@ -58,6 +59,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		initAccountConfigFiles(new File(getConfigDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME));
 		initAccountConfigFiles(new File(getConfigDirectory(), UPLOADSOK_FILENAME));
 		initAccountConfigFiles(new File(getConfigDirectory(), BANNEDCLIENTS_FILENAME));
+		initAccountConfigFiles(new File(getConfigDirectory(), HIDDEN_PACKETS_FILENAME));
 	}
 	
 	private void initAccountConfigFiles(File targetFile)
@@ -78,6 +80,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		clientsBanned = MartusUtilities.loadBannedClients(getBannedFile());
 		clientsAllowedUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
 		clientNotSendToAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
+		
+		ServerFileDatabase tmpDatabase = new ServerFileDatabase(getPacketDirectory(), security);		
+		hiddenUids = MartusServerUtilities.loadHiddenPacketsFile(getHiddenPacketsFile(), tmpDatabase, getLogger());
 	}
 	
 	private void initalizeFileDatabase(File dir)
@@ -263,6 +268,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			
 			file = getAllowUploadFile();
 			copyFile(file, getMartusServerAllowUploadFile());
+			
+			file = getHiddenPacketsFile();
+			copyFile(file, getServerDirectory());
 		}
 		catch (Exception ieo)
 		{	
@@ -403,6 +411,30 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public boolean isAccountNotSendToAmplifier(String clientId)
 	{
 		return clientNotSendToAmplifier.contains(clientId);
+	}
+	
+	public Vector getListOfHiddenBulletins(String accountId)
+	{
+		Vector hiddenBulletins = new Vector();	
+		if (hiddenUids == null) 
+			return hiddenBulletins;
+			
+		for (int i=0;i<hiddenUids.size();++i)
+		{
+			UniversalId uid = (UniversalId) hiddenUids.get(i);			
+			if (uid.getAccountId().equals(accountId))			
+				hiddenBulletins.add(uid.getLocalId());
+		}	
+				
+		return hiddenBulletins;
+	}
+	
+	public boolean hideBulletin(String accountId, String localId)
+	{
+		UniversalId uid = UniversalId.createFromAccountAndLocalId(accountId, localId);
+		getDatabase().hide(uid);
+		
+		return hiddenUids.add(uid);		
 	}
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception
@@ -568,6 +600,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector clientsBanned;
 	Vector clientsAllowedUpload;
 	Vector clientNotSendToAmplifier;
+	Vector hiddenUids;
 		
 	private File serverDirectory;
 		

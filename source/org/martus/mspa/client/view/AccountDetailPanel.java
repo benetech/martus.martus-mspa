@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
@@ -30,12 +31,12 @@ import org.martus.swing.UiTextArea;
 
 public class AccountDetailPanel extends JPanel
 {
-	public AccountDetailPanel(MSPAClient app, String id, Vector contactInfo, String hiddenBulletins, 
+	public AccountDetailPanel(MSPAClient app, String id, Vector contactInfo, Vector hiddenBulletins, 
 			Vector bulletinIds, Vector manageAccount)
 	{
 		accountId = id;	
 		mspaApp = app;		
-		numOfHiddenBulletins =	hiddenBulletins;
+		hiddenBulletinIds =	hiddenBulletins;
 		originalBulletinIds = bulletinIds;
 		
 		setBorder(new EmptyBorder(5,5,5,5));
@@ -44,23 +45,23 @@ public class AccountDetailPanel extends JPanel
 		loadAccountAdminInfo(manageAccount);		
 	
 		add(buildTopPanel(contactInfo),BorderLayout.NORTH);
-		add(getDisplayBulletinPanel(loadBulletinIds()), BorderLayout.CENTER);
+		add(loadBulletinDisplayPane(), BorderLayout.CENTER);
 		add(buildButtonsPanel(), BorderLayout.SOUTH);		
 	}
 
-	private Vector loadBulletinIds()
+	private Vector loadBulletinIds(Vector bulletins)
 	{
 		Vector newBulletinIds = new Vector();		
-		if (originalBulletinIds == null && originalBulletinIds.size() <=0)
+		if (bulletins == null || bulletins.size() <=0)
 			return newBulletinIds;
 								
-		for (int i=0; i<originalBulletinIds.size(); ++i)
+		for (int i=0; i<bulletins.size(); ++i)
 		{	
-			Vector bulletinInfo= (Vector) originalBulletinIds.get(i);
+			Vector bulletinInfo= (Vector) bulletins.get(i);
 			String bulletinId = (String) bulletinInfo.get(0)+" \t"+(String)bulletinInfo.get(1);
-			newBulletinIds.add(bulletinId);
-			
+			newBulletinIds.add(bulletinId);		
 		}
+
 		return newBulletinIds;
 	}
 
@@ -85,7 +86,7 @@ public class AccountDetailPanel extends JPanel
 		panel.setBorder(new EmptyBorder(5,5,5,5));
 		panel.setLayout(new ParagraphLayout());
 		JLabel numOfDelBulletinLabel = new JLabel("Number of Deleted Bulletins: ");
-		JTextField numOfDelBulletineField = new JTextField(numOfHiddenBulletins,5);
+		JTextField numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
 		numOfDelBulletineField.setEditable(false);		
 
 		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
@@ -198,45 +199,77 @@ public class AccountDetailPanel extends JPanel
 		return listModel;
 	}
 
-	private void configureTabList()
+	private void configureTabList(JList list)
 	{
 		TabListCellRenderer renderer = new TabListCellRenderer();
 		renderer.setTabs(new int[] {130, 200, 300});
-		bulletinList.setCellRenderer(renderer);
+		list.setCellRenderer(renderer);
 		
 		TabListCellRenderer renderer2 = new TabListCellRenderer();
 		renderer2.setTabs(new int[] {130, 200, 300});
-		bulletinList.setCellRenderer(renderer);
+		list.setCellRenderer(renderer);
 	}	
 
-	private JPanel getDisplayBulletinPanel(Vector bulletinsIds)
+	private JTabbedPane loadBulletinDisplayPane()
+	{
+		bulletinTabPane = new JTabbedPane();				
+		bulletinTabPane.setTabPlacement(JTabbedPane.TOP);
+		
+		Vector formattedBulletinsIds = loadBulletinIds(originalBulletinIds);
+		bulletinListModel = loadElementsToList(formattedBulletinsIds);
+		bulletinList = createBulletinList(bulletinListModel);
+		bulletinList.setName("bulletin");
+		
+		viewBulletinButton = new JButton("View");
+		bulletinTabPane.add(getDisplayBulletinPanel(bulletinList, viewBulletinButton), 0);
+		bulletinTabPane.setTitleAt(0, "List Of Bulletins");
+
+		hiddenListModel = loadElementsToList(hiddenBulletinIds);
+		hiddenList = createBulletinList(hiddenListModel);
+		hiddenList.setName("hidden");
+		viewHiddenButton = new JButton("View");
+		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
+		bulletinTabPane.setTitleAt(1, "List Of Delete Bulletins");
+
+		return bulletinTabPane;
+	}
+
+	private JList createBulletinList(DefaultListModel dataModel)
+	{
+		JList list = new JList(dataModel);
+		list.setFixedCellWidth(220);
+		configureTabList(list);
+
+		return list;
+	}
+
+	private JPanel getDisplayBulletinPanel(JList list, JButton view)
 	{
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder (new LineBorder (Color.gray, 1)," List Of Bulletins "));		
+		panel.setBorder(new EmptyBorder(5,5,5,5));		
 		panel.setLayout(new BorderLayout());		
 
-		bulletinListModel = loadElementsToList(bulletinsIds);
-		bulletinList = new JList(bulletinListModel);
-		bulletinList.setFixedCellWidth(220);
-		configureTabList();
-		
 		JPanel buttonPanel = new JPanel();
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.RIGHT);
 		buttonPanel.setLayout(layout);
 		
-		viewBulletins = new JButton("View Bulletin");
-		viewBulletins.addActionListener(new CommitButtonHandler());	
-		buttonPanel.add(viewBulletins);
-		delBulletins = new JButton("Delete Bulletin");
-		delBulletins.addActionListener(new CommitButtonHandler());	
-		buttonPanel.add(delBulletins);		
+		view = new JButton("View");
+		view.addActionListener(new CommitButtonHandler());	
+		buttonPanel.add(view);
+
+		if (list.getName().equals("bulletin"))
+		{
+			delBulletins = new JButton("Remove");
+			delBulletins.addActionListener(new CommitButtonHandler());	
+			buttonPanel.add(delBulletins);
+		}		
 
 		JScrollPane ps = createScrollPane();
 		ps.setPreferredSize(new Dimension(220, 150));
 		ps.setMinimumSize(new Dimension(220, 150));
 		ps.setAlignmentX(LEFT_ALIGNMENT);			
-		ps.getViewport().add(bulletinList);	
+		ps.getViewport().add(list);	
 
 		panel.add(ps, BorderLayout.CENTER);
 		panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -283,12 +316,21 @@ public class AccountDetailPanel extends JPanel
 
 		private void handleDeleteBulletin()
 		{								
-			mspaApp.updateAccountManageInfo(accountId, admOptions.getOptions());			
+			int selectItem = bulletinList.getSelectedIndex();	
+
+			if (!bulletinList.isSelectionEmpty())
+			{	
+				String item = (String) bulletinList.getSelectedValue();
+				String localId = item.substring(0,item.indexOf("\t"));
+				mspaApp.removeBulletin(accountId,localId);	
+				
+				bulletinList.remove(selectItem);
+			
+			}			
 		}
 	}
 	
 	String accountId;
-	String numOfHiddenBulletins;
 	JButton saveButton;
 	AccountAdminOptions admOptions;
 	
@@ -297,14 +339,19 @@ public class AccountDetailPanel extends JPanel
 	JCheckBox canSendToAmp;
 	JCheckBox amp;
 	
-	JButton viewBulletins;
+	JButton viewBulletinButton;
+	JButton viewHiddenButton;
 	JButton delBulletins;
 	JButton viewActivity;
 	JButton viewStatistics;
 
 	JList bulletinList;	
 	DefaultListModel bulletinListModel;
+	JList hiddenList;
+	DefaultListModel hiddenListModel;
 
 	MSPAClient mspaApp;
-	Vector originalBulletinIds;	
+	Vector originalBulletinIds;
+	Vector hiddenBulletinIds;	
+	JTabbedPane bulletinTabPane;
 }

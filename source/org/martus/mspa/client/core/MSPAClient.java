@@ -247,24 +247,41 @@ public class MSPAClient
 			e.printStackTrace();
 		}			
 		return new Vector();
-	}	
+	}		
 	
-	public String getNumOfHiddenBulletins()
+	public Vector getListOfHiddenBulletins(String accountId)
 	{	
 		try
 		{						
-			Vector results = handler.getNumOfHiddenBulletins(security.getPublicKeyString());
-		
-			if (results != null && !results.isEmpty())
-				return (String) results.get(1);
+			Vector results = handler.getListOfHiddenBulletinIds(accountId);		
+			if (results != null && !results.isEmpty())	
+				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return "";
+		return new Vector();
 	}	
+	
+	public String removeBulletin(String accountId, String localId)
+	{
+		String msg = "";
+		try
+		{												
+			Vector results = handler.removeHiddenBulletins(localId, localId);
+			
+			if (results != null && !results.isEmpty())
+				msg = (String) results.get(0);					
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return msg;
+	}
 	
 	public Vector getPacketDirNames()
 	{	
