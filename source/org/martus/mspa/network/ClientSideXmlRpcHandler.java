@@ -42,7 +42,7 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetContactInfo, params);
 	}	
 	
-	public Vector getInActiveMagicWords(String myAccountId) throws IOException
+	public Vector getInactiveMagicWords(String myAccountId) throws IOException
 	{
 		
 		Vector params = new Vector();

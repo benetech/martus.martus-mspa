@@ -49,7 +49,7 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 		
 		if (serverManageType == MirrorServerLabelFinder.LISTEN_FOR_CLIENTS)
 		{							
-			availableList = parent.getMSPAApp().getInActiveMagicWords();
+			availableList = parent.getMSPAApp().getInactiveMagicWords();
 			assignedList = parent.getMSPAApp().getActiveMagicWords();
 		}
 		else

@@ -195,11 +195,11 @@ public class MSPAClient
 		return new Vector();
 	}
 	
-	public Vector getInActiveMagicWords()
+	public Vector getInactiveMagicWords()
 	{	
 		try
 		{						
-			Vector results = handler.getInActiveMagicWords(security.getPublicKeyString());
+			Vector results = handler.getInactiveMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 			{

@@ -116,7 +116,7 @@ public class ServerSideHandler implements NetworkInterface
 		}											
 	}
 	
-	public Vector getInActiveMagicWords(String myAccountId)
+	public Vector getInactiveMagicWords(String myAccountId)
 	{	
 		Vector results = new Vector();				
 		Vector magicWords = server.getMagicWordsInfo().getInactiveMagicWords();

@@ -12,7 +12,7 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdGetContactInfo = "getContactInfo";
 	public static final String cmdGetAllMagicWords = "getAllMagicWords";
 	public static final String cmdGetActiveMagicWords = "getActiveMagicWords";
-	public static final String cmdGetInActiveMagicWords = "getInActiveMagicWords";
+	public static final String cmdGetInActiveMagicWords = "getInactiveMagicWords";
 	public static final String cmdUpdateMagicWords = "updateMagicWords";
 	
 	public static final String cmdGetListOfServersWhoWeCall = "getServersWhoWeCallAccounts";
