@@ -57,8 +57,8 @@ public class UiMainWindow extends JFrame
 		
 		try
 		{			
-			localization  = new UiBasicLocalization(getDefaultDirectoryPath());	
-			setLocalizationTranslation();			
+			localization  = new UiBasicLocalization(getDefaultDirectoryPath(), EnglishStrings.strings);	
+			localization.currentLanguageCode = Localization.ENGLISH;			
 			mspaApp = new MSPAClient(localization);		
 			initalizeUiState();
 		}
@@ -69,15 +69,6 @@ public class UiMainWindow extends JFrame
 		
 		currentActiveFrame = this;						
 	}
-	
-	private void setLocalizationTranslation()
-	{
-		for(int i=0; i < EnglishStrings.strings.length; ++i)
-		{
-			localization.addTranslation(Localization.ENGLISH, EnglishStrings.strings[i]);
-		}					
-		localization.currentLanguageCode = Localization.ENGLISH;
-	}		
 	
 	public UiBasicLocalization getLocalization()
 	{
