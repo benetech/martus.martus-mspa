@@ -62,7 +62,8 @@ public class ServerSideHandler implements NetworkInterface
 		Vector result = new Vector();				
 		if (!server.isAuthorizedMSPAClients(myAccountId))
 		{
-			result.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			result.add(NetworkInterfaceConstants.NOT_AUTHORIZED);
+			server.log("Client : "+NetworkInterfaceConstants.NOT_AUTHORIZED+"id: "+ myAccountId);				
 			return result;
 		}
 					
@@ -83,7 +84,7 @@ public class ServerSideHandler implements NetworkInterface
 		{
 			if (!server.isAuthorizedMSPAClients(myAccountId))
 			{
-				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);							
 				return results;
 			}
 

@@ -12,7 +12,7 @@ public class NetworkInterfaceConstants
 	public static final String SIG_ERROR = "signature error";
 	public static final String INCOMPLETE = "incomplete result";	
 	public static final String UNKNOWN_COMMAND = "unknown command";
-	public static final String NOT_AUTHORIZED = "not authorized";
+	public static final String NOT_AUTHORIZED = "client not authorized";
 	public static final String NOT_FOUND = "not found";
 	public static final String REJECTED = "account rejected";	
 	

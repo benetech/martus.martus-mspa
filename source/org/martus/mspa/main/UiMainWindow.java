@@ -124,7 +124,7 @@ public class UiMainWindow extends JFrame
 		setJMenuBar(menuBar);
 	
 		createTabbedPaneRight();
-		Vector accounts = mspaApp.displayAccounts();
+		Vector accounts = mspaApp.displayAccounts();			
 		accountTree = new AccountsTree(mspaApp.getCurrentServerPublicCode(), accounts, this);
 								
 		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);
@@ -135,7 +135,8 @@ public class UiMainWindow extends JFrame
 		
 		mainPanel.add(createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode()),BorderLayout.NORTH );
 		mainPanel.add(m_sp, BorderLayout.CENTER);
-		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);
+		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);	
+		setStatusText(mspaApp.getStatus());
 
 		WindowListener wndCloser = new WindowAdapter()
 		{
@@ -148,7 +149,7 @@ public class UiMainWindow extends JFrame
 		getContentPane().add(mainPanel);
 			
 		Utilities.centerFrame(this);	
-		setVisible(true);
+		setVisible(true);		
 						
 		return true;
 	}

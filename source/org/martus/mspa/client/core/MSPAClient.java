@@ -174,6 +174,11 @@ public class MSPAClient
 		return(combined);
 	}
 	
+	public String getStatus()
+	{
+		return currentStatus;
+	}
+	
 	public String getCurrentServerPublicCode()
 	{
 		return serverPublicCode;
@@ -203,25 +208,24 @@ public class MSPAClient
 	}	
 	
 	public Vector displayAccounts()
-	{	
+	{			
 		try
 		{			
 			Vector parameters = new Vector();							
 			String signature = security.createSignatureOfVectorOfStrings(parameters);	
-			Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);			
+			Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);					
+			currentStatus = (String) results.get(0);
 			
-			if (results != null && !results.isEmpty())
-			{
-				Vector accounts = (Vector) results.get(1);
-				if (!accounts.isEmpty())
-					return accounts;
-			}	 
+			if (currentStatus.equals(NetworkInterfaceConstants.OK))
+				return (Vector) results.get(1);
+
 		}		
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+
 		return new Vector();
 	}
 	
@@ -232,14 +236,14 @@ public class MSPAClient
 			Vector parameters = new Vector();
 			parameters.add(accountId);			
 			String signature = security.createSignatureOfVectorOfStrings(parameters);				
-			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);				
+			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
+			currentStatus = (String) results.get(0);				
 			Vector decodedContactInfoResult = ContactInfo.decodeContactInfoVectorIfNecessary(results);
 			
 			if (decodedContactInfoResult != null && !decodedContactInfoResult.isEmpty())
-			{
-				Vector info = (Vector) decodedContactInfoResult.get(1);
-				if (!info.isEmpty())
-					return info;
+			{				
+				if (currentStatus.equals(NetworkInterfaceConstants.OK))
+					return (Vector) decodedContactInfoResult.get(1);
 			}	 
 		}		
 		catch (Exception e)
@@ -255,8 +259,8 @@ public class MSPAClient
 		try
 		{						
 			Vector results = handler.getAccountManageInfo(security.getPublicKeyString(), manageAccountId);
-		
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
@@ -273,7 +277,8 @@ public class MSPAClient
 		try
 		{
 			Vector results = handler.getServerCompliance(security.getPublicKeyString());
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 			{
 				Vector compliants = (Vector) results.get(1);				
 				for (int i=0; i< compliants.size();++i)
@@ -293,7 +298,8 @@ public class MSPAClient
 		try
 		{
 			Vector results =  handler.updateServerCompliance(security.getPublicKeyString(), msg);
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return results;
 		}
 		catch (IOException e)
@@ -310,9 +316,9 @@ public class MSPAClient
 		try
 		{												
 			Vector results = handler.sendCommandToServer(security.getPublicKeyString(), cmdType, cmd);
-			
+			currentStatus = (String) results.get(0);
 			if (results != null && !results.isEmpty())
-				msg = (String) results.get(0);					
+				msg = currentStatus;					
 		}		
 		catch (Exception e)
 		{
@@ -340,8 +346,9 @@ public class MSPAClient
 	{			
 		try
 		{						
-			Vector results = handler.getMartusServerArguments(security.getPublicKeyString());		
-			if (results != null && !results.isEmpty())	
+			Vector results = handler.getMartusServerArguments(security.getPublicKeyString());
+			currentStatus = (String) results.get(0);		
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))	
 			{	
 				Vector args = (Vector) results.get(1);
 				LoadMartusServerArguments arguments = new LoadMartusServerArguments();
@@ -375,8 +382,9 @@ public class MSPAClient
 	{	
 		try
 		{						
-			Vector results = handler.getListOfHiddenBulletinIds(security.getPublicKeyString(), accountId);		
-			if (results != null && !results.isEmpty())	
+			Vector results = handler.getListOfHiddenBulletinIds(security.getPublicKeyString(), accountId);
+			currentStatus = (String) results.get(0);		
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))	
 				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
@@ -388,37 +396,33 @@ public class MSPAClient
 	}	
 	
 	public String removeBulletin(String accountId, Vector localIds)
-	{
-		String msg = "";
+	{		
 		try
 		{												
-			Vector results = handler.removeHiddenBulletins(security.getPublicKeyString(), accountId, localIds);			
-			if (results != null && !results.isEmpty())
-				msg = (String) results.get(0);
+			Vector results = handler.removeHiddenBulletins(security.getPublicKeyString(), accountId, localIds);
+			currentStatus = (String) results.get(0);			
 		}		
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return msg;
+		return currentStatus;
 	}
 	
 	public String recoverHiddenBulletin(String accountId, Vector localIds)
-	{
-		String msg = "";
+	{		
 		try
 		{												
-			Vector results = handler.recoverHiddenBulletins(security.getPublicKeyString(), accountId, localIds);			
-			if (results != null && !results.isEmpty())
-				msg = (String) results.get(0);
+			Vector results = handler.recoverHiddenBulletins(security.getPublicKeyString(), accountId, localIds);
+			currentStatus = (String) results.get(0);				
 		}		
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return msg;
+		return currentStatus;
 	}
 	
 	public Vector getPacketDirNames(String accountId)
@@ -426,8 +430,8 @@ public class MSPAClient
 		try
 		{						
 			Vector results = handler.getListOfBulletinIds(accountId);		
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);	
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);
 							
 		}		
@@ -444,8 +448,8 @@ public class MSPAClient
 		try
 		{						
 			Vector results = handler.getInactiveMagicWords(security.getPublicKeyString());
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
@@ -461,8 +465,8 @@ public class MSPAClient
 		try
 		{						
 			Vector results = handler.getActiveMagicWords(security.getPublicKeyString());
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);			
 		}		
 		catch (Exception e)
@@ -478,8 +482,8 @@ public class MSPAClient
 		try
 		{					
 			Vector results = handler.getAllMagicWords(security.getPublicKeyString());
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
@@ -508,8 +512,8 @@ public class MSPAClient
 		try
 		{					
 			Vector results = handler.getListOfAvailableServers(security.getPublicKeyString());
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
@@ -525,8 +529,8 @@ public class MSPAClient
 		try
 		{					
 			Vector results = handler.getListOfAssignedServers(security.getPublicKeyString(), mirrorType);
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
@@ -542,8 +546,8 @@ public class MSPAClient
 		try
 		{						
 			Vector results = handler.addAvailableMirrorServer(security.getPublicKeyString(), serverInfo);
-			
-			if (results != null && !results.isEmpty())
+			currentStatus = (String) results.get(0);
+			if (results != null)
 			{
 				String returnCode = (String) results.get(0);		
 				if (returnCode.equals(NetworkInterfaceConstants.OK))
@@ -608,6 +612,7 @@ public class MSPAClient
 	MartusCrypto security;
 	File keyPairFile;	
 	File[] toCallFiles;
+	String currentStatus;
 	
 	final static int DEFAULT_PORT = 443;
 	final static String DEFAULT_HOST = "localHost";	
