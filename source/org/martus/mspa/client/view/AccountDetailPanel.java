@@ -26,7 +26,7 @@ public class AccountDetailPanel extends JPanel
 	public AccountDetailPanel(String id, Vector contactInfo, String numOfDelBulletins)
 	{
 		accountPublicCode = id;
-		setBorder(new TitledBorder (new EmptyBorder(5,5,5,5)));
+		setBorder(new EmptyBorder(5,5,5,5));
 		setLayout(new BorderLayout());			
 		
 		JPanel centerPanel = new JPanel();

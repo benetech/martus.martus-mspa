@@ -31,9 +31,12 @@ import org.martus.common.clientside.Localization;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.clientside.UiBasicSigninDlg;
 import org.martus.mspa.client.core.MSPAClient;
+import org.martus.mspa.client.core.ManagingMirrorServerConstants;
+import org.martus.mspa.client.tools.MSPASwingUtils;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
 import org.martus.mspa.client.view.MenuItemManageMagicWords;
+import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
 
 public class UiMainWindow extends JFrame
 {
@@ -104,10 +107,11 @@ public class UiMainWindow extends JFrame
 		addWindowListener(wndCloser);
 		getContentPane().add(mainPanel);
 			
-		setVisible(true);				
+		MSPASwingUtils.center(this);	
+		setVisible(true);
+						
 		return true;
 	}
-
 
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
@@ -186,9 +190,10 @@ public class UiMainWindow extends JFrame
 
 	int signIn(int mode)
 	{
-		int seconds = 0;		
-		UiBasicSigninDlg signinDlg = new UiBasicSigninDlg(localization, uiState, currentActiveFrame, mode, "");
-			
+		int seconds = 0;
+		String iniPassword="";		
+		UiBasicSigninDlg signinDlg = new UiBasicSigninDlg(localization, uiState, currentActiveFrame, mode, "", iniPassword.toCharArray());
+				
 		try
 		{
 			String userName = signinDlg.getName();
@@ -229,15 +234,28 @@ public class UiMainWindow extends JFrame
 		menuBar.add(mEdit);
 		
 		JMenu mTool = new JMenu("Tools");		
-		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));			
+		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));		
+		JMenu manageServer = new JMenu("Managing Mirror servers");	
+		manageServer.add(new MenuItemManagingMirrorServers(this,				
+				ManagingMirrorServerConstants.SERVER_WHO_WE_CALL));
+		manageServer.add(new MenuItemManagingMirrorServers(this,				
+				ManagingMirrorServerConstants.SERVER_WE_AMPLIFY));
+		manageServer.add(new MenuItemManagingMirrorServers(this,				
+				ManagingMirrorServerConstants.AMP_WHO_CALLS_US));
+		manageServer.add(new MenuItemManagingMirrorServers(this,				
+				ManagingMirrorServerConstants.WHO_CALLS_US));
+		manageServer.add(new MenuItemManagingMirrorServers(this,				
+				ManagingMirrorServerConstants.CLIENT_LISTNER));		
+		mTool.add(manageServer);			
 		menuBar.add(mTool);
+		
 						
 		JMenu mHelp = new JMenu("Help");
 		mHelp.setMnemonic('h');
 		menuBar.add(mHelp);
 		
 		return menuBar;
-	}
+	}	
 	
 	
 	private void initalizeUiState()
