@@ -34,6 +34,7 @@ import java.rmi.registry.Registry;
 import java.util.Vector;
 
 import org.martus.mspa.server.MSPAServer;
+import org.martus.util.FileTransfer;
 import org.martus.util.TestCaseEnhanced;
 
 

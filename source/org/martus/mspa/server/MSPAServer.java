@@ -37,9 +37,9 @@ import org.martus.mspa.common.RetrievePublicKey;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.common.network.ServerSideHandler;
-import org.martus.mspa.roothelper.FileTransfer;
 import org.martus.mspa.roothelper.Messenger;
 import org.martus.mspa.roothelper.RootHelperConnector;
+import org.martus.util.FileTransfer;
 import org.martus.util.UnicodeWriter;
 
 

@@ -40,6 +40,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.martus.common.LoggerInterface;
 import org.martus.common.LoggerToConsole;
+import org.martus.util.FileTransfer;
 
 
 public class MessengerImpl extends UnicastRemoteObject implements Messenger, MessageType 
