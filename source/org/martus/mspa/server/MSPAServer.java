@@ -71,7 +71,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getPacketDirectory()
 	{
-		return new File(getServerDirectory(), "packets");;
+		return new File(getServerDirectory(), "packets");
 	}
 	
 	public File getServerDirectory()
