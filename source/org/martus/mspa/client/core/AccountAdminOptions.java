@@ -9,7 +9,7 @@ public class AccountAdminOptions
 	public boolean canUploadSelected() {return uploadOption;}
 	public boolean isBannedSelected(){return bannedOption;}
 	public boolean canSendToAmplifySelected() {return canSendOption;}
-	public boolean isAmplifierSelected() {return amplifierOption;}
+//	public boolean isAmplifierSelected() {return amplifierOption;}
 
 
 	public void setCanUploadOption(boolean option) 
@@ -26,11 +26,6 @@ public class AccountAdminOptions
 	{
 		canSendOption = option;
 	}	
-
-	public void setAmplifierOption(boolean option)
-	{
-		amplifierOption = option;
-	}
 	
 	public Vector getOptions()
 	{
@@ -38,7 +33,6 @@ public class AccountAdminOptions
 		options.add(CAN_UPLOAD, new Boolean(uploadOption));
 		options.add(BANNED, new Boolean(bannedOption));
 		options.add(CAN_SEND, new Boolean(canSendOption));
-		options.add(AMPLIFIER, new Boolean(amplifierOption));
 		
 		return options;
 	}	
@@ -48,10 +42,8 @@ public class AccountAdminOptions
 		Boolean canUpload = (Boolean) options.get(CAN_UPLOAD);
 		Boolean banned = (Boolean) options.get(BANNED);
 		Boolean canSendToAmp = (Boolean) options.get(CAN_SEND);
-		Boolean amplifier = (Boolean) options.get(AMPLIFIER);	
 							
 		setBannedOption(banned.booleanValue());
-		setAmplifierOption(amplifier.booleanValue());
 		setCanSendOption(canSendToAmp.booleanValue());
 		setCanUploadOption(canUpload.booleanValue());
 		
@@ -62,11 +54,11 @@ public class AccountAdminOptions
 	boolean uploadOption=false;
 	boolean bannedOption=false;
 	boolean canSendOption=false;
-	boolean amplifierOption=false;
+//	boolean amplifierOption=false;
 	
 	public static int CAN_UPLOAD =0;
 	public static int BANNED	 = 1;
 	public static int CAN_SEND = 2;
-	public static int AMPLIFIER = 3; 
+//	public static int AMPLIFIER = 3; 
 	
 }

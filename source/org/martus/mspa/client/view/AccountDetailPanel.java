@@ -113,13 +113,10 @@ public class AccountDetailPanel extends JPanel
 		banned.addActionListener(new CheckBoxHandler());	
 		canSendToAmp = new JCheckBox("Can Send to Amplify", admOptions.canSendToAmplifySelected());
 		canSendToAmp.addActionListener(new CheckBoxHandler());	
-		amp = new JCheckBox("Amplifier", admOptions.isAmplifierSelected());		
-		amp.addActionListener(new CheckBoxHandler());	
 		
 		panel.add(canUpload);
 		panel.add(banned);
-		panel.add(canSendToAmp);
-		panel.add(amp);
+		panel.add(canSendToAmp);		
 		
 		return panel;
 
@@ -175,9 +172,9 @@ public class AccountDetailPanel extends JPanel
 	
 	private JPanel buildButtonsPanel()
 	{
-		JPanel panel = new JPanel();	
-		panel.setLayout(new FlowLayout());
-				
+		JPanel panel = new JPanel();		
+		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+							
 		viewActivity = new JButton("View Activity");
 		viewActivity.addActionListener(new CommitButtonHandler());	
 		panel.add(viewActivity);					
@@ -187,7 +184,7 @@ public class AccountDetailPanel extends JPanel
 		panel.add(viewStatistics);
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(new CommitButtonHandler());
-		panel.add(saveButton);
+		panel.add(saveButton);		
 
 		return panel;
 	}	
@@ -264,7 +261,7 @@ public class AccountDetailPanel extends JPanel
 
 		if (list.getName().equals("bulletin"))
 		{
-			delBulletins = new JButton("Remove");
+			delBulletins = new JButton("Delete");
 			delBulletins.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(delBulletins);
 		}		
@@ -296,9 +293,7 @@ public class AccountDetailPanel extends JPanel
 			admOptions = new AccountAdminOptions();											
 			admOptions.setCanUploadOption(canUpload.isSelected());
 			admOptions.setBannedOption(banned.isSelected());	
-			admOptions.setCanSendOption(canSendToAmp.isSelected());	
-			admOptions.setAmplifierOption(amp.isSelected());
-			
+			admOptions.setCanSendOption(canSendToAmp.isSelected());							
 		}
 	}
 	
@@ -354,8 +349,7 @@ public class AccountDetailPanel extends JPanel
 	JCheckBox canUpload;
 	JCheckBox banned;	
 	JCheckBox canSendToAmp;
-	JCheckBox amp;
-	
+
 	JButton viewBulletinButton;
 	JButton viewHiddenButton;
 	JButton delBulletins;

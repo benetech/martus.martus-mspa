@@ -43,7 +43,6 @@ public class TestAccountAdminOptions extends TestCaseEnhanced
 		try
 		{			
 			AccountAdminOptions accountOptions = new AccountAdminOptions();				
-			accountOptions.setAmplifierOption(true);
 			accountOptions.setBannedOption(true);
 			accountOptions.setCanSendOption(false);
 			accountOptions.setCanUploadOption(false);
@@ -59,20 +58,18 @@ public class TestAccountAdminOptions extends TestCaseEnhanced
 			options.add(AccountAdminOptions.CAN_UPLOAD, new Boolean(true));
 			options.add(AccountAdminOptions.BANNED, new Boolean(false));
 			options.add(AccountAdminOptions.CAN_SEND, new Boolean(true));
-			options.add(AccountAdminOptions.AMPLIFIER, new Boolean(false));
-			
+
 			accountOptions = new AccountAdminOptions();
 			accountOptions.setOptions(options);	
 			
 			assertEquals("Can upload ", true, accountOptions.canUploadSelected());
 			assertEquals("Banned ", false, accountOptions.isBannedSelected());
 			assertEquals("Can Send ", true, accountOptions.canSendToAmplifySelected());
-			assertEquals("Amplifier ", false, accountOptions.isAmplifierSelected());	
 											
 		}	
 		catch(Exception e)
 		{
-			assertTrue("UTF8 not supported", false);
+			assertTrue("options not supported", false);
 		}			
 	}			
 

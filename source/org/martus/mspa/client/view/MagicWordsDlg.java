@@ -76,8 +76,6 @@ public class MagicWordsDlg extends JDialog
 	
 		addMagicWordButton = new JButton("Add");
 		addMagicWordButton.addActionListener(new MagicWordButtonHandler());	
-		removeMagicWordButton = new JButton("Remove");
-		removeMagicWordButton.addActionListener(new MagicWordButtonHandler());	
 		updateMagicWordButton = new JButton("Update");
 		updateMagicWordButton.addActionListener(new MagicWordButtonHandler());						
 				
@@ -92,7 +90,6 @@ public class MagicWordsDlg extends JDialog
 		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(new JLabel(""));		
 		panel.add(addMagicWordButton);	
-		panel.add(removeMagicWordButton);
 		panel.add(updateMagicWordButton);
 			
 		return panel;
@@ -224,8 +221,6 @@ public class MagicWordsDlg extends JDialog
 			
 			if (ae.getSource().equals(addMagicWordButton))
 				handleAddNewMagicWord();			
-			else if (ae.getSource().equals(removeMagicWordButton))
-				handleRemoveMagicWords();
 			else if (ae.getSource().equals(updateMagicWordButton))
 				handleUpdateMagicWords();	
 		}
@@ -278,32 +273,7 @@ public class MagicWordsDlg extends JDialog
 									
 			resetFields();	
 		}		
-		
-		private void handleRemoveMagicWords()
-		{			
-			int row = fTable.getSelectedRow();
-			
-			if (row < 0)
-			{
-				JOptionPane.showMessageDialog(parent, "There is no magic word selected from list.", "", JOptionPane.INFORMATION_MESSAGE);	
-				return;
-			}
-				
-			Object[] options = new String[] {"Yes", "No"};
-			String msg = "You are about to delete a magic word. \nAre you sure?";
-			String title = "Remove Magicword";
-			
-			if (displayOptionsDialog((Component) parent, msg, title, options) !=0) 
-				return;
-						
-			if (fData.delete(row)) 
-			{
-			  fTable.tableChanged(new TableModelEvent(fData, row, row, TableModelEvent.ALL_COLUMNS,
-				 TableModelEvent.DELETE)); 
-			  fTable.repaint();			  
-			}
-			resetFields();						
-		}		
+
 	}
 	
 	class CommitButtonHandler implements ActionListener
@@ -327,7 +297,6 @@ public class MagicWordsDlg extends JDialog
 	
 	JButton saveButton;
 	JButton cancelButton;
-	JButton removeMagicWordButton;
 	JButton addMagicWordButton;
 	JButton updateMagicWordButton;
 	JTable fTable;

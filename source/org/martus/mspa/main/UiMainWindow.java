@@ -262,7 +262,9 @@ public class UiMainWindow extends JFrame
 		JMenu mTool = new JMenu("Tools");
 		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
+		mTool.addSeparator();
 		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));	
+		mTool.addSeparator();
 		JMenu manageServer = new JMenu("Managing Mirror servers");	
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVER_WHO_WE_CALL));
