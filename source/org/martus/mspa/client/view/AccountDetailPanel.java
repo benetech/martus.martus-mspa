@@ -3,7 +3,6 @@ package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -164,7 +163,7 @@ public class AccountDetailPanel extends JPanel
 		panel.add(phone);		
 		
 		panel.add(new JLabel("Mailing Address: "),ParagraphLayout.NEW_PARAGRAPH);
-		UiTextArea address = new UiTextArea(4, 35, ComponentOrientation.LEFT_TO_RIGHT);		
+		UiTextArea address = new UiTextArea(4, 35);		
 		address.setEditable(false);
 		JScrollPane addressScrollPane = new JScrollPane(address, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

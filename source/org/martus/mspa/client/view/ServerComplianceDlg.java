@@ -27,7 +27,6 @@ package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -72,7 +71,7 @@ public class ServerComplianceDlg extends JDialog
 		
 		JLabel label = new JLabel("Compliance for this Martus Server:");
 		
-		complianceEditor = new UiWrappedTextArea(compliants, ComponentOrientation.LEFT_TO_RIGHT);
+		complianceEditor = new UiWrappedTextArea(compliants);
 		complianceEditor.setBackground(Color.WHITE);
 		complianceEditor.setEditable(true);		
 		
