@@ -29,13 +29,13 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.martus.mspa.client.view.ServerArgumentsConfigDlg;
+import org.martus.mspa.client.view.ServerComplianceDlg;
 import org.martus.mspa.main.UiMainWindow;
 
 
-public class MenuItemMartusServerArgumentsConfig extends AbstractAction
+public class MenuItemMartusServerCompliance extends AbstractAction
 {
-	public MenuItemMartusServerArgumentsConfig(UiMainWindow mainWindow, String label)
+	public MenuItemMartusServerCompliance(UiMainWindow mainWindow, String label)
 	{
 		super(label);	
 		parent = mainWindow;
@@ -44,9 +44,10 @@ public class MenuItemMartusServerArgumentsConfig extends AbstractAction
 
 	public void actionPerformed(ActionEvent arg0) 
 	{								
-		ServerArgumentsConfigDlg dlg = new ServerArgumentsConfigDlg(parent);
-		dlg.show();
-
+		String compliants = parent.getMSPAApp().getServerCompliant();
+		parent.setStatusText(parent.getMSPAApp().getStatus());		
+		ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
+		dlg.show();			
 	}
 	
 	UiMainWindow parent;	

@@ -41,7 +41,7 @@ import org.martus.mspa.client.view.menuitem.MenuItemExitApplication;
 import org.martus.mspa.client.view.menuitem.MenuItemExportPublicKey;
 import org.martus.mspa.client.view.menuitem.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
-import org.martus.mspa.client.view.menuitem.MenuItemMartusServerArgumentsConfig;
+import org.martus.mspa.client.view.menuitem.MenuItemMartusServerCompliance;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.Utilities;
@@ -331,7 +331,7 @@ public class UiMainWindow extends JFrame
 		menuBar.add(mEdit);		
 		
 		JMenu mTool = new JMenu("Tools");
-		mTool.add(new MenuItemMartusServerArgumentsConfig(this,"Martus Server Arguments Configuration"));
+		mTool.add(new MenuItemMartusServerCompliance(this,"Martus Server Compliance"));
 		mTool.addSeparator();
 		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	

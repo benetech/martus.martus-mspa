@@ -213,7 +213,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		updateButton = createButton("Save");				
 		cancelButton = createButton("Cancel");						
 				
-		panel.add(viewComplainButton);
+//		panel.add(viewComplainButton);
 		panel.add(updateButton);
 		panel.add(cancelButton);
 		
