@@ -116,6 +116,7 @@ public class AccountDetailPanel extends JPanel
 			panel.add(new JLabel("Mailing Address: "),ParagraphLayout.NEW_PARAGRAPH);
 			UiTextArea address = new UiTextArea(5, 35);
 			address.setText((String)contactInfo.get(index++));
+			address.setEditable(false);
 			JScrollPane addressScrollPane = new JScrollPane(address, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			panel.add(addressScrollPane,ParagraphLayout.NEW_LINE);
