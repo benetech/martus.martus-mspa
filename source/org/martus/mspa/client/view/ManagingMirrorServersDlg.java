@@ -91,6 +91,10 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(manageIPAddr);
 		panel.add(new JLabel("Public Code: "), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(managePublicCode);
+		mirrorServerPort = new JTextField(20);
+		panel.add(new JLabel("Which Port: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
+		panel.add(mirrorServerPort);	
+		
 		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
 		{		
 			collectMirrorInfo(panel);
@@ -101,12 +105,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	private void collectMirrorInfo(JPanel panel)
 	{
-		mirrorServerPort = new JTextField(20);
-		mirrorServerName = new JTextField(20);
-		addNewMirrorServer = createButton("add");	
-		panel.add(new JLabel("Which Port: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
-		panel.add(mirrorServerPort);		
-				
+		addNewMirrorServer = createButton("add");						
 		panel.add(addNewMirrorServer);		
 		
 	}
@@ -343,7 +342,6 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	JTextField manageIPAddr;
 	JTextField managePublicCode;
-	JTextField mirrorServerName;
 	JTextField mirrorServerPort;
 	
 	JButton addButton;
