@@ -76,7 +76,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (IOException e)
 		{
 			e.printStackTrace();			
-			logger.log(targetFile.getPath()+" error when created."+e.toString());
+			log(targetFile.getPath()+" error when created."+e.toString());
 		}		
 	}
 	
@@ -127,7 +127,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void initalizeFileDatabase(File dir)
 	{					
-		security = loadMartusKeypair(getMSPAServerKeyPairFile());
+		security = loadMartusKeypair(getMSAPKeypairFileName());
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
 		try
@@ -164,6 +164,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getAppDirectoryPath(),MSPA_ADMIN_DIR);
 	}
 	
+	public static File getAdminDeleteOnStartup()
+	{
+		return new File(getAdminDirectory(),DELETE_ON_STARTUP_DIRECTORY);
+	}
+	
 	public static File getAuthorizedClientsFile()
 	{
 		return new File(getAdminDirectory(), MSPA_CLIENT_AUTHORIZED_FILES);
@@ -174,9 +179,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getAdminDirectory(),MSPA_CLIENT_AUTHORIZED_DIR );
 	}
 	
-	public String getMSPAServerKeyPairFile()
+	public File getMSPAServerKeyPairFile()
 	{
-		return getAdminDirectory()+KEYPAIR_FILE;
+		File adminDeleteOnStartup = new File(getAdminDirectory().getPath(), DELETE_ON_STARTUP_DIRECTORY);
+		File keypair = new File(adminDeleteOnStartup.getPath(), KEYPAIR_FILE);
+		return keypair;
+	}
+	
+	public String getMSAPKeypairFileName()
+	{
+		return getMSPAServerKeyPairFile().getPath();
 	}
 	
 	public File getBannedFile()
@@ -282,7 +294,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (RemoteException e)
 		{
 			e.printStackTrace();
-			logger.log(" Error when try to get a compliance file."+e.toString());
+			log(" Error when try to get a compliance file."+e.toString());
 		}
 		catch (IOException e)
 		{
@@ -313,12 +325,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (RemoteException e)
 		{			
 			e.printStackTrace();
-			logger.log(" Error when try to update a compliance file."+e.toString());
+			log(" Error when try to update a compliance file."+e.toString());
 		}
 		catch (IOException e)
 		{			
 			e.printStackTrace();
-			logger.log(" Error when try to update a compliance file."+e.toString());
+			log(" Error when try to update a compliance file."+e.toString());
 		}	
 	}
 	
@@ -328,7 +340,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				
 		try
 		{	
-			File backUpFile = new File(getHiddenPacketsFile() + ".bak");				
+			File backUpFile = new File(getDeleteOnStartupBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
 			FileTransfer.copyFile(getHiddenPacketsFile(), backUpFile);
 						
 			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());							
@@ -342,7 +354,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		catch (Exception ieo)
 		{	
-			logger.log("Unable to read/write isHidden.txt."+ ieo.toString());		
+			log("Unable to read/write isHidden.txt."+ ieo.toString());		
 		}			
 		return true;
 	}
@@ -369,7 +381,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			logger.log("(Update Mirror Server) Problem when try to update/copy files: "+ e.toString());
+			log("(Update Mirror Server) Problem when try to update/copy files: "+ e.toString());
 		}	
 	}
 	
@@ -408,14 +420,14 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{				
 		try
 		{			
-			File backUpFile = new File(getDeleteOnStartupBackupDirectory(),getMagicWordsFile().getName() + ".bak");			
+			File backUpFile = new File(getDeleteOnStartupBackupDirectory(),getMagicWordsFile().getName() );			
 			FileTransfer.copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
 			magicWords.loadMagicWords(getMagicWordsFile());							
 		}
 		catch (Exception ieo)
 		{	
-			logger.log("MagicWord.txt file not found."+ ieo.toString());		
+			log("MagicWord.txt file not found."+ ieo.toString());		
 		}	
 	}	
 	
@@ -452,7 +464,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{
-			File backUpFile = new File(getDeleteOnStartupBackupDirectory(), file.getName() + ".bak");			
+			File backUpFile = new File(getDeleteOnStartupBackupDirectory(), file.getName());			
 			FileTransfer.copyFile(file, backUpFile);
 			MartusUtilities.writeListToFile(file, list);
 		}
@@ -627,6 +639,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		ipAddress = ipAddr;
 	}
+	
+	public synchronized void log(String message)
+	{
+		getLogger().log(message);
+	}
 
 	public synchronized void updateMartusServerArguments(Vector props)
 	{
@@ -677,10 +694,42 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return property;
 	}
 	
+	public boolean deleteStartupFiles()
+	{
+		if(!isSecureMode())
+			return true;
+			
+		Vector deleteList = new Vector();	
+		File[] startupFiles = getAdminDeleteOnStartup().listFiles();
+		for (int i=0; i<startupFiles.length;++i)			
+			deleteList.add(startupFiles[i]);
+				
+		MartusUtilities.deleteAllFiles(deleteList);
+		
+		File[] remainingStartupFiles = getAdminDeleteOnStartup().listFiles();
+		if(remainingStartupFiles.length != 0)
+		{
+			log("Files still exist in the folder: " + getAdminDeleteOnStartup().getAbsolutePath());
+			return false;
+		}
+		return true;
+	}
+
+	public void enterSecureMode()
+	{
+		secureMode = true;
+	}
+
+	public boolean isSecureMode()
+	{
+		return secureMode;
+	}
+	
 	private void processCommandLine(String[] args) 
 	{	
 		String listenersIpTag = "--listener-ip=";	
 		String portToListenTag = "--port=";
+		String secureModeTag = "--secure";
 		
 		System.out.println("");
 		for(int arg = 0; arg < args.length; ++arg)
@@ -700,6 +749,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				setPortToUse(Integer.parseInt(portToUse));	
 				System.out.println("Port to use for clients: "+ getPortToUse());
 			}
+
+			System.out.println("");
+			if(argument.equals(secureModeTag))
+			{
+				System.out.println("Running in SECURE mode");
+				enterSecureMode();
+			}
+			else
+				System.out.println("***RUNNING IN INSECURE MODE***");
 		}
 		System.out.println("");
 	}
@@ -733,6 +791,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
 			server.setRootHelperConnector();																			
 			System.out.println("Waiting for connection...");
+			
+			
+			if(!server.deleteStartupFiles())
+				System.exit(5);		
 		
 		}
 		catch(Exception e) 
@@ -757,7 +819,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	HiddenBulletins hiddenBulletins;
 	RootHelperConnector rootConnector;	
 		
-	private File serverDirectory;	
+	private File serverDirectory;
+	private boolean secureMode;	
 		
 	private final static String DELETEONSTARTUP_BACKUP_DIRECTORY = "deleteOnStartupBackup";
 	private final static String DELETE_ON_STARTUP_DIRECTORY = "deleteOnStartup";

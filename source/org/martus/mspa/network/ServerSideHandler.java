@@ -79,8 +79,14 @@ public class ServerSideHandler implements NetworkInterface
 		Vector results = new Vector();
 		
 		File contactFile=null;		
-		try
+		try		
 		{
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+
 			contactFile = server.getDatabase().getContactInfoFile(accountId);		
 			if(!contactFile.exists())
 			{
@@ -99,12 +105,6 @@ public class ServerSideHandler implements NetworkInterface
 		try
 		{
 			Vector contactInfo = ContactInfo.loadFromFile(contactFile);
-			if (!server.isAuthorizedMSPAClients(myAccountId))
-			{
-				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
-				return results;
-			}
-
 			results.add(NetworkInterfaceConstants.OK);
 			results.add(contactInfo);		
 
@@ -177,12 +177,18 @@ public class ServerSideHandler implements NetworkInterface
 		return results;	
 	}
 	
-	public Vector removeHiddenBulletins(String myAccountId, Vector localIds)
+	public Vector removeHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds)
 	{			
 		Vector results = new Vector();
 		try
-		{												
-			boolean result = server.hideBulletins(myAccountId, localIds);
+		{	
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+											
+			boolean result = server.hideBulletins(manageAccountId, localIds);
 			if (result)	
 				results.add(NetworkInterfaceConstants.OK);
 			else
@@ -199,12 +205,17 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
-	public Vector getListOfHiddenBulletinIds(String myAccountId) 
+	public Vector getListOfHiddenBulletinIds(String myAccountId, String manageAccountId) 
 	{		
-		Vector results = new Vector();			
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}			
 											
 		results.add(NetworkInterfaceConstants.OK);
-		results.add(server.getListOfHiddenBulletins(myAccountId));		
+		results.add(server.getListOfHiddenBulletins(manageAccountId));		
 
 		return results;		
 	}

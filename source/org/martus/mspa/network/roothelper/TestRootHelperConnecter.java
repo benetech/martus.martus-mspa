@@ -89,8 +89,8 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 			tempFile = createTempFileFromName("$$$MartusTestAdminFile");
 			messenger = register.getMessenger();
 			
-			Status status = messenger.getAdminFile("", magicFile.getPath(), tempFile.getPath());
-			assertEquals("Status should be success.", Status.SUCCESS, status.getStatus());
+			ServerStatus status = messenger.getAdminFile("", magicFile.getPath(), tempFile.getPath());
+			assertEquals("Status should be success.", ServerStatus.SUCCESS, status.getStatus());
 			
 			Vector entries = FileTransfer.readDataFromFile(tempFile);
 			assertTrue("Should contain some magicwords", entries.size() >0);

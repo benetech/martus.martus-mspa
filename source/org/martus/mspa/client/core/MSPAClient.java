@@ -375,7 +375,7 @@ public class MSPAClient
 	{	
 		try
 		{						
-			Vector results = handler.getListOfHiddenBulletinIds(accountId);		
+			Vector results = handler.getListOfHiddenBulletinIds(security.getPublicKeyString(), accountId);		
 			if (results != null && !results.isEmpty())	
 				return (Vector) results.get(1);
 		}		
@@ -392,7 +392,7 @@ public class MSPAClient
 		String msg = "";
 		try
 		{												
-			Vector results = handler.removeHiddenBulletins(accountId, localIds);			
+			Vector results = handler.removeHiddenBulletins(security.getPublicKeyString(), accountId, localIds);			
 			if (results != null && !results.isEmpty())
 				msg = (String) results.get(0);
 		}		
