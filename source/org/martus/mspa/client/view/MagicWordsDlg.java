@@ -3,11 +3,13 @@ package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,7 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EtchedBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
@@ -42,18 +44,22 @@ public class MagicWordsDlg extends JDialog
 	public MagicWordsDlg(UiMainWindow owner, Vector magicWords)
 	{
 		super((JFrame)owner, "Manage Magic Words", true);		
-		parent = owner;		
+		parent = owner;				
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());		
+		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 	
 		JPanel centerPanel = viewMagicPanel(magicWords);
 		JPanel northPanel = buildMagicWordPanel();
-					
-		getContentPane().setLayout(new BorderLayout());			
-		getContentPane().add(northPanel, BorderLayout.NORTH);
-		getContentPane().add(centerPanel, BorderLayout.CENTER);
-		getContentPane().add(buildButtonsPanel(), BorderLayout.SOUTH);						
+								
+		mainPanel.add(northPanel, BorderLayout.NORTH);
+		mainPanel.add(centerPanel, BorderLayout.CENTER);
+		mainPanel.add(buildButtonsPanel(), BorderLayout.SOUTH);						
 
+		getContentPane().add(mainPanel);
 		Utilities.centerDlg(this);
 		setResizable(false);
+		
 		resetFields();		
 	}	
 	
@@ -77,15 +83,15 @@ public class MagicWordsDlg extends JDialog
 		updateMagicWordButton.addActionListener(new MagicWordButtonHandler());						
 				
 		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel("Magic word:"));
-		
+		panel.add(new JLabel("Magic word:"));		
 		panel.add(addMagicWordsField);
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
+		
+		panel.add(Box.createHorizontalGlue());
 		panel.add(new JLabel("Assign to which group:"));
 		panel.add(groupComboField);				
-						
+								
 		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);		
+		panel.add(new JLabel(""));		
 		panel.add(addMagicWordButton);	
 		panel.add(removeMagicWordButton);
 		panel.add(updateMagicWordButton);
@@ -96,16 +102,16 @@ public class MagicWordsDlg extends JDialog
 	private JPanel viewMagicPanel(Vector items)
 	{
 		JPanel panel = new JPanel();
-		
-		panel.setBorder(new EtchedBorder (EtchedBorder.RAISED));
-		panel.setLayout(new ParagraphLayout());	
+			
+		panel.setLayout(new BorderLayout());
+		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panel.setPreferredSize(new Dimension(550,200));	
 		
 		fData = new MagicWordTableData(items);		
 		fTable = new JTable();
 		fTable.setAutoCreateColumnsFromModel(false);
 		fTable.setModel(fData); 
-		fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 
 		for (int k = 0; k < MagicWordColumnInfo.m_columns.length; k++) 
 		{		
@@ -138,10 +144,8 @@ public class MagicWordsDlg extends JDialog
 		ps.setSize(500, 150);
 		ps.getViewport().add(fTable);
 					
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel("View manage words and group assigned:"));	
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);	
-		panel.add(ps);
+		panel.add(new JLabel("View manage words and group assigned:"), BorderLayout.NORTH);		
+		panel.add(ps, BorderLayout.CENTER);
 
 		return panel;
 	}
@@ -233,6 +237,12 @@ public class MagicWordsDlg extends JDialog
 			String assignedGroup = (String) groupComboField.getSelectedItem();							
 			int row = fTable.getSelectedRow();
 			
+			if (row < 0)
+			{
+				JOptionPane.showMessageDialog(parent, "There is no magic word selected from list.", "", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}	
+			
 			if (!verifyMagicWord(word))
 				return;
 
@@ -255,7 +265,7 @@ public class MagicWordsDlg extends JDialog
 			if (!verifyMagicWord(word))
 				return;
 
-			if (assignedGroup == null && assignedGroup.length()<=1)
+			if (assignedGroup == null || assignedGroup.length()<=1)
 				assignedGroup = word;				
 
 			int row = fTable.getRowCount();
@@ -274,7 +284,11 @@ public class MagicWordsDlg extends JDialog
 		{			
 			int row = fTable.getSelectedRow();
 			
-			if (row < 0) return;
+			if (row < 0)
+			{
+				JOptionPane.showMessageDialog(parent, "There is no magic word selected from list.", "", JOptionPane.INFORMATION_MESSAGE);	
+				return;
+			}
 				
 			Object[] options = new String[] {"Yes", "No"};
 			String msg = "You are about to delete a magic word. \nAre you sure?";
@@ -317,7 +331,7 @@ public class MagicWordsDlg extends JDialog
 
 		public GroupComboBox(Vector groups)
 		{
-			super(groups);			
+			super(groups);				
 			setEditable(true);
 		}
 

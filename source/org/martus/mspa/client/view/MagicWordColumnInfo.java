@@ -38,8 +38,8 @@ public class MagicWordColumnInfo
 	}
 		
 	static final public MagicWordColumnInfo m_columns[] = {
-	  new MagicWordColumnInfo( "Creation Date", 80, JLabel.CENTER ),
-	  new MagicWordColumnInfo( "Status", 50, JLabel.CENTER ),
+	  new MagicWordColumnInfo( "Creation Date", 60, JLabel.CENTER ),
+	  new MagicWordColumnInfo( "Status", 40, JLabel.CENTER ),
 	  new MagicWordColumnInfo( "MagicWord", 100, JLabel.CENTER ),
 	  new MagicWordColumnInfo( "Group", 100, JLabel.CENTER )	
 	};
