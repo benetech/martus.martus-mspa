@@ -112,7 +112,7 @@ public class RootHelper
 	private int portToUse = DEFAULT_PORT;
 	private LoggerInterface logger;
 	
-	private final static int DEFAULT_PORT = 1099;
+	private final static int DEFAULT_PORT = 983;
 	private final static String UNIX_ENVIRONMENT = "/var/MSPARootHelper/";
 	private final static String WINDOW_ENVIRONMENT = "C:/MSPARootHelper/";
 	private final static String AUTHORIZED_CLIENTS_FILE = "authorizedClient.txt";
