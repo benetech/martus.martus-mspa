@@ -917,7 +917,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File[] martusServerData = getMartusServerDataDirectory().listFiles();
 		
 		Vector currentList = new Vector(Arrays.asList(deleteOnStartUp));
-		currentList.add(Arrays.asList(martusServerData));			
+		currentList.addAll(Arrays.asList(martusServerData));			
 		return currentList;
 	}
 	
