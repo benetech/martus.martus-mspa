@@ -23,39 +23,30 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.network.roothelper;
+package org.martus.mspa.client.view;
 
-import java.io.Serializable;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+
+import org.martus.mspa.main.UiMainWindow;
 
 
-public class Status implements Serializable
+public class MenuItemMartusServerArgumentsConfig extends AbstractAction
 {
-	public String errorMsg="";
-	public String status="";
-	
-	public Status()
+	public MenuItemMartusServerArgumentsConfig(UiMainWindow mainWindow, String label)
 	{
-		this(SUCCESS);
+		super(label);	
+		parent = mainWindow;
+		
 	}
-	
-	public Status(String msgStatus) 
-	{		
-		status = msgStatus;
-	}	
-	
-	public void setStatus(String returnStatus)
-	{
-		status = returnStatus;	
-	}	
-	
-	public void setErrorMsg(String msg)
-	{
-		errorMsg = msg;
-	}
-	
-	public String getErrorMsg() {return errorMsg;}
-	public String getStatus() {return status;}
 
-	public static final String SUCCESS = "success";
-	public static final String FAILED = "failed";
+	public void actionPerformed(ActionEvent arg0) 
+	{								
+		ServerArgumentsConfigDlg dlg = new ServerArgumentsConfigDlg(parent);
+		dlg.show();
+
+	}
+	
+	UiMainWindow parent;	
 }

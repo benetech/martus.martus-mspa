@@ -20,9 +20,7 @@ public class TestAllServer
 	public static Test suite ( )
 	{
 		TestSuite suite= new TestSuite("All Server MSPA Tests");
-
-//		suite.addTest(TestServer.suite());
-
+		suite.addTest(new TestSuite(TestServerArgumentsConfig.class));
 		return suite;
 	}
 }

@@ -37,6 +37,7 @@ import org.martus.mspa.client.view.AccountsTree;
 import org.martus.mspa.client.view.MenuItemExitApplication;
 import org.martus.mspa.client.view.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
+import org.martus.mspa.client.view.MenuItemMartusServerArgumentsConfig;
 import org.martus.mspa.client.view.MenuItemServerCommands;
 import org.martus.swing.Utilities;
 
@@ -260,6 +261,8 @@ public class UiMainWindow extends JFrame
 		menuBar.add(mEdit);
 		
 		JMenu mTool = new JMenu("Tools");
+		mTool.add(new MenuItemMartusServerArgumentsConfig(this,"Martus Server Arguments Configuration"));
+		mTool.addSeparator();
 		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
 		mTool.addSeparator();

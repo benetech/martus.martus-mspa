@@ -31,4 +31,7 @@ public interface NetworkInterface
 		
 	public Vector sendCommandToServer(String myAccountId, String type, String cmd) throws IOException;
 	
+	public Vector getMartusServerArguments(String myAccountId) throws IOException;
+	public Vector updateMartusServerArguments(String myAccountId, Vector args) throws IOException;
+	
 }

@@ -46,8 +46,9 @@ public class MenuItemServerCommands extends AbstractAction
 	{
 		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
 		{	
-			ServerCommandDlg dlg = new ServerCommandDlg(parent, NetworkInterfaceConstants.START_SERVER);
-			dlg.show();
+			parent.setStatusText("Send Start command to MSPA server ...");
+			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.START_SERVER,"");
+			parent.setStatusText("Start Martus Server status: "+result);
 		}
 		
 		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))

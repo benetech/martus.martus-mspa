@@ -170,6 +170,21 @@ public class ClientSideXmlRpcHandler
 		
 		return (Vector)callServer(cmdUpdateManagingMirrorServers, params);
 	}	
+	
+	public Vector getMartusServerArguments(String myAccountId) throws IOException
+	{
+		Vector params = new Vector();
+		params.add(myAccountId);	
+		return (Vector)callServer(cmdGetMartusServerArguments, params);
+	}
+	
+	public Vector updateMartusServerArguments(String myAccountId, Vector args) throws IOException
+	{
+		Vector params = new Vector();
+		params.add(myAccountId);
+		params.add(args);	
+		return (Vector)callServer(cmdUpdateMartusServerArguments, params);
+	}
 		
 	public Object callServer(String method, Vector params) throws IOException
 	{		

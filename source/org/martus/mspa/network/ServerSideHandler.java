@@ -14,6 +14,7 @@ import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.packet.BulletinHeaderPacket;
+import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.mspa.server.MSPAServer;
 
 public class ServerSideHandler implements NetworkInterface
@@ -389,6 +390,34 @@ public class ServerSideHandler implements NetworkInterface
 		}		
 		return results;		
 	}
+	
+	public Vector getMartusServerArguments(String myAccountId)
+	{			
+		Vector results = new Vector();		
+		LoadMartusServerArguments arguments = MSPAServer.getMartusServerArguments();	
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(arguments.convertToVector());		
+		return results;		
+	}	
+	
+	public Vector updateMartusServerArguments(String myAccountId, Vector args)
+	{
+		Vector results = new Vector();
+		try
+		{
+			server.updateMartusServerArguments(args);					
+			results.add(NetworkInterfaceConstants.OK);		
+			return results;
+		}
+
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}		
+	}
+	
 	
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
 	{

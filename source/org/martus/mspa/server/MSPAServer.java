@@ -46,7 +46,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		logger = new LoggerToConsole();	
 		magicWords = new MagicWords(logger);
 		magicWords.loadMagicWords(getMagicWordsFile());	
-		loadConfigurationFiles();		
+		loadConfigurationFiles();				
 		
 		rootConnector = new RootHelperConnector("localhost");
 	}	
@@ -223,7 +223,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getConfigDirectory(),COMPLIANCE_FILE );
 	}	
 	
-	public File getConfigDirectory()
+	public static File getConfigDirectory()
 	{
 		return new File(getAppDirectoryPath(),ADMIN_MSPA_CONFIG_DIRECTORY);
 	}
@@ -620,8 +620,46 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public void setListenersIpAddress(String ipAddr)
 	{
 		ipAddress = ipAddr;
-	}	
+	}
+
+	public void updateMartusServerArguments(Vector props)
+	{
+		File propertyFile = new File(getConfigDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
+		LoadMartusServerArguments args = new LoadMartusServerArguments();
+		args.convertFromVector(props);
+		args.writePropertyFile(propertyFile.getPath());
+	}
 	
+	public static LoadMartusServerArguments getMartusServerArguments()
+	{
+		File propertyFile = new File(getConfigDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
+		LoadMartusServerArguments property = null;
+
+		if (!propertyFile.exists())
+			property = loadDefaultMartusServerArguments(propertyFile.getPath());
+		else
+			property = new LoadMartusServerArguments( propertyFile.getPath());
+						
+		return property;
+	}	
+
+	public static LoadMartusServerArguments loadDefaultMartusServerArguments(String propertyFile)
+	{
+		LoadMartusServerArguments property = new LoadMartusServerArguments(propertyFile);
+
+		property.setProperty(LoadMartusServerArguments.LISTENER_IP,"");
+		property.setProperty(LoadMartusServerArguments.PASSWORD,"no");
+		property.setProperty(LoadMartusServerArguments.AMPLIFIER_IP,"");
+		property.setProperty(LoadMartusServerArguments.AMPLIFIER_INDEXING_MINUTES,"5");
+		property.setProperty(LoadMartusServerArguments.AMPLIFIER,"no");
+		property.setProperty(LoadMartusServerArguments.CLIENT_LISTENER,"no");
+		property.setProperty(LoadMartusServerArguments.MIRROR_LISTENER,"no");
+		property.setProperty(LoadMartusServerArguments.AMPLIFIER_LISTENER,"no");	
+
+		property.writePropertyFile(propertyFile);
+		
+		return property;
+	}
 	
 	public void processCommandLine(String[] args)
 	{	
@@ -696,7 +734,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	HiddenBulletins hiddenBulletins;
 	RootHelperConnector rootConnector;
 		
-	private File serverDirectory;
+	private File serverDirectory;	
 		
 	private final static String ADMIN_MSPA_CONFIG_DIRECTORY = "accountConfig";
 	private final static String ADMIN_MARTUS_CONFIG_DIRECTORY = "deleteOnStartup";
@@ -706,6 +744,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
 	private static final String COMPLIANCE_FILE =  "compliance.txt";
+	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "ServerArguments.props";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";

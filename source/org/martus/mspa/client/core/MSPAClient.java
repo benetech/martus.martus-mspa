@@ -17,6 +17,7 @@ import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.network.ClientSideXmlRpcHandler;
 import org.martus.mspa.network.NetworkInterfaceConstants;
+import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.util.Base64.InvalidBase64Exception;
 
 public class MSPAClient 
@@ -287,6 +288,41 @@ public class MSPAClient
 			e.printStackTrace();
 		}			
 	}		
+	
+	public  LoadMartusServerArguments getMartusServerArguments()
+	{			
+		try
+		{						
+			Vector results = handler.getMartusServerArguments(security.getPublicKeyString());		
+			if (results != null && !results.isEmpty())	
+			{	
+				Vector args = (Vector) results.get(1);
+				LoadMartusServerArguments arguments = new LoadMartusServerArguments();
+				arguments.convertFromVector(args);
+
+				return arguments;				
+			}
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return null;
+	}	
+	
+	public void updateMartusServerArguments(LoadMartusServerArguments args)
+	{		
+		try
+		{									
+			handler.updateMartusServerArguments(security.getPublicKeyString(), args.convertToVector());				
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+	}	
 	
 	public Vector getListOfHiddenBulletins(String accountId)
 	{	

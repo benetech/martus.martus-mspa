@@ -31,5 +31,8 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdUpdateManagingMirrorServers = "updateManagingMirrorServers";
 	
 	public static final String cmdSendCommandToServer = "sendCommandToServer";
+	
+	public static final String cmdGetMartusServerArguments = "getMartusServerArguments";
+	public static final String cmdUpdateMartusServerArguments = "updateMartusServerArguments";
 		
 }
