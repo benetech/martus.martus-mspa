@@ -4,12 +4,10 @@ package org.martus.mspa.network;
 import java.util.Vector;
 
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.Database;
-import org.martus.common.database.DatabaseKey;
-import org.martus.common.packet.BulletinHeaderPacket;
-import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
-import org.martus.util.ByteArrayInputStreamWithSeek;
+import org.martus.util.Base64.InvalidBase64Exception;
 ;
 
 public class ServerSideHandler implements NetworkInterface
@@ -34,7 +32,6 @@ public class ServerSideHandler implements NetworkInterface
 
 	public Vector getAccountIds(String myAccountId, Vector parameters, String signature)
 	{
-		
 		class AccountVisitor implements Database.AccountVisitor
 		{
 			AccountVisitor()
@@ -43,19 +40,23 @@ public class ServerSideHandler implements NetworkInterface
 			}
 	
 			public void visit(String accountString)
-			{
-				LocallIdOfPublicBulletinsCollector collector = new LocallIdOfPublicBulletinsCollector();				
-				Database db = server.getDatabase();
-				db.visitAllRecordsForAccount(collector, accountString);
-				
-				if(collector.infos.size() > 0 && ! accounts.contains(accountString))
-					accounts.add(accountString);
+			{		
+				try
+				{			
+					String publicCode = MartusSecurity.getFormattedPublicCode(accountString);								
+					accounts.add(publicCode);
+				}
+				catch (InvalidBase64Exception e)
+				{						
+					e.printStackTrace();					
+				}
 			}
 	
 			public Vector getAccounts()
 			{
 				return accounts;
 			}
+			
 			Vector accounts;
 		}
 		
@@ -67,46 +68,11 @@ public class ServerSideHandler implements NetworkInterface
 		}
 					
 		AccountVisitor visitor = new AccountVisitor();
-		
+		server.getDatabase().visitAllAccounts(visitor);
 		result.add(NetworkInterfaceConstants.OK);
+	
 		result.add(visitor.getAccounts());		
 		return result;
-	}
-		
-	class LocallIdOfPublicBulletinsCollector implements Database.PacketVisitor
-	{
-		public void visit(DatabaseKey key)
-		{
-			try
-			{
-				if(! key.getLocalId().startsWith("B-") )
-					return;
-				if(key.isDraft())
-					return;
-				
-				DatabaseKey burKey = MartusServerUtilities.getBurKey(key);
-				String burInDatabase = server.getDatabase().readRecord(burKey, server.getSecurity());
-				if(!MartusServerUtilities.wasBurCreatedByThisCrypto(burInDatabase, server.getSecurity()))
-					return;				
-							
-				String headerXml = server.getDatabase().readRecord(key, server.getSecurity());
-				byte[] headerBytes = headerXml.getBytes("UTF-8");
-				
-				ByteArrayInputStreamWithSeek headerIn = new ByteArrayInputStreamWithSeek(headerBytes);
-				BulletinHeaderPacket bhp = new BulletinHeaderPacket("");
-				bhp.loadFromXml(headerIn, null);
-				if(! bhp.isAllPrivate())
-				{
-					infos.add(key.getLocalId());
-				}
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		Vector infos = new Vector();
 	}
 
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)

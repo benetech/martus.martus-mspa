@@ -1,15 +1,19 @@
 package org.martus.mspa.server;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.crypto.MockMartusSecurity;
-import org.martus.common.database.Database;
-import org.martus.common.database.MockServerDatabase;
+import org.martus.common.database.FileDatabase;
+import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
+import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
@@ -18,14 +22,66 @@ import org.martus.mspa.network.ServerSideHandler;
 public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 {
 		
-	public MSPAServer(Database db) 
+	public MSPAServer(File dir) throws Exception
 	{	
-		mspaHandler = new ServerSideHandler(this);
-		database = db;
+		mspaHandler = new ServerSideHandler(this);		
+		mspaSecurity = new MartusSecurity();		
+		initalizeFileDatabase(dir);		
 	}	
 	
+	private void initalizeFileDatabase(File dir)
+	{
+		martusDatabaseToUse = new ServerFileDatabase(dir, mspaSecurity);	
+		File packetsDirectory = new File(dir, "packets");	
+		File keyPairDirectory = new File(dir, "deleteOnStartup");
+		String keyPairFile = keyPairDirectory+KEYPAIR_FILE;
+
+		MartusCrypto security = loadMartusKeypair(keyPairFile);
+		martusDatabaseToUse = new ServerFileDatabase(packetsDirectory, security);
+
+		try
+		{
+			martusDatabaseToUse.initialize();
+		}
+		catch(FileDatabase.MissingAccountMapException e)
+		{
+			e.printStackTrace();
+			System.out.println("Missing Account Map File");
+			System.exit(7);
+		}
+		catch(FileDatabase.MissingAccountMapSignatureException e)
+		{
+			e.printStackTrace();
+			System.out.println("Missing Account Map Signature File");
+			System.exit(7);
+		}
+		catch(FileVerificationException e)
+		{
+			e.printStackTrace();
+			System.out.println("Account Map did not verify against signature file");
+			System.exit(7);
+		}		
+	}
+	
+	public MartusCrypto loadMartusKeypair(String keyPairFileName)
+	{
+		MartusCrypto signer = MartusServerUtilities.loadKeyPair(keyPairFileName, true);
+		setMartusSecurity(signer);
+		return signer;
+	}
+	
+	public void setMartusSecurity(MartusCrypto signer)
+	{
+		martusSecurityToUse = signer;
+	}
+	
+	public MartusCrypto getMartusCurrentSecurity()
+	{
+		return martusSecurityToUse;
+	}
+	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception
-	{	
+	{				
 		MartusSecureWebServer.security = MockMartusSecurity.createClient();
 		MartusXmlRpcServer.createSSLXmlRpcServer(getMSPAHandler(),serverObjectName, port, getMainIpAddress());
 	}
@@ -33,12 +89,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public ServerSideHandler getMSPAHandler()
 	{
 		return mspaHandler;
-	}
-	
-	public void setPortToUse(int port)
-	{
-		portToUse = port;
-	}
+	}	
 	
 	public InetAddress getMainIpAddress() throws UnknownHostException
 	{
@@ -47,41 +98,73 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public MartusCrypto getSecurity()
 	{
-		return MartusSecureWebServer.security;
+		return mspaSecurity;
 	}
 	
-	public Database getDatabase()
+	public ServerFileDatabase getDatabase()
 	{		
-		return database;
+		return martusDatabaseToUse;
 	}
 	
 	boolean isAuthorizeClient(String myAccountId)
 	{
 		return authorizedClients.contains(myAccountId);
-	}
-	
-	public void setIPAddress(String ipAddr)
-	{
-		ipAddress = ipAddr;
-	}
+	}	
 	
 	public String ping()
 	{
 		return "" + NetworkInterfaceConstants.VERSION;
+	}
+	
+	public static File getDefaultDataDirectory()
+	{
+		return new File(MSPAServer.getDefaultDataDirectoryPath());
 	}	
+	
+	public static String getDefaultDataDirectoryPath()
+	{
+		String dataDirectory = null;
+		if(isRunningUnderWindows())
+			dataDirectory = WINDOW_ENVIRONMENT;
+		else
+			dataDirectory = UNIX_ENVIRONMENT;
+		return dataDirectory;
+	}
+	
+	public static boolean isRunningUnderWindows()
+	{
+		return System.getProperty("os.name").indexOf("Windows") >= 0;
+	}
+
+	public void setPortToUse(int port)
+	{
+		portToUse = port;
+	}
+
+	public int getPortToUse()
+	{
+		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
+	}
+
+	public void setIPAddress(String ipAddr)
+	{
+		ipAddress = ipAddr;
+	}
+
+	public String getIpAddress()
+	{	
+		return (ipAddress == null)? DEFAULT_HOST:ipAddress;
+	}
 	
 	public static void main(String[] args)
 	{
 		System.out.println("MSPAServer");
 		try
-		{	
-			int port = 443;	
-			MSPAServer server = new MSPAServer(new MockServerDatabase());
-			server.setPortToUse(port);
-			server.setIPAddress("localHost");
-				
-			System.out.println("Setting up socket connection for listener ...");			
-			server.createMSPAXmlRpcServerOnPort(port);
+		{					
+			System.out.println("Setting up socket connection for listener ...");
+			MSPAServer server = new MSPAServer(MSPAServer.getDefaultDataDirectory());
+			server.setIPAddress(DEFAULT_HOST);
+			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());																	
 			System.out.println("Waiting for connection...");
 		
 		}
@@ -96,5 +179,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	String ipAddress;
 	int portToUse;
 	Vector authorizedClients;
-	Database database;	
+	ServerFileDatabase martusDatabaseToUse;	
+	MartusCrypto mspaSecurity;
+	MartusCrypto martusSecurityToUse;
+
+	final static String KEYPAIR_FILE ="\\keypair.dat"; 
+	final static String WINDOW_ENVIRONMENT = "C:/MartusServer/";
+	final static String UNIX_ENVIRONMENT = "/var/MartusServer/";
+	final static int DEFAULT_PORT = 443;
+	final static String DEFAULT_HOST = "localHost";
 }
