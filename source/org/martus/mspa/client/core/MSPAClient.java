@@ -639,7 +639,7 @@ public class MSPAClient
 		JOptionPane pane = new JOptionPane(cause, JOptionPane.INFORMATION_MESSAGE,
 				 JOptionPane.DEFAULT_OPTION, null, buttons);
 		JDialog dialog = pane.createDialog(null, title);
-		dialog.show();
+		dialog.setVisible(true);
 	}
 				
 	

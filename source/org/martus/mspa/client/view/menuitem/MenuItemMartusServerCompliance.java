@@ -47,7 +47,7 @@ public class MenuItemMartusServerCompliance extends AbstractAction
 		String compliants = parent.getMSPAApp().getServerCompliant();
 		parent.setStatusText(parent.getMSPAApp().getStatus());		
 		ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
-		dlg.show();			
+		dlg.setVisible(true);			
 	}
 	
 	UiMainWindow parent;	

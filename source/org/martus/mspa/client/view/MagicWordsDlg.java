@@ -230,7 +230,7 @@ public class MagicWordsDlg extends JDialog
 		JOptionPane pane = new JOptionPane(message, JOptionPane.WARNING_MESSAGE, 
 					JOptionPane.DEFAULT_OPTION, null, options);	
 		JDialog dialog = pane.createDialog(parent, title);
-		dialog.show();
+		dialog.setVisible(true);
 		Object obj = pane.getValue();
 		int result = -1;
 		for (int k = 0; k < options.length; k++)

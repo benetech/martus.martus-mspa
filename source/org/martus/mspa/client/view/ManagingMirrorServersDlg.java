@@ -363,7 +363,7 @@ public class ManagingMirrorServersDlg extends JDialog
 			String compliants = parent.getMSPAApp().getServerCompliant();
 			postStatus("Request Serve Compliant: ");
 			ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
-			dlg.show();
+			dlg.setVisible(true);
 		}	
 	}
 	

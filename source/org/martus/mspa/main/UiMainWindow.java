@@ -176,7 +176,7 @@ public class UiMainWindow extends JFrame
 		
 			Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
 			ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
-			dlg.show();
+			dlg.setVisible(true);
 			
 			if (mspaApp.getCurrentServerPublicCode().length() <=0)
 				return false;
@@ -303,7 +303,7 @@ public class UiMainWindow extends JFrame
 		JOptionPane pane = new JOptionPane(cause, JOptionPane.INFORMATION_MESSAGE,
 				 JOptionPane.DEFAULT_OPTION, null, buttons);
 		JDialog dialog = pane.createDialog(null, title);
-		dialog.show();
+		dialog.setVisible(true);
 	}
 	
 

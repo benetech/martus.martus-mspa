@@ -50,7 +50,7 @@ public class MenuItemManageMagicWords extends AbstractAction
 		parent.setStatusText("Retrieve available magicwords: "+parent.getMSPAApp().getStatus());
 		
 		MagicWordsDlg magicWordsDlg = new MagicWordsDlg(parent, magicWords);
-		magicWordsDlg.show();
+		magicWordsDlg.setVisible(true);
 	}	
 	
 	UiMainWindow parent;				

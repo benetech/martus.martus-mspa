@@ -49,7 +49,7 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 			
 		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, 
 					serverManageType, "", "", availableList, assignedList);
-		serverManagementDlg.show();
+		serverManagementDlg.setVisible(true);
 	}	
 
 	void getMirrorServers(Vector orginalList)
