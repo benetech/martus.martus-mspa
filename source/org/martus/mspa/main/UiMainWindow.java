@@ -245,7 +245,7 @@ public class UiMainWindow extends JFrame
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.WHO_CALLS_US));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.ACT_AS_CLIENT));		
+				ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS));		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		

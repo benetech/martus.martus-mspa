@@ -23,36 +23,31 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.client.view;
+package org.martus.mspa.client.core;
 
-import java.awt.event.ActionEvent;
-import java.util.Vector;
 
-import javax.swing.AbstractAction;
-
-import org.martus.mspa.client.core.MirrorServerLabelFinder;
-import org.martus.mspa.main.UiMainWindow;
-
-public class MenuItemManagingMirrorServers extends AbstractAction
+public class MirrorServerLabelInfo
 {
-	public MenuItemManagingMirrorServers(UiMainWindow mainWindow, int manageType)
+	public MirrorServerLabelInfo(int index, String _title, String _header, 
+			String _avaialbeLabel, String _allowedLabel)
 	{
-		super(MirrorServerLabelFinder.getMessageInfo(manageType).getTitle());
-		serverManageType = manageType;
-		parent = mainWindow;
+		id = index;
+		title = _title;
+		header = _header;
+		allowedLabel = _allowedLabel;
+		availableLabel = _avaialbeLabel;
 	}
 
-	public void actionPerformed(ActionEvent arg0) 
-	{	
-						
-		Vector availableList = parent.getMSPAApp().getMagicWords();
-		Vector assigedList = parent.getMSPAApp().getMagicWordsFromMartus();
-			
-		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, serverManageType,
-					"", "", availableList, assigedList);
-		serverManagementDlg.show();
-	}
+	public int getId() {return id;};
+	public String getTitle() {return title;}
+	public String getHeader() {return header;}
+	public String getAllowedLabel() {return allowedLabel;}
+	public String getAvailableLabel() {return availableLabel;};
+	
 
-	UiMainWindow parent;	
-	int serverManageType;
+	String title;
+	String header;
+	String allowedLabel;
+	String availableLabel;
+	int id;
 }

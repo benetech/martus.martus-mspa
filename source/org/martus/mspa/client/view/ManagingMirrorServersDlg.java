@@ -47,7 +47,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
-import org.martus.mspa.client.core.MirrorServerMessageConverter;
+import org.martus.mspa.client.core.MirrorServerLabelInfo;
+import org.martus.mspa.client.core.MirrorServerLabelFinder;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.Utilities;
@@ -59,7 +60,9 @@ public class ManagingMirrorServersDlg extends JDialog
 			String serverToManage, String serverToManagePublicCode,
 			Vector allList, Vector currentList)
 	{
-		super((JFrame)owner, "Managing Server Mirroring: "+MirrorServerMessageConverter.getTitle(manageType) , true);
+		super((JFrame)owner);
+		msgLabelInfo = MirrorServerLabelFinder.getMessageInfo(manageType);
+		setTitle("Managing Server Mirroring: "+ msgLabelInfo.getTitle());
 		parent = owner;
 		serverManageType = manageType;
 		availableList = allList;
@@ -79,7 +82,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.setLayout(new ParagraphLayout());
 		panel.setBorder(new LineBorder (Color.gray, 1));	
 
-		JLabel manageTypeLabel = new JLabel(MirrorServerMessageConverter.getHeader(serverManageType));		
+		JLabel manageTypeLabel = new JLabel(msgLabelInfo.getHeader());		
 		manageTypeLabel.setFont(manageTypeLabel.getFont().deriveFont(Font.BOLD));
 		
 		JLabel manageIPAddrLabel = new JLabel("Manage IP Address: ");				
@@ -122,7 +125,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		availableServers.setFixedCellWidth(200);    
 		JScrollPane ps = new JScrollPane();
 		ps.getViewport().add(availableServers);
-		JLabel availableLabel = new JLabel(MirrorServerMessageConverter.getAvailabledLabel(serverManageType));
+		JLabel availableLabel = new JLabel(msgLabelInfo.getAvailableLabel());
 				
 		panel.add(availableLabel);
 		panel.add(ps);
@@ -140,7 +143,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		allowedServers.setFixedCellWidth(200);    
 		JScrollPane ps = new JScrollPane();
 		ps.getViewport().add(allowedServers);
-		JLabel allowedLabel = new JLabel(MirrorServerMessageConverter.getAllowedLabel(serverManageType));
+		JLabel allowedLabel = new JLabel( msgLabelInfo.getAllowedLabel());
 				
 		panel.add(allowedLabel);
 		panel.add(ps);
@@ -181,12 +184,12 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.setLayout(new FlowLayout());		
 		
 	
-		loadAvailableServerButton = createButton("Load Available Server");	
+		loadAvailableServerButton = createButton("Load Available Servers");	
 		viewComplainButton = createButton("View Compliance");			
 		updateButton = createButton("Update");				
 		cancelButton = createButton("Cancel");		
 				
-		if (serverManageType != ManagingMirrorServerConstants.ACT_AS_CLIENT)	
+		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)	
 			panel.add(loadAvailableServerButton);
 				
 		panel.add(viewComplainButton);
@@ -278,5 +281,6 @@ public class ManagingMirrorServersDlg extends JDialog
 	DefaultListModel allowedListModel;
 	
 	int serverManageType;
+	MirrorServerLabelInfo msgLabelInfo;
 	
 }
