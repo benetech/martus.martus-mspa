@@ -1,10 +1,14 @@
 package org.martus.mspa.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import org.martus.common.LoggerInterface;
+import org.martus.common.LoggerToConsole;
+import org.martus.common.MagicWords;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
@@ -24,7 +28,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public MSPAServer(File dir) throws Exception
 	{	
 		mspaHandler = new ServerSideHandler(this);								
-		initalizeFileDatabase(dir);				
+		initalizeFileDatabase(dir);		
+		logger = new LoggerToConsole();	
+		magicWords = new MagicWords(logger);	
+		magicWords.loadMagicWords(getMagicWordsFile());
 	}	
 	
 	private void initalizeFileDatabase(File dir)
@@ -108,6 +115,24 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getConfigDirectory(), MAGICWORDS_FILENAME);
 	}
 	
+	public MagicWords getMagicWordsInfo()
+	{
+		return magicWords;
+	}
+	
+	public void updateMagicWords(Vector words)
+	{				
+		try
+		{
+			magicWords.writeMagicWords(getMagicWordsFile(), words);
+			magicWords.loadMagicWords(getMagicWordsFile());
+		}
+		catch (IOException ieo)
+		{	
+			logger.log("MagicWord.txt file not found."+ ieo.toString());		
+		}	
+	}	
+	
 	public File getMartusMagicWordsFile()
 	{
 		return new File(getMartusConfigDirectory(), MAGICWORDS_FILENAME);
@@ -122,6 +147,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public ServerSideHandler getMSPAHandler()
 	{
 		return mspaHandler;
+	}
+	
+	public LoggerInterface getLogger()
+	{
+		return logger;
 	}	
 	
 	public InetAddress getMainIpAddress() throws UnknownHostException
@@ -244,6 +274,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector authorizedClients;
 	ServerFileDatabase martusDatabaseToUse;	
 	MartusCrypto security;
+	LoggerInterface logger;
+	MagicWords magicWords;
 		
 	private File serverDirectory;	
 	private final static String ADMIN_MSPA_CONFIG_DIRECTORY = "accountConfig";

@@ -9,8 +9,8 @@ public interface NetworkInterface
 {
 	public Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws IOException;
 	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId) throws IOException;
-	public Vector getMagicWordsFromMartus(String myAccountId, Vector parameters, String signature) throws IOException;
-	public Vector getMagicWords(String myAccountId) throws IOException;
-	public Vector updateMagicWordsToMartus(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException;
+	public Vector getInActiveMagicWords(String myAccountId) throws IOException;
+	public Vector getActiveMagicWords(String myAccountId) throws IOException;
+	public Vector getAllMagicWords(String myAccountId) throws IOException;
 	public Vector updateMagicWords(String myAccountId, Vector magicWords) throws IOException;
 }

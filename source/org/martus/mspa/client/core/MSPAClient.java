@@ -197,14 +197,12 @@ public class MSPAClient
 		return results;
 	}
 	
-	public Vector getMagicWordsFromMartus()
+	public Vector getInActiveMagicWords()
 	{
 		Vector results=null;	
 		try
-		{			
-			Vector parameters = new Vector();			
-			String signature = security.createSignatureOfVectorOfStrings(parameters);		
-			results = handler.getMagicWordsFromMartus(security.getPublicKeyString(), parameters, signature);
+		{						
+			results = handler.getInActiveMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -221,12 +219,34 @@ public class MSPAClient
 		return results;
 	}	
 	
-	public Vector getMagicWords()
+	public Vector getActiveMagicWords()
+	{
+		Vector results=null;	
+		try
+		{						
+			results = handler.getActiveMagicWords(security.getPublicKeyString());
+			
+			if (results != null && !results.isEmpty())
+			{
+				Vector info = (Vector) results.get(1);
+				if (!info.isEmpty())
+					return info;
+			}	 
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return results;
+	}	
+	
+	public Vector getAllMagicWords()
 	{
 		Vector results=null;	
 		try
 		{					
-			results = handler.getMagicWords(security.getPublicKeyString());
+			results = handler.getAllMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -241,24 +261,9 @@ public class MSPAClient
 			e.printStackTrace();
 		}			
 		return results;
-	}	
+	}		
 	
-	public void updateMagicWordsToMartus(Vector magicWords)
-	{	
-		try
-		{			
-			Vector parameters = new Vector();			
-			String signature = security.createSignatureOfVectorOfStrings(parameters);		
-			handler.updateMagicWordsToMartus(security.getPublicKeyString(), parameters, signature, magicWords);			
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}				
-	}	
-	
-	public void updateMagicWords(Vector magicWords)
+	public void updateMagicWords(Vector magicWords)	
 	{	
 		try
 		{			

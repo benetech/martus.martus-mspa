@@ -19,10 +19,11 @@ public class MenuItemManageMagicWords extends AbstractAction
 	
 	public void actionPerformed(ActionEvent arg0) 
 	{
-		Vector magicWords = parent.getMSPAApp().getMagicWords();
+		Vector magicWords = parent.getMSPAApp().getAllMagicWords();
+		
 		MagicWordsDlg magicWordsDlg = new MagicWordsDlg(parent, magicWords);
 		magicWordsDlg.show();
-	}
+	}	
 	
 	UiMainWindow parent;				
 }

@@ -227,8 +227,8 @@ public class ManagingMirrorServersDlg extends JDialog
 			{	
 				String item = (String) availableServers.getSelectedValue();
 				if (!allowedListModel.contains(item))
-				{	
-					allowedListModel.addElement(item);
+				{						
+					allowedListModel.addElement(item.replace('#', '\0').trim());
 					availableListModel.remove(selectItem);
 				}				
 			}
@@ -237,11 +237,21 @@ public class ManagingMirrorServersDlg extends JDialog
 		private void handleUpdateMirrorServerInfo()
 		{
 			Object[] items = allowedListModel.toArray();
-			Vector magicWords = new Vector();			
+			Vector itemCollection = new Vector();			
 			for (int i=0;i<items.length;i++)
-				magicWords.add(items[i]);
+				itemCollection.add(items[i]);
+				
+			items = availableListModel.toArray();	
+			for (int i=0;i<items.length;i++)
+			{
+				String itemString = (String) items[i];
+				if (serverManageType == MirrorServerLabelFinder.LISTEN_FOR_CLIENTS)	
+						itemCollection.add("#"+itemString);
+				else
+					itemCollection.add(itemString);
+			}
 							
-			parent.getMSPAApp().updateMagicWordsToMartus(magicWords);
+			parent.getMSPAApp().updateMagicWords(itemCollection);
 			dispose();							
 		}
 		
@@ -253,7 +263,7 @@ public class ManagingMirrorServersDlg extends JDialog
 				String item = (String) allowedServers.getSelectedValue();				
 		
 				allowedListModel.remove(selectItem);
-				if (!availableListModel.contains(item))				
+				if (!availableListModel.contains(item))								
 					availableListModel.addElement(item);
 			}							
 		}				

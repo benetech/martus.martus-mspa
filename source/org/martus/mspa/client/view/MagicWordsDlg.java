@@ -13,10 +13,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.martus.common.LoggerToConsole;
+import org.martus.common.MagicWordEntry;
+import org.martus.common.MagicWords;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.Utilities;
@@ -29,12 +33,14 @@ public class MagicWordsDlg extends JDialog
 		super((JFrame)owner, "Manage Magic Words", true);
 		parent = owner;	
 		
+		magicWordsInfo = new MagicWords(new LoggerToConsole());	
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(buildTopPanel(magicWords), BorderLayout.CENTER);
 		getContentPane().add(buildButtonsPanel(), BorderLayout.SOUTH);						
 
 		Utilities.centerDlg(this);
 		setResizable(false);
+		
 	}	
 	
 	private JPanel buildTopPanel(Vector magicWords)
@@ -44,10 +50,11 @@ public class MagicWordsDlg extends JDialog
 
 		JLabel magicWordLabel = new JLabel("Enter a new magic word:");				
 		addMagicWordsField = new JTextField(10);
-		addMagicWordsField.requestFocus();
-		
+		addMagicWordsField.requestFocus();	
+	
 		addButton = new JButton("Add");
 		addButton.addActionListener(new ButtonHandler());	
+		
 		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(magicWordLabel);
 		panel.add(addMagicWordsField);
@@ -57,13 +64,10 @@ public class MagicWordsDlg extends JDialog
 		activeWords = new JList(listModel);
 		activeWords.setFixedCellWidth(200);    
 		JScrollPane ps = new JScrollPane();
-		ps.getViewport().add(activeWords);
-		JLabel activeLabel = new JLabel("Active Magic Words:");
+		ps.getViewport().add(activeWords);	
 		removeButton = new JButton("Remove");
 		removeButton.addActionListener(new ButtonHandler());	
-		
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(activeLabel);
+				
 		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(ps);
 		panel.add(removeButton);	
@@ -90,8 +94,20 @@ public class MagicWordsDlg extends JDialog
 	{
 		listModel = new DefaultListModel();
 		for (int i=0; i<items.size();++i)
-			listModel.add(i, items.get(i));
+		{			
+			String word = (String) items.get(i);
+			MagicWordEntry entry = addNewMagicEntry(word);
+			listModel.add(i, entry.getMagicWord());			
+		}
 	}	
+	
+	private MagicWordEntry addNewMagicEntry(String word)
+	{
+		MagicWordEntry entry = new MagicWordEntry(word);
+		magicWordsInfo.add(entry);
+		
+		return entry;
+	}
 	
 	class ButtonHandler implements ActionListener
 	{
@@ -109,32 +125,43 @@ public class MagicWordsDlg extends JDialog
 		
 		private void handleAddNewMagicWord()
 		{
-			String newMagicWords = addMagicWordsField.getText();	
+			String newMagicWords = addMagicWordsField.getText();
+			
+			if (newMagicWords.startsWith("#"))
+			{			
+				JOptionPane.showMessageDialog(parent, "'#' denotes an inactive magic words", "Invalid character", JOptionPane.ERROR_MESSAGE);				
+				addMagicWordsField.setText("");					
+				return;
+			}					
+					
 			if (!listModel.contains(newMagicWords))
+			{	
 				listModel.addElement(newMagicWords);
+				magicWordsInfo.add(addNewMagicEntry(newMagicWords));
+	
+			}
 				
 			addMagicWordsField.setText("");		
 		}
 		
 		private void handleUpdateMagicWords()
 		{			
-			Object[] items = listModel.toArray();
-			Vector magicWords = new Vector();			
-			for (int i=0;i<items.length;i++)
-				magicWords.add(items[i]);
-							
-			parent.getMSPAApp().updateMagicWords(magicWords);	
+			parent.getMSPAApp().updateMagicWords(magicWordsInfo.getAllMagicWords());	
 			dispose();			
 		}
 		
 		private void handleRemoveMagicWords()
 		{			
-			int selectItem = activeWords.getSelectedIndex();	
+			int selectItem = activeWords.getSelectedIndex();
+				
 			if (!activeWords.isSelectionEmpty())
 			{	
-				listModel.remove(selectItem);
+				String item = (String) activeWords.getSelectedValue();	
+				
+				listModel.remove(selectItem);					
+				magicWordsInfo.remove(item);
 			}							
-		}				
+		}		
 	}
 	
 	JButton saveButton;
@@ -144,5 +171,6 @@ public class MagicWordsDlg extends JDialog
 	JList activeWords;
 	DefaultListModel listModel;
 	JTextField addMagicWordsField;
-	UiMainWindow parent; 	
+	UiMainWindow parent;
+	MagicWords magicWordsInfo; 	
 }

@@ -45,8 +45,8 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	public void actionPerformed(ActionEvent arg0) 
 	{	
 						
-		Vector availableList = parent.getMSPAApp().getMagicWords();
-		Vector assigedList = parent.getMSPAApp().getMagicWordsFromMartus();
+		Vector availableList = parent.getMSPAApp().getInActiveMagicWords();
+		Vector assigedList = parent.getMSPAApp().getActiveMagicWords();
 			
 		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, serverManageType,
 					"", "", availableList, assigedList);

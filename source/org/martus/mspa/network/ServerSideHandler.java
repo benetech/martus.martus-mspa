@@ -9,15 +9,13 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.Database;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
-import org.martus.util.UnicodeReader;
-import org.martus.util.UnicodeWriter;
 ;
 
 public class ServerSideHandler implements NetworkInterface
 {
 	public ServerSideHandler(MSPAServer serverToUse)
 	{
-		server = serverToUse;	
+		server = serverToUse;			
 	}
 	
 	public Vector ping()
@@ -118,88 +116,67 @@ public class ServerSideHandler implements NetworkInterface
 		}											
 	}
 	
-	public Vector getMagicWordsFromMartus(String myAccountId, Vector parameters, String signature)
+	public Vector getInActiveMagicWords(String myAccountId)
 	{	
-		Vector results = new Vector();
-		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
-		{
-			results.add(NetworkInterfaceConstants.SIG_ERROR);				
-			return results;
-		}
-						
-		return readMagicWords(server.getMartusMagicWordsFile());
-	}
-	
-	public Vector getMagicWords(String myAccountId)
-	{			
-		return readMagicWords(server.getMagicWordsFile());
-	}								
-	
-	private Vector readMagicWords(File magicFile)
-	{
 		Vector results = new Vector();				
-		if(!magicFile.exists())
+		Vector magicWords = server.getMagicWordsInfo().getInActiveMagicWords();
+		if(magicWords.size()<=0)
 		{
 			results.add(NetworkInterfaceConstants.NOT_FOUND);
 			return results;
-		}
+		}		
 
-		try
-		{
-			Vector magicWords = new Vector();		
-			UnicodeReader reader = new UnicodeReader(magicFile);		
-			String line = null;
-			while( (line = reader.readLine()) != null)
-			{
-				if(line.trim().length() != 0)
-				{						
-					String newMagicWord = line.toLowerCase().trim().replaceAll("\\s", "");
-					if( !magicWords.contains(newMagicWord) )
-							magicWords.add(newMagicWord);
-				}
-			}
-			reader.close();
-			
-			results.add(NetworkInterfaceConstants.OK);
-			results.add(magicWords);		
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(magicWords);		
 
-			return results;
-		}
-		catch (Exception e1)
+		return results;					
+	}
+
+	public Vector getActiveMagicWords(String myAccountId)
+	{	
+		Vector results = new Vector();				
+		Vector magicWords = server.getMagicWordsInfo().getActiveMagicWords();
+		if(magicWords.size()<=0)
 		{
-			e1.printStackTrace();
-			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			results.add(NetworkInterfaceConstants.NOT_FOUND);
 			return results;
-		}							
-	}		
+		}		
+
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(magicWords);		
+
+		return results;					
+	}
+	
+	public Vector getAllMagicWords(String myAccountId)
+	{			
+		Vector results = new Vector();		
+
+		Vector magicWords = server.getMagicWordsInfo().getAllMagicWords();		
+		if(magicWords.size()<=0)
+		{
+			results.add(NetworkInterfaceConstants.NOT_FOUND);
+			return results;
+		}		
+
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(magicWords);		
+
+		return results;		
+	}								
 	
 	public Vector updateMagicWords(String myAccountId, Vector magicWords)
 	{			
-		return writeMagicWords(server.getMagicWordsFile(), magicWords );						
-	}					
+		return writeMagicWords(magicWords);						
+	}								
 	
-	public Vector updateMagicWordsToMartus(String myAccountId, Vector parameters, String signature, Vector magicWords)
-	{	
-		Vector results = new Vector();
-		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
-		{
-			results.add(NetworkInterfaceConstants.SIG_ERROR);				
-			return results;
-		}
-		
-		return writeMagicWords(server.getMartusMagicWordsFile(),magicWords );					
-	}					
-	
-	private Vector writeMagicWords(File magicFile, Vector magicWords)
+	private Vector writeMagicWords(Vector magicWords)
 	{
 		Vector results = new Vector();
 		try
 		{
-			UnicodeWriter writer = new UnicodeWriter(magicFile);
-			for (int i=0;i<magicWords.size();++i)
-				writer.writeln((String) magicWords.get(i));								
+			server.updateMagicWords(magicWords);								
 			results.add(NetworkInterfaceConstants.OK);		
-			writer.close();
 			return results;
 		}
 
