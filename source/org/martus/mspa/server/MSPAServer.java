@@ -69,7 +69,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{			
 		try
 		{
-			log("Initialize environments ...");
+			System.out.println("Initialize environments ...");
 			getMessenger().setReadWrite(security.getPublicKeyString());
 			getServerWhoWeCallDirectory().mkdirs();
 			getMirrorServerWhoCallUsDirectory().mkdirs();
@@ -86,7 +86,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			initAccountConfigFiles(new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME));
 			
 			getMessenger().setReadOnly(security.getPublicKeyString());
-			log("Completed setting up server environments...\n");	
+			System.out.println("Completed setting up server environments...\n");	
 		}
 		catch (RemoteException e)
 		{
@@ -99,9 +99,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	}
 	
 	private void initAccountConfigFiles(File targetFile) throws IOException
-	{			
-		targetFile.createNewFile();
-		log(targetFile.getPath()+" (ready)" );				
+	{		
+		targetFile.createNewFile();			
 	}
 	
 	private void loadConfigurationFiles()
@@ -122,8 +121,14 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			return;
 		}	
 		
-		File[] authorizedDir = getAuthorizedClientsDir().listFiles();	
-		log("Load authorized clients now.");
+		File[] authorizedDir = getAuthorizedClientsDir().listFiles();
+		if (authorizedDir.length ==0)
+		{	
+			System.out.println("No client has been authorized yet. "+getAuthorizedClientsDir().getPath()+" was empty.");
+			return;
+		}
+				
+		System.out.println("Load authorized clients now.");
 		for (int i=0; i<authorizedDir.length;i++)
 		{	
 			File authorizedFile = authorizedDir[i];
@@ -134,7 +139,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(authorizedFile, security);
 					String serverPublicKey = (String)publicInfo.get(0);
 					authorizeMSPAClients.add(serverPublicKey);
-					log("Client "+i+" "+serverPublicKey);
+					System.out.println("Client "+i+" "+serverPublicKey);
 				}
 				catch (IOException e)
 				{
@@ -733,7 +738,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		if(Version.isRunningUnderWindows())
 			appDirectory = WINDOW_MSPA_ENVIRONMENT;
 		else
-			appDirectory = System.getProperty("user.home")+UNIX_MSPA_ENVIRONMENT;
+			appDirectory = UNIX_MSPA_ENVIRONMENT;
 		return new File(appDirectory);
 	}	
 	
