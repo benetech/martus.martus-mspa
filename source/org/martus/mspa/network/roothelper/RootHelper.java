@@ -31,7 +31,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import org.martus.common.LoggerInterface;
-import org.martus.common.LoggerToConsole;
 import org.martus.common.Version;
 
 
@@ -39,9 +38,7 @@ public class RootHelper
 {
 	public RootHelper(String[] args)
 	{	
-		logger = new LoggerToConsole();	
 		processCommandLine(args);
-		
 		try 
 		{
 			Registry registry = getRegistry(portToUse);	
@@ -101,7 +98,7 @@ public class RootHelper
 			{	
 				String portToUse = argument.substring(portToListenTag.length());
 				setPortToUse(Integer.parseInt(portToUse));	
-			}		
+			}			
 		}
 		System.out.println("");
 	}

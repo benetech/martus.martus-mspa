@@ -38,20 +38,24 @@ import org.martus.util.UnicodeWriter;
 public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 {
 		
-	public MSPAServer(File dir) throws Exception
+	public MSPAServer(File dir) 
 	{				
 		serverDirectory = dir;	
 		authorizedMartusAccounts = new Vector();
 		authorizeMSPAClients = new Vector();
+		logger = new LoggerToConsole();	
 		mspaHandler = new ServerSideHandler(this);								
 		initalizeFileDatabase();
 		initializedEnvironmentDirectory();
 				
-		logger = new LoggerToConsole();	
-		magicWords = new MagicWords(logger);
-		magicWords.loadMagicWords(getMagicWordsFile());	
 		loadConfigurationFiles();	
-	}	
+	}
+	
+	private void setMagicWords() throws Exception
+	{
+		magicWords = new MagicWords(logger);
+		magicWords.loadMagicWords(getMagicWordsFile());
+	}			
 	
 	private void initializedEnvironmentDirectory()
 	{
@@ -187,8 +191,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMSPAServerKeyPairFile()
 	{
-		File keypair = new File(getMSPADeleteOnStartup().getPath(), KEYPAIR_FILE);
-		return keypair;
+		return new File(getMSPADeleteOnStartup().getPath(), KEYPAIR_FILE);
 	}
 	
 	public String getMSAPKeypairFileName()
@@ -305,9 +308,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File complianceFile = getMartusServerDataComplianceFile();		
 		try
 		{
+			log("Update compliance file.");
+			getMessenger().setReadWrite(security.getPublicKeyString());			
 			UnicodeWriter writer = new UnicodeWriter(complianceFile);
 			writer.writeln(compliantsMsg);
 			writer.close();
+			
+			getMessenger().setReadOnly(security.getPublicKeyString());	
 		}
 		catch (RemoteException e)
 		{			
@@ -325,6 +332,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{	
+			log("Write hidden bulletin to isHidden.txt");	
+			getMessenger().setReadWrite(security.getPublicKeyString());			
 			File backUpFile = new File(getMartusServerDataBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
 			FileTransfer.copyFile(getHiddenPacketsFile(), backUpFile);
 						
@@ -335,7 +344,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				writer.writeln(currentAccountId);	 	
 				hiddenBulletins.writeLineOfHiddenBulletinsToFile(currentAccountId, writer);
 			}
-			writer.close();	
+			writer.close();
+			getMessenger().setReadOnly(security.getPublicKeyString());	
 		}
 		catch (Exception ieo)
 		{	
@@ -373,16 +383,20 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public synchronized void updateManagingMirrorServerInfo(Vector mirrorInfo, int mirrorType)
 	{
 		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
-		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);	
-		deleteAllFilesFromMirrorDirectory(destDirectory.listFiles());
+		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);		
 		
 		try 
-		{			 
+		{	
+			log("Update "+destDirectory.getName());		 
+			getMessenger().setReadWrite(security.getPublicKeyString());					
+			deleteAllFilesFromMirrorDirectory(destDirectory.listFiles());
+			
 			for (int i =0; i<mirrorInfo.size();i++)
 			{
 				String file = (String) mirrorInfo.get(i);
 				FileTransfer.copyFile(new File(sourceDirectory, file), new File(destDirectory, file));
 			}	
+			getMessenger().setReadOnly(security.getPublicKeyString());
 		}
 		catch (Exception e) 
 		{
@@ -405,11 +419,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public synchronized void updateMagicWords(Vector words)
 	{				
 		try
-		{			
+		{		
+			log("Update magicWords");	
+			getMessenger().setReadWrite(security.getPublicKeyString());
+								
 			File backUpFile = new File(getMartusServerDataBackupDirectory(),getMagicWordsFile().getName() );			
 			FileTransfer.copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
-			magicWords.loadMagicWords(getMagicWordsFile());							
+			magicWords.loadMagicWords(getMagicWordsFile());
+			
+			getMessenger().setReadOnly(security.getPublicKeyString());							
 		}
 		catch (Exception ieo)
 		{	
@@ -450,14 +469,19 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{
+			log("Update configuration file: "+ file.getName());
+			getMessenger().setReadWrite(security.getPublicKeyString());			
+		
 			File backUpFile = new File(getMartusServerDataBackupDirectory(), file.getName());			
 			FileTransfer.copyFile(file, backUpFile);
 			MartusUtilities.writeListToFile(file, list);
+			
+			getMessenger().setReadOnly(security.getPublicKeyString());			
 		}
 		catch (Exception ieo)
 		{	
 			log(file.getPath()+" file not found."+ ieo.toString());		
-		}
+		} 
 	}	
 	
 	private void updateBannedAccount(boolean isSelected, String accountId)
@@ -726,7 +750,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		String listenersIpTag = "--listener-ip=";	
 		String portToListenTag = "--port=";
 		String secureModeTag = "--secure";
-		String rootPortTag = "--roothelper-port=";
+		String rootPortTag = "--roothelper-port=";		
 		
 		System.out.println("");
 		for(int arg = 0; arg < args.length; ++arg)
@@ -753,16 +777,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				setRootHelperPortToUse(Integer.parseInt(portToUse));	
 				System.out.println("Port to use for connect to RootHelper: "+ getRootHelperPortToUse());
 			}
-
-			System.out.println("");
+						
 			if(argument.equals(secureModeTag))
-			{
-				System.out.println("Running in SECURE mode");
-				enterSecureMode();
-			}
-			else
-				System.out.println("***RUNNING IN INSECURE MODE***");
+				enterSecureMode();			
+				
 		}
+		
+		if (isSecureMode())
+			System.out.println("Running in SECURE mode");
+		else
+			System.out.println("Running in INSECURE mode");
+			
 		System.out.println("");
 	}
 
@@ -797,19 +822,19 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			System.out.println("Setting up socket connection for listener ...");
 			
 			MSPAServer server = new MSPAServer(MSPAServer.getMartusDefaultDataDirectory());
-			server.processCommandLine(args);			
+			server.processCommandLine(args);
+			server.setMagicWords();			
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
 			server.setRootHelperConnector();																			
 			System.out.println("Waiting for connection...");
-			
-			
+						
 			if(!server.deleteStartupFiles())
 				System.exit(5);		
 		
 		}
 		catch(Exception e) 
 		{
-			System.out.println("UnknownHost Exception" + e);
+			System.out.println("Exception: " + e);
 			System.exit(1);			
 		}
 	}	
