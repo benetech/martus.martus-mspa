@@ -93,7 +93,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 	private void loadAuthorizedClients() 
 	{
-		File[] authorizedDir = getAuthorizedClientsDir().listFiles();
+		File[] authorizedDir = getAuthorizedClientsDir().listFiles();		
+		log("Load authorized clients now.");
 		for (int i=0; i<authorizedDir.length;i++)
 		{	
 			File authorizedFile = authorizedDir[i];
@@ -103,8 +104,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				try
 				{
 					publicInfo = MartusUtilities.importServerPublicKeyFromFile(authorizedFile, security);
-					String serverPublicKey = (String)publicInfo.get(0);	
+					String serverPublicKey = (String)publicInfo.get(0);
 					authorizeMSPAClients.add(serverPublicKey);
+					log("Client "+i+" "+serverPublicKey);
 				}
 				catch (IOException e)
 				{
@@ -114,7 +116,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				catch (InvalidPublicKeyFileException e)
 				{
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+//					e.printStackTrace();
+					log("Error when load "+authorizedFile.getName());
 				}
 				catch (PublicInformationInvalidException e)
 				{
