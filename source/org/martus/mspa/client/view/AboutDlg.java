@@ -25,20 +25,15 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.client.view;
 
-import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import org.martus.common.VersionBuildDate;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.mspa.main.UiMainWindow;
@@ -92,12 +87,7 @@ public class AboutDlg extends JDialog implements ActionListener
 		
 		panel.add(vBoxAboutDialog);
 		getContentPane().add(panel);
-
-		pack();
-		Dimension size = getSize();
-		Rectangle screen = new Rectangle(new Point(0, 0), getToolkit().getScreenSize());
-		setLocation(Utilities.center(size, screen));
-		setResizable(false);
+		Utilities.centerDlg(this);
 		show();
 	}	
 
