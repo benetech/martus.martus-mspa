@@ -21,7 +21,7 @@ import javax.swing.border.TitledBorder;
 
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.view.AccountDetailPanel;
-import org.martus.mspa.client.view.CreateAccountsTree;
+import org.martus.mspa.client.view.AccountsTree;
 
 public class UiMainWindow extends JFrame
 {
@@ -41,7 +41,7 @@ public class UiMainWindow extends JFrame
 	
 		createTabbedPaneRight();
 		Vector accounts = app.displayAccounst();
-		accountTree = new CreateAccountsTree(serverToView, accounts, this);
+		accountTree = new AccountsTree(serverToView, accounts, this);
 								
 		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);
 		m_sp.setContinuousLayout(false);
@@ -95,7 +95,8 @@ public class UiMainWindow extends JFrame
 	protected JTabbedPane createTabbedPaneRight()
 	{
 		tabPane = new JTabbedPane();				
-		tabPane.add( new JPanel(), "Account Detail");			
+
+		loadEmptyAccountDetailPanel();			
 		tabPane.setTabPlacement(JTabbedPane.BOTTOM);		
 		
 		return tabPane;
@@ -105,10 +106,19 @@ public class UiMainWindow extends JFrame
 	{
 
 		Vector contactInfo = mspaApp.getContactInfo(accountId);
-				
+		
 		tabPane.remove(0);
 		tabPane.add(new AccountDetailPanel(publicId, contactInfo,""), "Account Detail");			
 	}		
+	
+	public void loadEmptyAccountDetailPanel()
+	{
+		if (tabPane.getTabCount() > 0)
+			tabPane.remove(0);
+			
+		tabPane.add(new JPanel(), "Account Detail");
+		
+	}
 	
 	public boolean run()
 	{
@@ -151,6 +161,6 @@ public class UiMainWindow extends JFrame
 	JFrame currentActiveFrame;	
 	JTabbedPane tabPane;
 	JTextField statusField;
-	CreateAccountsTree accountTree;	
+	AccountsTree accountTree;	
 	
 }

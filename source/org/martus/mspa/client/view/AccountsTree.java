@@ -15,9 +15,9 @@ import javax.swing.tree.TreeSelectionModel;
 import org.martus.mspa.main.UiMainWindow;
 
 
-public class CreateAccountsTree
+public class AccountsTree
 {
-	public CreateAccountsTree(String server, Vector accounts, UiMainWindow mainWin)
+	public AccountsTree(String server, Vector accounts, UiMainWindow mainWin)
 	{	
 		String whichServerToView = server;		
 		parentWindow = mainWin;
@@ -35,16 +35,13 @@ public class CreateAccountsTree
 		model = new DefaultTreeModel(top);
 		tree = new JTree(model);
 
-		model = new DefaultTreeModel(top);
-		tree = new JTree(model);
-
 		tree.addTreeSelectionListener(new AccountNodeSelectionListener());
 		
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION); 	
 		tree.setShowsRootHandles(true); 
 		tree.setEditable(false);
-		TreePath path = new TreePath(nodes);
-		tree.setSelectionPath(path);
+		TreePath path = new TreePath(nodes[0]);
+		tree.setSelectionPath(path);		
 
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
@@ -79,7 +76,9 @@ public class CreateAccountsTree
 			if (node != null)
 			{
 				AccountNode selectedAccountNode = (AccountNode) node.getUserObject();
-				if (!node.isRoot())
+				if (node.isRoot())
+				 parentWindow.loadEmptyAccountDetailPanel();
+				else	
 				 parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());		
 			}		
 		}
