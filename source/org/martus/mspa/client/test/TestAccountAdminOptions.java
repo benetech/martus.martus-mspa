@@ -52,7 +52,6 @@ public class TestAccountAdminOptions extends TestCaseEnhanced
 			assertEquals("Can upload should be in index 0", false, ((Boolean)options.get(0)).booleanValue());
 			assertEquals("Banned should be in index 1", true, ((Boolean)options.get(1)).booleanValue());
 			assertEquals("Can Send should be in index 2", false, ((Boolean)options.get(2)).booleanValue());
-			assertEquals("Amplifier should be in index 3", true, ((Boolean)options.get(3)).booleanValue());
 			
 			options = new Vector();		
 			options.add(AccountAdminOptions.CAN_UPLOAD, new Boolean(true));
