@@ -43,7 +43,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		authorizedMartusAccounts = new Vector();
 		authorizeMSPAClients = new Vector();
 		mspaHandler = new ServerSideHandler(this);								
-		initalizeFileDatabase(dir);
+		initalizeFileDatabase();
 		initializedEnvironmentDirectory();
 				
 		logger = new LoggerToConsole();	
@@ -128,9 +128,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}			
 	}	
 	
-	private void initalizeFileDatabase(File dir)
+	private void initalizeFileDatabase()
 	{					
-		security = loadMartusKeypair(getMSAPKeypairFileName());
+		security = loadMSPAKeypair(getMSAPKeypairFileName());
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
 		try
@@ -157,7 +157,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}		
 	}	
 	
-	public MartusCrypto loadMartusKeypair(String keyPairFileName)
+	public MartusCrypto loadMSPAKeypair(String keyPairFileName)
 	{
 		return MartusServerUtilities.loadKeyPair(keyPairFileName, true);		
 	}	
@@ -241,14 +241,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public static File getAvailableMirrorServerDirectory()
 	{
 		return new File(getMartusServerDataDirectory(),"AvailableMirrorServers");
-	}	
+	}		
 	
-	public File getMartusComplianceFile()
-	{
-		return new File(getMartusConfigDirectory(),COMPLIANCE_FILE );
-	}	
-	
-	public File getMSPAComplianceFile()
+	public File getMartusServerDataComplianceFile()
 	{
 		return new File(getMartusServerDataDirectory(),COMPLIANCE_FILE );
 	}	
@@ -261,12 +256,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public static File getMartusServerDataBackupDirectory()
 	{
 		return new File(getMartusServerDataDirectory(),MARTUSSERVER_BACKUP_DIRECTORY);
-	}
-	
-	public File getMartusConfigDirectory()
-	{
-		return new File(getServerDirectory(),MARTUS_SERVER_DATA);
-	}
+	}	
 	
 	public MagicWords getMagicWordsInfo()
 	{
@@ -276,16 +266,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public synchronized Vector getComplianceFile(String accountId)
 	{
 		Vector results = new Vector();
-		File complianceFile = getMSPAComplianceFile();
-		File martusComplianceFile = getMartusComplianceFile();
-
+		File complianceFile = getMartusServerDataComplianceFile();	
 		try
 		{
-			if (!complianceFile.exists())
-			{
-				rootConnector.getMessenger().getAdminFile(accountId, 
-					martusComplianceFile.getPath(),complianceFile.getPath());
-			}
+			if (complianceFile.createNewFile())				
+				return new Vector();
 			results = FileTransfer.readDataFromFile(complianceFile);
 		}
 		catch (RemoteException e)
@@ -296,7 +281,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			logger.log(" Error when try to get a compliance file."+e.toString());
+			log(" Error when try to get a compliance file."+e.toString());
 		}
 		
 		return results;	
@@ -304,20 +289,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 	public synchronized void updateComplianceFile(String accountId, String compliantsMsg)
 	{		
-		File complianceFile = getMSPAComplianceFile();
-		File martusComplianceFile = getMartusComplianceFile();
+		File complianceFile = getMartusServerDataComplianceFile();		
 		try
 		{
 			UnicodeWriter writer = new UnicodeWriter(complianceFile);
 			writer.writeln(compliantsMsg);
 			writer.close();
-
-			if (complianceFile.exists())
-			{
-				FileTransfer transfer = new FileTransfer(complianceFile.getPath(),martusComplianceFile.getPath() );
-				Vector transfers = new Vector();	
-				transfers.add(transfer);			
-			}
 		}
 		catch (RemoteException e)
 		{			
