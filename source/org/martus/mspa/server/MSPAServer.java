@@ -5,10 +5,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.crypto.MockMartusSecurity;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
@@ -24,18 +23,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 	public MSPAServer(File dir) throws Exception
 	{	
-		mspaHandler = new ServerSideHandler(this);		
-		mspaSecurity = new MartusSecurity();		
+		mspaHandler = new ServerSideHandler(this);								
 		initalizeFileDatabase(dir);		
 	}	
 	
 	private void initalizeFileDatabase(File dir)
 	{
-		serverDirectory = dir;
-		martusDatabaseToUse = new ServerFileDatabase(dir, mspaSecurity);				
+		serverDirectory = dir;				
 		String keyPairFile = getConfigDirectory()+KEYPAIR_FILE;
 
-		MartusCrypto security = loadMartusKeypair(keyPairFile);
+		security = loadMartusKeypair(keyPairFile);
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);
 
 		try
@@ -60,13 +57,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			System.out.println("Account Map did not verify against signature file");
 			System.exit(7);
 		}		
-	}
+	}	
 	
 	public MartusCrypto loadMartusKeypair(String keyPairFileName)
 	{
-		MartusCrypto signer = MartusServerUtilities.loadKeyPair(keyPairFileName, true);
-		setMartusSecurity(signer);
-		return signer;
+		return MartusServerUtilities.loadKeyPair(keyPairFileName, true);		
 	}
 	
 	public File getPacketDirectory()
@@ -81,27 +76,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getConfigDirectory()
 	{
-		return new File(getServerDirectory(),ADMINSTARTUPCONFIGDIRECTORY);
+		return new File(getServerDirectory(),ADMIN_STARTUP_CONFIG_DIRECTORY);
 	}
 	
 	public File getMagicWordsFile()
 	{
-		return new File(getConfigDirectory(), MAGICWORDSFILENAME);
-	}	
-	
-	public void setMartusSecurity(MartusCrypto signer)
-	{
-		martusSecurityToUse = signer;
-	}
-	
-	public MartusCrypto getMartusCurrentSecurity()
-	{
-		return martusSecurityToUse;
-	}
+		return new File(getConfigDirectory(), MAGICWORDS_FILENAME);
+	}		
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception
 	{				
-		MartusSecureWebServer.security = MockMartusSecurity.createClient();
+		MartusSecureWebServer.security = getSecurity();
 		MartusXmlRpcServer.createSSLXmlRpcServer(getMSPAHandler(),serverObjectName, port, getMainIpAddress());
 	}
 	
@@ -117,7 +102,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public MartusCrypto getSecurity()
 	{
-		return mspaSecurity;
+		return security;
 	}
 	
 	public ServerFileDatabase getDatabase()
@@ -143,18 +128,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public static String getDefaultDataDirectoryPath()
 	{
 		String dataDirectory = null;
-		if(isRunningUnderWindows())
+		if(Version.isRunningUnderWindows())
 			dataDirectory = WINDOW_ENVIRONMENT;
 		else
-			dataDirectory = UNIX_ENVIRONMENT;
+			dataDirectory = System.getProperty("user.home")+UNIX_ENVIRONMENT;
 		return dataDirectory;
 	}
 	
-	public static boolean isRunningUnderWindows()
-	{
-		return System.getProperty("os.name").indexOf("Windows") >= 0;
-	}
-
 	public void setPortToUse(int port)
 	{
 		portToUse = port;
@@ -181,9 +161,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{					
 			System.out.println("Setting up socket connection for listener ...");
+			
 			MSPAServer server = new MSPAServer(MSPAServer.getDefaultDataDirectory());
 			server.setIPAddress(DEFAULT_HOST);
-			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());																	
+			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());
+																				
 			System.out.println("Waiting for connection...");
 		
 		}
@@ -199,15 +181,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	int portToUse;
 	Vector authorizedClients;
 	ServerFileDatabase martusDatabaseToUse;	
-	MartusCrypto mspaSecurity;
-	MartusCrypto martusSecurityToUse;	
+	MartusCrypto security;
+		
 	private File serverDirectory;	
-	private final static String ADMINSTARTUPCONFIGDIRECTORY = "deleteOnStartup";
-	private final static String MAGICWORDSFILENAME = "magicwords.txt";
+	private final static String ADMIN_STARTUP_CONFIG_DIRECTORY = "deleteOnStartup";
+	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private final static String WINDOW_ENVIRONMENT = "C:/MartusServer/";
 	private final static String UNIX_ENVIRONMENT = "/var/MartusServer/";
+	
 	private final static int DEFAULT_PORT = 443;
 	private final static String DEFAULT_HOST = "localHost";
 	

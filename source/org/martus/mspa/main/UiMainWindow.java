@@ -6,15 +6,18 @@ import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -22,6 +25,11 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.martus.common.Version;
+import org.martus.common.clientside.CurrentUiState;
+import org.martus.common.clientside.Localization;
+import org.martus.common.clientside.UiBasicLocalization;
+import org.martus.common.clientside.UiBasicSigninDlg;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
@@ -29,11 +37,41 @@ import org.martus.mspa.client.view.MenuItemManageMagicWords;
 
 public class UiMainWindow extends JFrame
 {
-	public UiMainWindow(String serverToView, MSPAClient app)
+	public UiMainWindow(String serverIP, int port, String serverToConnect)
 	{		
 		super("Martus Server Policy Administrator (MSPA)");
-		currentActiveFrame = this;	
-		mspaApp = app;
+		serverName = serverIP;
+		
+		try
+		{			
+			localization = new UiBasicLocalization(getDefaultDirectoryPath());	
+			setLocalizationTranslation();			
+			mspaApp = new MSPAClient(localization, serverName, port, serverToConnect);		
+			initalizeUiState();
+		}
+		catch(Exception e)
+		{
+			initializationErrorDlg(e.getMessage());
+		}
+		
+		currentActiveFrame = this;						
+	}
+	
+	private void setLocalizationTranslation()
+	{
+		for(int i=0; i < EnglishStrings.strings.length; ++i)
+		{
+			localization.addTranslation(Localization.ENGLISH, EnglishStrings.strings[i]);
+		}					
+		localization.currentLanguageCode = Localization.ENGLISH;
+	}
+		
+	public boolean run()	
+	{
+		int result = signIn(UiBasicSigninDlg.INITIAL); 
+		if(result == UiBasicSigninDlg.CANCEL)
+			return false;
+		
 		
 		setSize(800, 550);
 		JPanel mainPanel = new JPanel();
@@ -44,8 +82,8 @@ public class UiMainWindow extends JFrame
 		setJMenuBar(menuBar);
 	
 		createTabbedPaneRight();
-		Vector accounts = app.displayAccounst();
-		accountTree = new AccountsTree(serverToView, accounts, this);
+		Vector accounts = mspaApp.displayAccounst();
+		accountTree = new AccountsTree(getMartusServerName(), accounts, this);
 								
 		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);
 		m_sp.setContinuousLayout(false);
@@ -53,7 +91,7 @@ public class UiMainWindow extends JFrame
 		m_sp.setDividerSize(5);		
 		m_sp.setOneTouchExpandable(true);
 		
-		mainPanel.add(createServerInfoPanel("", serverToView),BorderLayout.NORTH );
+		mainPanel.add(createServerInfoPanel("", getMartusServerName()),BorderLayout.NORTH );
 		mainPanel.add(m_sp, BorderLayout.CENTER);
 		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);
 
@@ -67,9 +105,11 @@ public class UiMainWindow extends JFrame
 		addWindowListener(wndCloser);
 		getContentPane().add(mainPanel);
 			
-		setVisible(true);		
-	}	
-	
+		setVisible(true);				
+		return true;
+	}
+
+
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
 		JPanel serverInfoPanel = new JPanel();		
@@ -78,7 +118,7 @@ public class UiMainWindow extends JFrame
 		{		
 			JLabel ipLabel = new JLabel("Martus Server IP Address: "+InetAddress.getByName(ipAddr).getHostAddress());
 			ipLabel.setForeground(Color.BLUE);					
-			JLabel publicCodeLabel = new JLabel("Martus Server Public code: "+ mspaApp.getPublicCode(accountId));
+			JLabel publicCodeLabel = new JLabel("Martus Server Public code: "+ mspaApp.getCurrentServerPublicCode());
 			publicCodeLabel.setForeground(Color.BLUE);
 			serverInfoPanel.add(ipLabel);	
 			serverInfoPanel.add(publicCodeLabel);	
@@ -131,16 +171,46 @@ public class UiMainWindow extends JFrame
 		tabPane.add(new JPanel(), "Account Detail");		
 	}
 	
-	public boolean run()
+	private void initializationErrorDlg(String message)
 	{
-		return true;
+		String title = "Error Starting MSPA";
+		String cause = "Unable to start MSPA: " + message;
+		String ok = "OK";
+		String[] buttons = { ok };
+		JOptionPane pane = new JOptionPane(cause, JOptionPane.INFORMATION_MESSAGE,
+				 JOptionPane.DEFAULT_OPTION, null, buttons);
+		JDialog dialog = pane.createDialog(null, title);
+		dialog.show();
+		System.exit(1);
 	}
+	
 
 	int signIn(int mode)
 	{
-		int seconds = 0;
+		int seconds = 0;		
+		UiBasicSigninDlg signinDlg = new UiBasicSigninDlg(localization, uiState, currentActiveFrame, mode, "");
+			
+		try
+		{
+			String userName = signinDlg.getName();
+			char[] password = signinDlg.getPassword();
+						
+			int userChoice = signinDlg.getUserChoice();
+			if (userChoice != UiBasicSigninDlg.SIGN_IN)
+				return userChoice;
+
+			if(mode == UiBasicSigninDlg.INITIAL)
+			{	
+				mspaApp.signIn(userName, password);
+			}
+		
+			return UiBasicSigninDlg.SIGN_IN;
+		}
+		catch (Exception e)
+		{			
+		}
 		return seconds;
-	}	
+	}		
 
 	protected JMenuBar createMenuBar()
 	{
@@ -170,6 +240,38 @@ public class UiMainWindow extends JFrame
 		return menuBar;
 	}
 	
+	
+	private void initalizeUiState()
+	{
+		uiState = new CurrentUiState();
+		File uiStateFile = mspaApp.getUiStateFile();
+
+		if(!uiStateFile.exists())
+		{
+			uiState.setCurrentLanguage(localization.getCurrentLanguageCode());
+			uiState.setCurrentDateFormat(localization.getCurrentDateFormatCode());
+			uiState.save(uiStateFile);
+			return;
+		}
+		uiState.load(uiStateFile);
+		localization.setCurrentDateFormatCode(uiState.getCurrentDateFormat());
+	}
+	
+	public static File getDefaultDirectoryPath()
+	{
+		String dataDirectory = null;
+		if(Version.isRunningUnderWindows())
+			dataDirectory = "C:/MSPAClient/";
+		else
+			dataDirectory = System.getProperty("user.home")+"/.MSPAClient/";
+		return new File(dataDirectory);
+	}
+	
+	private String getMartusServerName()
+	{
+		return serverName;
+	}
+	
 	public MSPAClient getMSPAApp()
 	{
 		return mspaApp;
@@ -180,5 +282,9 @@ public class UiMainWindow extends JFrame
 	JFrame currentActiveFrame;	
 	JTabbedPane tabPane;
 	JTextField statusField;
-	AccountsTree accountTree;	
+	AccountsTree accountTree;
+	UiBasicLocalization localization;
+	CurrentUiState 	uiState;
+	String serverName;
+	
 }

@@ -6,8 +6,6 @@ import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.martus.mspa.client.core.MSPAClient;
-
 
 public class MSPAMain
 {
@@ -26,10 +24,12 @@ public class MSPAMain
 
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-							
-			MSPAClient app = new MSPAClient(DEFAULT_HOST, DEFAULT_PORT);	
-			UiMainWindow window = new UiMainWindow(DEFAULT_HOST, app);
+			int defaultPort = 443;
+			String defaultHost = "localHost";	
+			String serverPublicCode = "2343.8324.4616.1545.5585";
+			
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());										
+			UiMainWindow window = new UiMainWindow(defaultHost, defaultPort, serverPublicCode);
 			if(!window.run())
 				System.exit(0);													
 							
@@ -38,9 +38,10 @@ public class MSPAMain
 		{
 			System.out.println(e);
 			//e.printStatckTrace(System.out);
-		}		
+		}
+		
+		
 	}	
 	
-	final static int DEFAULT_PORT = 443;
-	final static String DEFAULT_HOST = "localHost";	
+
 }

@@ -3,9 +3,7 @@ package org.martus.mspa.network;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.martus.common.crypto.MockMartusSecurity;
 import org.martus.common.network.MartusXmlrpcClient;
-import org.martus.common.network.SimpleX509TrustManager;
 
 
 public class ClientSideXmlRpcHandler 
@@ -15,17 +13,9 @@ public class ClientSideXmlRpcHandler
 	
 	public ClientSideXmlRpcHandler(String serverIpAddr, int portToUse) throws Exception
 	{
-		super(serverIpAddr, portToUse);
-		SimpleX509TrustManager tm = getSimpleX509TrustManager();
-		
-		tm.setExpectedPublicKey(getServerPublicKey());
+		super(serverIpAddr, portToUse);		
 	}
 	
-	String getServerPublicKey() throws Exception 
-	{
-		return MockMartusSecurity.createClient().getPublicKeyString();
-	}	
-	 	 	
 	public Vector ping() throws Exception
 	{
 		return (Vector)callServer(cmdPing, new Vector());

@@ -1,23 +1,29 @@
 
 package org.martus.mspa.client.core;
 
+import java.io.File;
 import java.util.Vector;
 
+import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.crypto.MockMartusSecurity;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
+import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.network.ClientSideXmlRpcHandler;
 import org.martus.util.Base64.InvalidBase64Exception;
 
 public class MSPAClient 
 {				
-	public MSPAClient(String ipAddr, int port) throws Exception
+	public MSPAClient(UiBasicLocalization local, String ipAddr, int port, String serverToConnect) throws Exception
 	{
 		ipToUse = ipAddr;
 		portToUse = port;
-		security = MockMartusSecurity.createClient();	
-		handler = createXmlRpcNetworkInterfaceHandler();			
+		serverPublicCode = serverToConnect;
+		
+		security = new MartusSecurity();		
+		handler = createXmlRpcNetworkInterfaceHandler();	
+		setServerPublicCode(serverPublicCode);
+			
 	}
 	
 	public ClientSideXmlRpcHandler getClientSideXmlRpcHandler()
@@ -28,13 +34,21 @@ public class MSPAClient
 	public void setPortToUse(int port)
 	{
 		portToUse = port;
-	}			
+	}		
+	
+	private void setServerPublicCode(String key)
+	{	
+
+		String serverPublicCode = MartusCrypto.removeNonDigits(key);
+		handler.getSimpleX509TrustManager().setExpectedPublicCode(serverPublicCode);	
+	}
 				
 	private ClientSideXmlRpcHandler createXmlRpcNetworkInterfaceHandler()
 	{		
 		try 
-		{			
-			return new ClientSideXmlRpcHandler(ipToUse, portToUse);
+		{					
+			ClientSideXmlRpcHandler handler =  new ClientSideXmlRpcHandler(ipToUse, portToUse);
+			return handler;			
 		} 
 		catch (SSLSocketSetupException e) 
 		{
@@ -46,7 +60,52 @@ public class MSPAClient
 			e.printStackTrace();			
 		}
 		return null;
-	}		
+	}	
+	
+	public File getUiStateFile()
+	{
+		return new File(UiMainWindow.getDefaultDirectoryPath(), "UiState.dat");
+	}
+	
+	public MartusCrypto getSecurity()
+	{
+		return security;
+	}
+	
+	public File getKeypairFile()
+	{
+		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
+	}
+	
+	public void signIn(String userName, char[] userPassPhrase) throws Exception
+	{
+		try
+		{				
+			getSecurity().readKeyPair(getKeypairFile(), getCombinedPassPhrase(userName, userPassPhrase));		
+		}
+		catch(Exception e)
+		{
+			throw e;
+		}
+	}
+	
+	public char[] getCombinedPassPhrase(String userName, char[] userPassPhrase)
+	{
+		char[] combined = new char[userName.length() + userPassPhrase.length + 1];
+		System.arraycopy(userPassPhrase,0,combined,0,userPassPhrase.length);
+		combined[userPassPhrase.length] = ':';
+		System.arraycopy(userName.toCharArray(),0,combined,userPassPhrase.length+1,userName.length());
+		
+		return(combined);
+	}
+	
+	public String getCurrentServerPublicCode()
+	{
+		return serverPublicCode;
+	}
+	
+	
+			
 	
 	private Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws Exception 
 	{		
@@ -153,13 +212,18 @@ public class MSPAClient
 		}
 		
 		return publicCode;
-	}		
+	}			
 	
 	ClientSideXmlRpcHandler handler;
 	String ipToUse;
 	int portToUse;
-	MartusCrypto security;	
+	String serverPublicCode;
+	UiBasicLocalization localization;
+	MartusCrypto security;
+	File keyPairFile;	
 	
 	final static int DEFAULT_PORT = 443;
 	final static String DEFAULT_HOST = "localHost";	
+	
+	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 }
