@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,12 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
 import org.martus.common.clientside.CurrentUiState;
-import org.martus.common.clientside.Localization;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.clientside.UiBasicSigninDlg;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
@@ -54,8 +51,7 @@ public class UiMainWindow extends JFrame
 		
 		try
 		{			
-			localization  = new UiBasicLocalization(getDefaultDirectoryPath(), EnglishStrings.strings);	
-			localization.currentLanguageCode = Localization.ENGLISH;			
+			localization  = new UiBasicLocalization(getDefaultDirectoryPath(), EnglishStrings.strings);
 			mspaApp = new MSPAClient(localization);		
 			initalizeUiState();
 		}
