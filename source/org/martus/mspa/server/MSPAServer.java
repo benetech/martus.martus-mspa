@@ -95,7 +95,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 	private void loadAuthorizedClients() 
 	{
-		File[] authorizedDir = getAuthorizedClientsDir().listFiles();		
+		if (!getAuthorizedClientsDir().exists())
+		{			
+			System.out.println("Warning: missing authorizedclients information.");
+			return;
+		}	
+		
+		File[] authorizedDir = getAuthorizedClientsDir().listFiles();	
 		log("Load authorized clients now.");
 		for (int i=0; i<authorizedDir.length;i++)
 		{	

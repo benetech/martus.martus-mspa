@@ -130,44 +130,60 @@ public class AccountDetailPanel extends JPanel
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder (new LineBorder (Color.gray, 1)," Contact Info "));
 		panel.setLayout(new ParagraphLayout());
+											
+		panel.add(new JLabel("Author: ") , ParagraphLayout.NEW_PARAGRAPH);			
+		JTextField author = new JTextField(30);		
+		author.setEditable(false);
+		panel.add(author);		
 		
+		panel.add(new JLabel("Organization: "),ParagraphLayout.NEW_PARAGRAPH);			
+		JTextField  organization = new JTextField(30);			
+		organization.setEditable(false);
+		panel.add(organization);
+						
+		panel.add(new JLabel("Email Address: "),ParagraphLayout.NEW_PARAGRAPH);			
+		JTextField email = new JTextField(30);
+		email.setEditable(false);
+		panel.add(email);				
+		
+		panel.add(new JLabel("Web Page: "),ParagraphLayout.NEW_PARAGRAPH);			
+		JTextField web = new JTextField(30);
+		web.setEditable(false);
+		panel.add(web);	
+		
+		panel.add(new JLabel("Phone #: "),ParagraphLayout.NEW_PARAGRAPH);			
+		JTextField phone = new JTextField(30);
+		phone.setEditable(false);
+		panel.add(phone);		
+		
+		panel.add(new JLabel("Mailing Address: "),ParagraphLayout.NEW_PARAGRAPH);
+		UiTextArea address = new UiTextArea(4, 35);		
+		address.setEditable(false);
+		JScrollPane addressScrollPane = new JScrollPane(address, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		panel.add(addressScrollPane,ParagraphLayout.NEW_LINE);
+			
 		if (!contactInfo.isEmpty())
 		{
-			int index = 2;							
-						
-			panel.add(new JLabel("Author: ") , ParagraphLayout.NEW_PARAGRAPH);
+			int index = 2;	
 			String fieldName = (String)contactInfo.get(index++);
-			JTextField author = new JTextField(fieldName, 30);
-			author.setEditable(false);
-			panel.add(author);		
-			panel.add(new JLabel("Organization: "),ParagraphLayout.NEW_PARAGRAPH);
+			author.setText(fieldName);		
+				
 			fieldName = (String)contactInfo.get(index++);
-			JTextField  organization = new JTextField(fieldName, 30);
-			organization.setEditable(false);
-			panel.add(organization);				
-			panel.add(new JLabel("Email Address: "),ParagraphLayout.NEW_PARAGRAPH);
-			fieldName = (String)contactInfo.get(index++);
-			JTextField email = new JTextField(fieldName, 30);
-			email.setEditable(false);
-			panel.add(email);				
-			panel.add(new JLabel("Web Page: "),ParagraphLayout.NEW_PARAGRAPH);
-			fieldName = (String)contactInfo.get(index++);
-			JTextField web = new JTextField(fieldName, 30);
-			web.setEditable(false);
-			panel.add(web);	
-			panel.add(new JLabel("Phone #: "),ParagraphLayout.NEW_PARAGRAPH);
-			fieldName = (String)contactInfo.get(index++);
-			JTextField phone = new JTextField(fieldName, 30);
-			phone.setEditable(false);
-			panel.add(phone);		
-			panel.add(new JLabel("Mailing Address: "),ParagraphLayout.NEW_PARAGRAPH);
-			UiTextArea address = new UiTextArea(4, 35);
-			address.setText((String)contactInfo.get(index++));
-			address.setEditable(false);
-			JScrollPane addressScrollPane = new JScrollPane(address, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			panel.add(addressScrollPane,ParagraphLayout.NEW_LINE);
+			organization.setText(fieldName);
 			
+			fieldName = (String)contactInfo.get(index++);
+			email.setText(fieldName);
+						
+			fieldName = (String)contactInfo.get(index++);
+			web.setText(fieldName);
+			
+			fieldName = (String)contactInfo.get(index++);
+			phone.setText(fieldName);	
+						
+			fieldName = (String)contactInfo.get(index++);			
+			address.setText(fieldName);
+					
 		}
 				
 		return panel;
