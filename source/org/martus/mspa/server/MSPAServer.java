@@ -28,6 +28,7 @@ import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.packet.UniversalId;
+import org.martus.common.serverside.ServerSideUtilities;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
@@ -50,7 +51,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		authorizedMartusAccounts = new Vector();
 		authorizeMSPAClients = new Vector();
 		logger = new LoggerToConsole();	
-		mspaHandler = new ServerSideHandler(this);								
+		mspaHandler = new ServerSideHandler(this);										
 		initalizeFileDatabase();
 	}
 	
@@ -165,6 +166,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void initalizeFileDatabase()
 	{					
+		File waitingFile = new File(getTriggerDirectory(), "waiting");		
+		ServerSideUtilities.writeSyncFile(waitingFile, "MSPAServer.main");				
+		
 		security = loadMSPAKeypair(getMSAPKeypairFileName());
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
@@ -1000,6 +1004,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return rootConnector.getMessenger();
 	}
 	
+	private void deleteRunningFile()
+	{
+		getRunningFile().delete();
+	}
+
+	private File getRunningFile()
+	{
+		File runningFile = new File(getTriggerDirectory(), "running");
+		return runningFile;
+	}
+	
 	public static File getMirrorDirectory(int type)
 	{		
 		if (type == ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP)
@@ -1020,18 +1035,22 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			System.out.println("Setting up socket connection for listener ...");
 			
 			MSPAServer server = new MSPAServer(MSPAServer.getMartusDefaultDataDirectory());
+			server.deleteRunningFile();				
+						
 			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
-				System.exit(4);
+				System.exit(4);											
 			
 			server.processCommandLine(args);
 			server.setMagicWords();			
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
 			server.setRootHelperConnector();
-			server.initConfig();																			
-			System.out.println("\nWaiting for connection...");
+			server.initConfig();																						
 						
 			if(!server.deleteStartupFiles())
 				System.exit(5);		
+				
+			ServerSideUtilities.writeSyncFile(server.getRunningFile(), "MSPAServer.main");
+			System.out.println("\nWaiting for connection...");	
 		
 		}
 		catch(Exception e) 
