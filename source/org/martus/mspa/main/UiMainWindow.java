@@ -189,7 +189,7 @@ public class UiMainWindow extends JFrame
 	
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
-		JPanel serverInfoPanel = new JPanel();		
+		JPanel serverInfoPanel = new JPanel();
 		serverInfoPanel.setLayout(new ParagraphLayout());
 		try
 		{		
@@ -318,6 +318,8 @@ public class UiMainWindow extends JFrame
 	
 		JMenu mFile = new JMenu("File");
 		mFile.setMnemonic('f');
+		mFile.add(new MenuItemExportPublicKey(this, "Export Public Key", getDefaultDirectoryPath()));
+		mFile.addSeparator();		
 		JMenuItem item = new JMenuItem("Open");				
 		mFile.add(item);
 		mFile.addSeparator();			
@@ -326,11 +328,7 @@ public class UiMainWindow extends JFrame
 		
 		JMenu mEdit = new JMenu("Edit");
 		mFile.setMnemonic('d');
-		menuBar.add(mEdit);
-		
-		JMenu mOptions = new JMenu("Options");
-		mOptions.add(new MenuItemExportPublicKey(this, "Export Public Key", getDefaultDirectoryPath()));
-		menuBar.add(mOptions);
+		menuBar.add(mEdit);		
 		
 		JMenu mTool = new JMenu("Tools");
 		mTool.add(new MenuItemMartusServerArgumentsConfig(this,"Martus Server Arguments Configuration"));
@@ -338,17 +336,17 @@ public class UiMainWindow extends JFrame
 		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
 		mTool.addSeparator();
-		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));	
+		mTool.add(new MenuItemManageMagicWords(this,"Magic Words"));	
 		mTool.addSeparator();
-		JMenu manageServer = new JMenu("Managing Mirror servers");	
+		JMenu manageServer = new JMenu("Other Servers");	
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVER_WHO_WE_CALL));
+				ManagingMirrorServerConstants.SERVERS_WHO_WE_MIRROR));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.MIRRORS_WHO_WE_CALL));
+				ManagingMirrorServerConstants.SERVERS_WE_AMPLIFY));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.AMPS_WHO_CALL_US));
+				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFIES_US));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.MIRRORS_WHO_CALL_US));		
+				ManagingMirrorServerConstants.SERVERS_WHO_MIRRORS_US));		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		

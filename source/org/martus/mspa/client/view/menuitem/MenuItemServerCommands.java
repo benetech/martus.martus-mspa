@@ -48,16 +48,22 @@ public class MenuItemServerCommands extends AbstractAction
 	{
 		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
 		{	
-			parent.setStatusText("Send Start command to MSPA server ...");
-			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");
+			String msg = "Send Start command to MSPA server ...";
+			parent.setStatusText(msg);
+			JOptionPane.showMessageDialog(parent, msg, "Start Server", JOptionPane.INFORMATION_MESSAGE);
+			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");			
 			handleResults(results, "Start");			
 		}
 		
 		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
 		{	
-			parent.setStatusText("Send stop command to MSPA server ...");
-			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
-			handleResults(results, "Stop");
+			int answer = JOptionPane.showConfirmDialog(parent, "Are you sure?","Stop Server", JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.YES_OPTION) 
+			{
+				parent.setStatusText("Send stop command to MSPA server ...");
+				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
+				handleResults(results, "Stop");						
+			} 	
 		}	
 	}
 	
@@ -65,7 +71,11 @@ public class MenuItemServerCommands extends AbstractAction
 	{
 		String status = (String) results.get(0);
 		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
+		{	
+			parent.setStatusText(type+" Martus Server status: failed");
 			JOptionPane.showMessageDialog(parent, (String) results.get(1), status, JOptionPane.ERROR_MESSAGE);
+			parent.setStatusText("");			
+		}
 		else
 			parent.setStatusText(type+" Martus Server status: "+status);
 	}

@@ -42,7 +42,7 @@ public class MagicWordsDlg extends JDialog
 {
 	public MagicWordsDlg(UiMainWindow owner, Vector magicWords)
 	{
-		super((JFrame)owner, "Manage Magic Words", true);		
+		super((JFrame)owner, "Magic Words", true);		
 		parent = owner;				
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
@@ -65,7 +65,7 @@ public class MagicWordsDlg extends JDialog
 	private JPanel buildMagicWordPanel()
 	{
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Manage Magic Word and Group"));
+		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Magic Word and Group"));
 		panel.setLayout(new ParagraphLayout());
 				
 		addMagicWordsField = new JTextField(20);

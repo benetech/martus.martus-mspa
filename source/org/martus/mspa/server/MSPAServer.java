@@ -779,11 +779,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public static File getMirrorDirectory(int type)
 	{		
-		if (type == ManagingMirrorServerConstants.SERVER_WHO_WE_CALL)
+		if (type == ManagingMirrorServerConstants.SERVERS_WHO_WE_MIRROR)
 			return getServerWhoWeCallDirectory();
-		else if (type == ManagingMirrorServerConstants.MIRRORS_WHO_CALL_US)
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_MIRRORS_US)
 			return getMirrorServerWhoCallUsDirectory();
-		else if (type == ManagingMirrorServerConstants.AMPS_WHO_CALL_US)
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFIES_US)
 			return getAmpsWhoCallUsDirectory();	
 
 		return getMirrorServerWhoWeCallDirectory();		

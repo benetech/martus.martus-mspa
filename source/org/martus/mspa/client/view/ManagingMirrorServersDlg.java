@@ -62,7 +62,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	{
 		super((JFrame)owner);
 		msgLabelInfo = MirrorServerLabelFinder.getMessageInfo(manageType);
-		setTitle("Managing Server Mirroring: "+ msgLabelInfo.getTitle());
+		setTitle("Other Servers: "+ msgLabelInfo.getTitle());
 		parent = owner;
 		serverManageType = manageType;
 		availableItems = allList;
@@ -112,7 +112,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	private void collectMirrorInfo(JPanel panel)
 	{
-		addNewMirrorServer = createButton("add");						
+		addNewMirrorServer = createButton("Add");						
 		panel.add(addNewMirrorServer);				
 	}
 	
@@ -210,8 +210,8 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.setLayout(new FlowLayout());		
 				
 		viewComplainButton = createButton("View Compliance");			
-		updateButton = createButton("Update");				
-		cancelButton = createButton("Close");						
+		updateButton = createButton("Save");				
+		cancelButton = createButton("Cancel");						
 				
 		panel.add(viewComplainButton);
 		panel.add(updateButton);

@@ -65,7 +65,7 @@ public class MenuItemExportPublicKey extends AbstractAction
 			MartusUtilities.exportServerPublicKey(security, outputFile);			
 			if (outputFile.exists())				
 				JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
-				 "", JOptionPane.INFORMATION_MESSAGE);
+				 "Export Public Key", JOptionPane.INFORMATION_MESSAGE);
 			else
 				JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
 				 "Export Error", JOptionPane.ERROR_MESSAGE);
