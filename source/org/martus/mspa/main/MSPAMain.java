@@ -32,8 +32,7 @@ public class MSPAMain
 		}
 		catch(Exception e)
 		{
-			System.out.println(e);
-			//e.printStatckTrace(System.out);
+			e.printStackTrace();
 		}				
 	}	
 	

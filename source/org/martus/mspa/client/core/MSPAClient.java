@@ -94,8 +94,16 @@ public class MSPAClient
 		boolean prompUserToSelectServer=false;
 		
 		portToUse = DEFAULT_PORT;					
-		toCallFiles = getServerToCallDirectory().listFiles();
+		File serverToCallDirectory = getServerToCallDirectory();
+		serverToCallDirectory.mkdirs();
+		toCallFiles = serverToCallDirectory.listFiles();
 
+		if(toCallFiles.length == 0)
+		{
+			System.out.println("No server to call.  Please configure the directory "+serverToCallDirectory.getAbsolutePath());
+			System.exit(3);
+		}
+		
 		if (toCallFiles.length >1)
 			prompUserToSelectServer = true;
 		
