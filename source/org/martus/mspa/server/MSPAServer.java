@@ -7,6 +7,9 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import org.martus.common.LoggerInterface;
@@ -310,7 +313,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{
 		
 			logAction("Update compliance file", compliantsMsg);			
-			getMessenger().setReadWrite(security.getPublicKeyString());			
+			getMessenger().setReadWrite(security.getPublicKeyString());
+			backupFile(complianceFile);
+						
 			UnicodeWriter writer = new UnicodeWriter(complianceFile);
 			writer.writeln(compliantsMsg);
 			writer.close();
@@ -334,8 +339,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{		
 			getMessenger().setReadWrite(security.getPublicKeyString());			
-			File backUpFile = new File(getMartusServerDataBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
-			FileTransfer.copyFile(getHiddenPacketsFile(), backUpFile);
+			backupFile(getHiddenPacketsFile());
 						
 			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());							
 			for (int aId = 0; aId < authorizedMartusAccounts.size();++aId)
@@ -400,7 +404,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			}	
 			getMessenger().setReadOnly(security.getPublicKeyString());
 		}
-		catch (Exception e) 
+		catch (IOException e) 
 		{
 			e.printStackTrace();
 			log("(Update Mirror Server) Problem when try to update/copy files: "+ e.toString());
@@ -425,14 +429,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			logActions("Update MagicWords", words);				
 			getMessenger().setReadWrite(security.getPublicKeyString());
 								
-			File backUpFile = new File(getMartusServerDataBackupDirectory(),getMagicWordsFile().getName() );			
-			FileTransfer.copyFile(getMagicWordsFile(), backUpFile);
+			backupFile(getMagicWordsFile());
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
 			magicWords.loadMagicWords(getMagicWordsFile());
 			
 			getMessenger().setReadOnly(security.getPublicKeyString());							
 		}
-		catch (Exception ieo)
+		catch (IOException ieo)
 		{	
 			log("MagicWord.txt file not found."+ ieo.toString());		
 		}	
@@ -474,8 +477,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 			getMessenger().setReadWrite(security.getPublicKeyString());			
 		
-			File backUpFile = new File(getMartusServerDataBackupDirectory(), file.getName());			
-			FileTransfer.copyFile(file, backUpFile);
+			backupFile(file);
 			MartusUtilities.writeListToFile(file, list);
 			
 			getMessenger().setReadOnly(security.getPublicKeyString());			
@@ -572,7 +574,50 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return mspaHandler;
 	}
 	
-	public void logActions(String action, Vector data)
+	private void backupFile(File from) throws IOException
+	{			
+		Date today = new Date();
+		
+		String targetFile = getFileFromBackupDir(from.getName());	
+		if (targetFile == "")
+		{
+			String file = from.getName()+"."+getBackupFileExtension(today);
+			File backupFile = new File(getMartusServerDataBackupDirectory(), file);			
+			FileTransfer.copyFile(from, backupFile);
+			return;
+		}	
+		
+		File currrentBackupFile = new File(getMartusServerDataBackupDirectory(), targetFile);
+		long lastModifyTime = currrentBackupFile.lastModified();					
+		if (today.getTime() > lastModifyTime)					
+			FileTransfer.copyFile(from, currrentBackupFile);
+	}
+	
+	private String getBackupFileExtension(Date today)
+	{
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(today);
+		int year = calendar.get(GregorianCalendar.YEAR);
+		int month = calendar.get(GregorianCalendar.MONTH);
+		int day = calendar.get(GregorianCalendar.DAY_OF_MONTH);
+		
+		return Integer.toString(year)+Integer.toString(month+1)+Integer.toString(day);
+	}
+	
+	private String getFileFromBackupDir(String targetFileName)
+	{		
+		File backupDir = getMartusServerDataBackupDirectory();
+		String[] files = backupDir.list();
+		for (int i=0; i<files.length;++i)
+		{			
+			String filename = files[i];
+			if (filename.startsWith(targetFileName))
+				return filename;			
+		}			
+		return "";
+	}
+	
+	private void logActions(String action, Vector data)
 	{
 		String actionMsg = "["+action+"]: "; 
 		StringBuffer recordMsg = new StringBuffer();
@@ -584,7 +629,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		log(recordMsg.toString());		
 	}
 	
-	public void logAction(String action, String msg)
+	private void logAction(String action, String msg)
 	{
 		String actionMsg = "["+action+"]: "; 
 		StringBuffer recordMsg = new StringBuffer();
