@@ -25,7 +25,8 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.server;
 
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 
@@ -116,11 +117,12 @@ public class LoadMartusServerArguments extends LoadProperty
 	
 	public String toString()
 	{
-		StringBuffer argsLine = new StringBuffer();
-		Enumeration enum = props.propertyNames();
-		while (enum.hasMoreElements())
+		StringBuffer argsLine = new StringBuffer();		
+		ArrayList list = Collections.list(props.propertyNames());
+		Collections.reverse(list);
+		for (int i=0;i<list.size();++i)
 		{
-			String name = (String)enum.nextElement();
+			String name = (String)list.get(i);
 			String value = (String) props.get(name);
 			if (name.equals(LISTENER_IP) || 
 				name.equals(AMPLIFIER_IP) ||
@@ -140,8 +142,7 @@ public class LoadMartusServerArguments extends LoadProperty
 			}	
 			
 			if (value.equalsIgnoreCase("yes"))
-				argsLine.append("--").append(name).append(" ");							
-							
+				argsLine.append("--").append(name).append(" ");	
 		}
 		return argsLine.toString().trim();
 	}

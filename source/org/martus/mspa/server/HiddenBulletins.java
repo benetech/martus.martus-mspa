@@ -27,6 +27,7 @@ package org.martus.mspa.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -53,8 +54,8 @@ public class HiddenBulletins
 	public HiddenBulletins(Database databaseToUse, 
 			MartusCrypto securityToUse, LoggerInterface loggerToUse, File hiddenFileLocation)
 	{
-		database = databaseToUse;
-		hiddenUids = new HashSet();
+		database = databaseToUse;	
+		hiddenUids = Collections.synchronizedSet(new HashSet());
 		security = securityToUse;
 		logger = loggerToUse;
 		hiddenFile = hiddenFileLocation;
