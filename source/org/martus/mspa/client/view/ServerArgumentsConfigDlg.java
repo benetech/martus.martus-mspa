@@ -27,6 +27,7 @@ package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -45,6 +47,7 @@ import javax.swing.border.LineBorder;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiWrappedTextArea;
 import org.martus.swing.Utilities;
 
 
@@ -96,15 +99,11 @@ public class ServerArgumentsConfigDlg extends JDialog
 		minutsComboField = new JComboBox(minutes);	
 		minutsComboField.setSelectedItem(arguments.getMinutes());
 		
-		amplifier = new JCheckBox("Amplifier");
-		amplifier.setSelected(arguments.getAmplifierListenerStatus());
-		clientListener = new JCheckBox("Client-Listener");
-		amplifier.setSelected(arguments.getClientListenerStatus());
-		mirrorListener = new JCheckBox("Mirror-Listener");
-		amplifier.setSelected(arguments.getMirrorListenerStatus());
-		amplifierListener = new JCheckBox("Amplifier-Listener");
-		amplifier.setSelected(arguments.getAmplifierListenerStatus()); 
-		
+		amplifier = new JCheckBox("Amplifier",arguments.getAmplifierStatus());	
+		clientListener = new JCheckBox("Client-Listener",arguments.getClientListenerStatus());		
+		mirrorListener = new JCheckBox("Mirror-Listener",arguments.getMirrorListenerStatus());		
+		amplifierListener = new JCheckBox("Amplifier-Listener", arguments.getAmplifierListenerStatus());
+		 		
 		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(listenerIpLabel); 
 		panel.add(listenerIpTextField);
@@ -125,6 +124,27 @@ public class ServerArgumentsConfigDlg extends JDialog
 		panel.add(clientListener);	
 		panel.add(mirrorListener); 
 		panel.add(amplifierListener);			
+		
+		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(previewPanel());
+		
+		return panel;
+	}
+	
+	private JPanel previewPanel()
+	{
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout());
+		
+		previewButton = new JButton("Preview");	
+		previewButton.addActionListener(new CommitButtonHandler());		
+		previewArea = new UiWrappedTextArea("");
+		previewArea.setEditable(false);	
+		JScrollPane sp = new JScrollPane(previewArea);	
+		sp.setPreferredSize(new Dimension(350,70));	
+		
+		panel.add(sp);
+		panel.add(previewButton);
 		
 		return panel;
 	}
@@ -170,6 +190,11 @@ public class ServerArgumentsConfigDlg extends JDialog
 				dispose();
 			else if (ae.getSource().equals(saveButton))
 				handleSendCommand();
+			else if (ae.getSource().equals(previewButton))
+			{	
+				LoadMartusServerArguments args = populateData();
+				previewArea.setText(args.toString());
+			}
 			
 		}
 
@@ -183,10 +208,13 @@ public class ServerArgumentsConfigDlg extends JDialog
 	UiMainWindow parent;
 	JButton saveButton;
 	JButton cancelButton;
+	JButton previewButton;
+	
 	JTextField listenerIpTextField;
 	JTextField amplifierIpTextField;
 	JComboBox passwordComboField;
 	JComboBox minutsComboField;
+	UiWrappedTextArea previewArea;
 	
 	JCheckBox amplifier;
 	JCheckBox clientListener;
