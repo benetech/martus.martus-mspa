@@ -26,11 +26,13 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.network.roothelper;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
@@ -45,6 +47,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	public MessengerImpl(final String _passphrase) throws RemoteException 
 	{
 		super();
+		passphrase = _passphrase;
 		logger = new LoggerToConsole();	
 	}
 	
@@ -101,7 +104,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		Status status = new Status();	
 		try
 		{
-			logWhoCallThisScript(callScript);						
+			logWhoCallThisScript(callScript);							
 			Process process = Runtime.getRuntime().exec(callScript);		
 	
 			StringBuffer errorStream = new StringBuffer();			
@@ -109,9 +112,15 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 			
 			StringBuffer outputStream = new StringBuffer(); 
 			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputStream);
-			
 			errorGobbler.start();
 			outputGobbler.start();
+			
+			if (callScript.endsWith("restart"))
+			{	
+				BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+				buffStdin.write(passphrase+"\r");
+				buffStdin.flush(); 
+			}
 			
 			if (process.waitFor() != 0)
 			{															
@@ -119,6 +128,10 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 				status.setStatus(Status.FAILED);
 				log(errorStream.toString());
 			}
+			
+			process.getInputStream().close();
+			process.getOutputStream().close();
+			process.getErrorStream().close(); 
 							
 			status.setStdOutMsg(outputStream.toString());
 			log(outputStream.toString());
@@ -214,5 +227,6 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	}
 	
 	private LoggerInterface logger;
+	private String passphrase;	
 	public static final String CONNET_MSG = "[MessengerImpl] Connected: Ready to invoke ...\n";
 }
