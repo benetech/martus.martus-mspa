@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.martus.common.ContactInfo;
 import org.martus.common.MartusUtilities;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.crypto.MartusCrypto;
@@ -181,10 +182,11 @@ public class MSPAClient
 			parameters.add(accountId);			
 			String signature = security.createSignatureOfVectorOfStrings(parameters);				
 			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);				
+			Vector decodedContactInfoResult = ContactInfo.decodeContactInfoVectorIfNecessary(results);
 			
-			if (results != null && !results.isEmpty())
+			if (decodedContactInfoResult != null && !decodedContactInfoResult.isEmpty())
 			{
-				Vector info = (Vector) results.get(1);
+				Vector info = (Vector) decodedContactInfoResult.get(1);
 				if (!info.isEmpty())
 					return info;
 			}	 
