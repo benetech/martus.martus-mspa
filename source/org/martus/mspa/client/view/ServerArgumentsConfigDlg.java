@@ -27,6 +27,7 @@ package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -137,7 +138,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 		
 		previewButton = new JButton("Preview");	
 		previewButton.addActionListener(new CommitButtonHandler());		
-		previewArea = new UiWrappedTextArea("");
+		previewArea = new UiWrappedTextArea("", ComponentOrientation.LEFT_TO_RIGHT);
 		previewArea.setEditable(false);	
 		JScrollPane sp = new JScrollPane(previewArea);	
 		sp.setPreferredSize(new Dimension(350,70));	
