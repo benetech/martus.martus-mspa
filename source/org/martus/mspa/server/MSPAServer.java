@@ -58,14 +58,14 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		getServerWhoCallUsDirectory().mkdirs();
 		getAmplifyWhoCallUsDirectory().mkdirs();
 		getAvailableMirrorServerDirectory().mkdirs();
-		getDeleteOnStartupDirectory().mkdirs();
+		getMartusServerDataDirectory().mkdirs();
 		
-		initAccountConfigFiles(new File(getDeleteOnStartupDirectory(), MAGICWORDS_FILENAME));
-		initAccountConfigFiles(new File(getDeleteOnStartupDirectory(), UPLOADSOK_FILENAME));		
-		initAccountConfigFiles(new File(getDeleteOnStartupDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME));
-		initAccountConfigFiles(new File(getDeleteOnStartupDirectory(), UPLOADSOK_FILENAME));
-		initAccountConfigFiles(new File(getDeleteOnStartupDirectory(), BANNEDCLIENTS_FILENAME));
-		initAccountConfigFiles(new File(getDeleteOnStartupDirectory(), HIDDEN_PACKETS_FILENAME));
+		initAccountConfigFiles(new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME));
+		initAccountConfigFiles(new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME));		
+		initAccountConfigFiles(new File(getMartusServerDataDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME));
+		initAccountConfigFiles(new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME));
+		initAccountConfigFiles(new File(getMartusServerDataDirectory(), BANNEDCLIENTS_FILENAME));
+		initAccountConfigFiles(new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME));
 	}
 	
 	private void initAccountConfigFiles(File targetFile)
@@ -99,11 +99,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{	
 			File authorizedFile = authorizedDir[i];
 			if(!authorizedFile.isDirectory())
-			{
-				Vector publicInfo;
+			{				
 				try
 				{
-					publicInfo = MartusUtilities.importServerPublicKeyFromFile(authorizedFile, security);
+					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(authorizedFile, security);
 					String serverPublicKey = (String)publicInfo.get(0);
 					authorizeMSPAClients.add(serverPublicKey);
 					log("Client "+i+" "+serverPublicKey);
@@ -161,32 +160,26 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public MartusCrypto loadMartusKeypair(String keyPairFileName)
 	{
 		return MartusServerUtilities.loadKeyPair(keyPairFileName, true);		
-	}
+	}	
 	
-	public static File getAdminDirectory()
+	public static File getMSPADeleteOnStartup()
 	{
-		return new File(getAppDirectoryPath(),MSPA_ADMIN_DIR);
-	}
-	
-	public static File getAdminDeleteOnStartup()
-	{
-		return new File(getAdminDirectory(),DELETE_ON_STARTUP_DIRECTORY);
+		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP);
 	}
 	
 	public static File getAuthorizedClientsFile()
 	{
-		return new File(getAdminDirectory(), MSPA_CLIENT_AUTHORIZED_FILES);
-	}
+		return new File(getAppDirectoryPath(), MSPA_CLIENT_AUTHORIZED_FILES);
+	}	
 
 	public static File getAuthorizedClientsDir()
 	{
-		return new File(getAdminDirectory(),MSPA_CLIENT_AUTHORIZED_DIR );
+		return new File(getMSPADeleteOnStartup(),MSPA_CLIENT_AUTHORIZED_DIR );
 	}
 	
 	public File getMSPAServerKeyPairFile()
 	{
-		File adminDeleteOnStartup = new File(getAdminDirectory().getPath(), DELETE_ON_STARTUP_DIRECTORY);
-		File keypair = new File(adminDeleteOnStartup.getPath(), KEYPAIR_FILE);
+		File keypair = new File(getMSPADeleteOnStartup().getPath(), KEYPAIR_FILE);
 		return keypair;
 	}
 	
@@ -197,22 +190,22 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getBannedFile()
 	{
-		return new File(getDeleteOnStartupDirectory(), BANNEDCLIENTS_FILENAME);
+		return new File(getMartusServerDataDirectory(), BANNEDCLIENTS_FILENAME);
 	}
 	
 	public File getAllowUploadFile()
 	{
-		return new File(getDeleteOnStartupDirectory(), UPLOADSOK_FILENAME);
+		return new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME);
 	}
 	
 	public File getClientsNotToAmplifiyFile()
 	{
-		return new File(getDeleteOnStartupDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
+		return new File(getMartusServerDataDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
 	}
 	
 	public File getMagicWordsFile()
 	{
-		return new File(getDeleteOnStartupDirectory(), MAGICWORDS_FILENAME);		
+		return new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME);		
 	}	
 	
 	public File getPacketDirectory()
@@ -227,27 +220,27 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private File getHiddenPacketsFile()
 	{
-		return new File(getDeleteOnStartupDirectory(), HIDDEN_PACKETS_FILENAME);
+		return new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME);
 	}	
 	
 	public static File getServerWhoWeCallDirectory()
 	{
-		return new File(getDeleteOnStartupDirectory(),"serversWhoWeCall");
+		return new File(getMartusServerDataDirectory(),"serversWhoWeCall");
 	}
 	
 	public static File getServerWhoCallUsDirectory()
 	{
-		return new File(getDeleteOnStartupDirectory(),"serversWhoCallUs");
+		return new File(getMartusServerDataDirectory(),"mirrorsWhoCallUs");
 	}
 	
 	public static File getAmplifyWhoCallUsDirectory()
 	{
-		return new File(getDeleteOnStartupDirectory(),"amplifyWhoCallUs");
+		return new File(getMartusServerDataDirectory(),"ampWhoCallUs");
 	}
 	
 	public static File getAvailableMirrorServerDirectory()
 	{
-		return new File(getDeleteOnStartupDirectory(),"availableMirrorServers");
+		return new File(getMartusServerDataDirectory(),"AvailableMirrorServers");
 	}	
 	
 	public File getMartusComplianceFile()
@@ -257,22 +250,22 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMSPAComplianceFile()
 	{
-		return new File(getDeleteOnStartupDirectory(),COMPLIANCE_FILE );
+		return new File(getMartusServerDataDirectory(),COMPLIANCE_FILE );
 	}	
 	
-	public static File getDeleteOnStartupDirectory()
+	public static File getMartusServerDataDirectory()
 	{
-		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP_DIRECTORY);
+		return new File(getAppDirectoryPath(),MARTUS_SERVER_DATA);
 	}
 	
-	public static File getDeleteOnStartupBackupDirectory()
+	public static File getMartusServerDataBackupDirectory()
 	{
-		return new File(getAppDirectoryPath(),DELETEONSTARTUP_BACKUP_DIRECTORY);
+		return new File(getMartusServerDataDirectory(),MARTUSSERVER_BACKUP_DIRECTORY);
 	}
 	
 	public File getMartusConfigDirectory()
 	{
-		return new File(getServerDirectory(),DELETE_ON_STARTUP_DIRECTORY);
+		return new File(getServerDirectory(),MARTUS_SERVER_DATA);
 	}
 	
 	public MagicWords getMagicWordsInfo()
@@ -342,7 +335,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{	
-			File backUpFile = new File(getDeleteOnStartupBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
+			File backUpFile = new File(getMartusServerDataBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
 			FileTransfer.copyFile(getHiddenPacketsFile(), backUpFile);
 						
 			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());							
@@ -443,7 +436,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{				
 		try
 		{			
-			File backUpFile = new File(getDeleteOnStartupBackupDirectory(),getMagicWordsFile().getName() );			
+			File backUpFile = new File(getMartusServerDataBackupDirectory(),getMagicWordsFile().getName() );			
 			FileTransfer.copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
 			magicWords.loadMagicWords(getMagicWordsFile());							
@@ -487,7 +480,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{
-			File backUpFile = new File(getDeleteOnStartupBackupDirectory(), file.getName());			
+			File backUpFile = new File(getMartusServerDataBackupDirectory(), file.getName());			
 			FileTransfer.copyFile(file, backUpFile);
 			MartusUtilities.writeListToFile(file, list);
 		}
@@ -670,7 +663,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 	public synchronized void updateMartusServerArguments(Vector props)
 	{
-		File propertyFile = new File(getDeleteOnStartupDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
+		File propertyFile = new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE);
 		LoadMartusServerArguments args = new LoadMartusServerArguments();
 		args.convertFromVector(props);
 		args.writePropertyFile(propertyFile.getPath());
@@ -678,7 +671,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public synchronized static LoadMartusServerArguments getMartusServerArguments()
 	{
-		File propertyFile = new File(getDeleteOnStartupDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
+		File propertyFile = new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE);
 		LoadMartusServerArguments property = null;
 
 		try
@@ -723,16 +716,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			return true;
 			
 		Vector deleteList = new Vector();	
-		File[] startupFiles = getAdminDeleteOnStartup().listFiles();
+		File[] startupFiles = getMSPADeleteOnStartup().listFiles();
 		for (int i=0; i<startupFiles.length;++i)			
 			deleteList.add(startupFiles[i]);
 				
 		MartusUtilities.deleteAllFiles(deleteList);
 		
-		File[] remainingStartupFiles = getAdminDeleteOnStartup().listFiles();
+		File[] remainingStartupFiles = getMSPADeleteOnStartup().listFiles();
 		if(remainingStartupFiles.length != 0)
 		{
-			log("Files still exist in the folder: " + getAdminDeleteOnStartup().getAbsolutePath());
+			log("Files still exist in the folder: " + getMSPADeleteOnStartup().getAbsolutePath());
 			return false;
 		}
 		return true;
@@ -845,24 +838,24 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private File serverDirectory;
 	private boolean secureMode;	
 		
-	private final static String DELETEONSTARTUP_BACKUP_DIRECTORY = "deleteOnStartupBackup";
-	private final static String DELETE_ON_STARTUP_DIRECTORY = "deleteOnStartup";
+	private final static String DELETE_ON_STARTUP = "deleteOnStartup";	
+	private final static String MARTUSSERVER_BACKUP_DIRECTORY = "Backups";
+	private final static String MARTUS_SERVER_DATA = "MartusServerData";	
 	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
 	private static final String BANNEDCLIENTS_FILENAME = "banned.txt";
 	private static final String UPLOADSOK_FILENAME = "uploadsok.txt";
 	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
 	private static final String COMPLIANCE_FILE =  "compliance.txt";
-	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "ServerArguments.props";
-	private static final String MSPA_ADMIN_DIR = "admin";
+	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "serverarguments.props";
 	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "authorizedClients"; 
 	private static final String MSPA_CLIENT_AUTHORIZED_FILES = "authorizedClients.txt"; 
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";
 	private final static String UNIX_MARTUS_ENVIRONMENT = "/var/MartusServer/";
-	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAListener/";
-	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAListener/";
+	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAServer/";
+	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAServer/";
 	
 	private final static int DEFAULT_PORT = 443;
 	
