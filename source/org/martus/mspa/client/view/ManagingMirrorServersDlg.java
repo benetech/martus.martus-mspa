@@ -79,7 +79,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	private JPanel getTopPanel()
 	{
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),msgLabelInfo.getHeader()));			
+		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));
 		panel.setLayout(new ParagraphLayout());
 		
 		manageIPAddr = new JTextField(20);		

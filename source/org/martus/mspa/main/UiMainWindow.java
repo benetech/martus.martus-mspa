@@ -342,11 +342,13 @@ public class UiMainWindow extends JFrame
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
+						ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA));
+		manageServer.addSeparator();												
+		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA));
-		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA));		
+		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		

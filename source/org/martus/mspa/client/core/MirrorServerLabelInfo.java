@@ -28,25 +28,22 @@ package org.martus.mspa.client.core;
 
 public class MirrorServerLabelInfo
 {
-	public MirrorServerLabelInfo(int index, String _title, String _header, 
+	public MirrorServerLabelInfo(int index, String _title,
 			String _avaialbeLabel, String _allowedLabel)
 	{
 		id = index;
 		title = _title;
-		header = _header;
 		allowedLabel = _allowedLabel;
 		availableLabel = _avaialbeLabel;
 	}
 
 	public int getId() {return id;};
-	public String getTitle() {return title;}
-	public String getHeader() {return header;}
+	public String getTitle() {return title;}	
 	public String getAllowedLabel() {return allowedLabel;}
 	public String getAvailableLabel() {return availableLabel;};
 	
 
 	String title;
-	String header;
 	String allowedLabel;
 	String availableLabel;
 	int id;

@@ -38,16 +38,13 @@ public interface ManagingMirrorServerConstants
 	public static String SERVERS_WHO_AMPLIFY_OUR_DATA_TITLE		="Servers Who Amplify Our Data";
 	public static String SERVERS_WHO_BACKUP_OUR_DATA_TITLE		="Servers Who Backup Our Data";
 	
-	public static String SERVERS_WHOES_DATA_WE_BACKUP_HEADER	="Servers whose data we backup";
-	public static String DATA_WE_BACKUP_LABEL					="Data We Backup:";
-	public static String SERVERS_WHOSE_DATA_WE_AMPLIFY_HEADER	="Servers whose data we amplify";
-	public static String DATA_WE_AMPLIFY_LABEL					="Servers Whose Data We Amplify:";
-	public static String SERVERS_WHO_AMPLIFY_OUR_DATA_HEADER	="Servers who amplify our data";
-	public static String CAN_AMPLIFY_OUR_DATA_LABEL				="Can Amplier My Data:";
-	public static String SERVERS_WHO_BACKUP_OUR_DATA_HEADER		="Server who backup our data";
-	public static String CAN_UPLOAD_OUR_DATA_LABEL				="Can Upload Our Data";	
 	
-	public static String AVAILABLE_SERVER_LABEL				="Available Servers:";
-	public static String AVAILABLE_MAGIC_LABEL				="Available Magic Words:";	
+	public static String DATA_WE_BACKUP_LABEL					="Servers Whose Data We Backup:";	
+	public static String DATA_WE_AMPLIFY_LABEL					="Servers Whose Data We Amplify:";		
+	public static String CAN_AMPLIFY_OUR_DATA_LABEL				="Can Amplify Our Data:";
+	public static String CAN_UPLOAD_OUR_DATA_LABEL				="Can Backup Our Data";	
+	
+	public static String AVAILABLE_SERVER_LABEL					="Available Servers:";
+	public static String AVAILABLE_MAGIC_LABEL					="Available Magic Words:";	
 	
 }
