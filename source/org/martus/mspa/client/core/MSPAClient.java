@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import org.martus.common.ContactInfo;
 import org.martus.common.MartusUtilities;
+import org.martus.common.clientside.PasswordHelper;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
@@ -155,17 +156,7 @@ public class MSPAClient
 	
 	public void signIn(String userName, char[] userPassPhrase) throws Exception
 	{
-		getSecurity().readKeyPair(getKeypairFile(), getCombinedPassPhrase(userName, userPassPhrase));		
-	}
-	
-	public char[] getCombinedPassPhrase(String userName, char[] userPassPhrase)
-	{
-		char[] combined = new char[userName.length() + userPassPhrase.length + 1];
-		System.arraycopy(userPassPhrase,0,combined,0,userPassPhrase.length);
-		combined[userPassPhrase.length] = ':';
-		System.arraycopy(userName.toCharArray(),0,combined,userPassPhrase.length+1,userName.length());
-		
-		return(combined);
+		getSecurity().readKeyPair(getKeypairFile(), PasswordHelper.getCombinedPassPhrase(userName, userPassPhrase));		
 	}
 	
 	public String getStatus()
