@@ -61,6 +61,8 @@ public class ServerSideHandler implements NetworkInterface
 			result.add(NetworkInterfaceConstants.SIG_ERROR);				
 			return result;
 		}
+		else
+			server.addAuthorizedClients(myAccountId);
 					
 		AccountVisitor visitor = new AccountVisitor();
 		server.getDatabase().visitAllAccounts(visitor);
@@ -116,6 +118,57 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.SERVER_ERROR);
 			return results;
 		}											
+	}
+	
+	public Vector getAccountManageInfo(String myAccountId, String manageAccountId)
+	{	
+		Vector results = new Vector();				
+		Vector acccountAdminInfo = server.getAccountAdminInfo(manageAccountId);
+		
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(acccountAdminInfo);		
+
+		return results;					
+	}
+	
+	public Vector updateAccountManageInfo(String myAccountId, String manageAccountId, Vector accountInfo)
+	{			
+		Vector results = new Vector();
+		try
+		{
+			server.updateAccountInfo(manageAccountId, accountInfo);								
+			results.add(NetworkInterfaceConstants.OK);		
+			return results;
+		}
+		
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}							
+	}	
+	
+	public Vector getNumOfHiddenBulletins(String myAccountId) 
+	{
+		Vector results = new Vector();				
+		String hiddenBulletins = server.getNumOfHiddenBulletins(myAccountId);
+		
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(hiddenBulletins);		
+
+		return results;		
+	}
+	
+	public Vector getPacketDirNames(String myAccountId)
+	{	
+		Vector results = new Vector();				
+		Vector packetDir = server.getPacketDirectoryNames();
+		
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(packetDir);		
+
+		return results;					
 	}
 	
 	public Vector getInactiveMagicWords(String myAccountId)
@@ -254,7 +307,7 @@ public class ServerSideHandler implements NetworkInterface
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
 	{
 		return verifier.verifySignatureOfVectorOfStrings(parameters, myAccountId, signature);
-	}	
+	}		
 			
 	MSPAServer server;
 }

@@ -21,7 +21,7 @@ public class TestAll
 	{
 		TestSuite suite= new TestSuite("All Client MSPA Tests");
 		
-		suite.addTest(TestClient.suite());
+		suite.addTest(TestClient.suite());		
 
 		return suite;
 	}

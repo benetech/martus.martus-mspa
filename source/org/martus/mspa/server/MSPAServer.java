@@ -12,6 +12,7 @@ import java.util.Vector;
 import org.martus.common.LoggerInterface;
 import org.martus.common.LoggerToConsole;
 import org.martus.common.MagicWords;
+import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
@@ -20,6 +21,7 @@ import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.utilities.MartusServerUtilities;
+import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
@@ -30,18 +32,37 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 {
 		
 	public MSPAServer(File dir) throws Exception
-	{	
+	{				
+		serverDirectory = dir;	
+		authorizedClients = new Vector();
 		mspaHandler = new ServerSideHandler(this);								
-		initalizeFileDatabase(dir);		
+		initalizeFileDatabase(dir);
+		initializedEnvironmentDirectory();
+				
 		logger = new LoggerToConsole();	
-		magicWords = new MagicWords(logger);	
-		magicWords.loadMagicWords(getMagicWordsFile());
+		magicWords = new MagicWords(logger);
+		magicWords.loadMagicWords(getMagicWordsFile());	
+		loadConfigurationFiles();		
 	}	
 	
-	private void initalizeFileDatabase(File dir)
+	private void initializedEnvironmentDirectory()
 	{
-		serverDirectory = dir;				
-
+		getServerWhoWeCallDirectory().mkdirs();
+		getServerWhoCallUsDirectory().mkdirs();
+		getAmplifyWhoCallUsDirectory().mkdirs();
+		getAvailableMirrorServerDirectory().mkdirs();
+		getConfigDirectory().mkdirs();
+	}
+	
+	private void loadConfigurationFiles()
+	{				
+		clientsBanned = MartusUtilities.loadBannedClients(getBannedFile());
+		clientsCanUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
+		clientNotAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
+	}
+	
+	private void initalizeFileDatabase(File dir)
+	{					
 		security = loadMartusKeypair(getMSPAServerKeyPairFile());
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
@@ -77,6 +98,21 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public String getMSPAServerKeyPairFile()
 	{
 		return getConfigDirectory()+KEYPAIR_FILE;
+	}
+	
+	public File getBannedFile()
+	{
+		return new File(getConfigDirectory(), BANNEDCLIENTS_FILENAME);
+	}
+	
+	public File getAllowUploadFile()
+	{
+		return new File(getConfigDirectory(), UPLOADSOK_FILENAME);
+	}
+	
+	public File getClientsNotToAmplifiyFile()
+	{
+		return new File(getConfigDirectory(), CLIENTS_NOTTO_AMPLIFY_FILENAME);
 	}
 	
 	public File getMartusServerMagicWordFile()
@@ -179,7 +215,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 		 sourceChannel.close();
 		 destinationChannel.close();
-	 }
+	}
 	
 	public void updateMagicWords(Vector words)
 	{				
@@ -203,6 +239,76 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return new File(getMartusConfigDirectory(), MAGICWORDS_FILENAME);
 	}		
+	
+	public Vector getAccountAdminInfo(String manageAccountId)
+	{		
+		AccountAdminOptions options = new AccountAdminOptions();
+		options.setCanSendOption(isAccountIdNotAmplifier(manageAccountId));
+		options.setBannedOption(isAccountIdBanned(manageAccountId));
+		options.setCanUploadOption(canAccountIdUpload(manageAccountId));
+			
+		return options.getOptions();
+	}
+	
+	public void updateAccountInfo(String manageAccountId, Vector accountInfo)
+	{		
+		try
+		{		
+			AccountAdminOptions options = new AccountAdminOptions();
+			options.setOptions(accountInfo);
+
+			if (options.isBannedSelected())
+				clientsBanned.add(manageAccountId);
+			else
+				clientsBanned.remove(manageAccountId);				
+			
+			if (options.canSendToAmplifySelected())
+				clientNotAmplifier.remove(manageAccountId);
+			else
+				clientNotAmplifier.add(manageAccountId);
+			
+			if (options.canSendToAmplifySelected())
+				clientNotAmplifier.add(manageAccountId);
+			else
+				clientNotAmplifier.remove(manageAccountId);
+				
+			if (options.canUploadSelected())	
+				clientsCanUpload.add(manageAccountId);
+			else
+				clientsCanUpload.remove(manageAccountId);							
+		
+		}
+		catch (Exception ieo)
+		{	
+			logger.log("MagicWord.txt file not found."+ ieo.toString());		
+		}	
+	}	
+	
+	public String getNumOfHiddenBulletins(String accountId)
+	{	
+		String numOfHiddenBulletins="0";
+		return numOfHiddenBulletins;
+	}
+	
+	public boolean isAccountIdBanned(String clientId)
+	{
+		return clientsBanned.contains(clientId);
+	}	
+	
+	public boolean canAccountIdUpload(String clientId)
+	{
+		return clientsCanUpload.contains(clientId);
+	}
+	
+	public boolean isAccountIdNotAmplifier(String clientId)
+	{
+		return clientNotAmplifier.contains(clientId);
+	}
+	
+	public Vector getPacketDirectoryNames()
+	{
+		return new Vector();
+	}
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception
 	{				
@@ -235,10 +341,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return martusDatabaseToUse;
 	}
 	
-	boolean isAuthorizeClient(String myAccountId)
+	boolean isAuthorizedMSPAClient(String myAccountId)
 	{
 		return authorizedClients.contains(myAccountId);
-	}	
+	}
 	
 	public String ping()
 	{
@@ -279,6 +385,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public int getPortToUse()
 	{
 		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
+	}
+
+	public void addAuthorizedClients(String authorizedClientId)
+	{
+		if (!isAuthorizedClients(authorizedClientId))
+			authorizedClients.add(authorizedClientId);
+	}
+
+	public boolean isAuthorizedClients(String authorizedClientId)
+	{
+		return authorizedClients.contains(authorizedClientId);
 	}
 
 	public void setListenersIpAddress(String ipAddr)
@@ -353,11 +470,18 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	MartusCrypto security;
 	LoggerInterface logger;
 	MagicWords magicWords;
+	Vector clientsBanned;
+	Vector clientsCanUpload;
+	Vector clientNotAmplifier;
 		
-	private File serverDirectory;	
+	private File serverDirectory;
+		
 	private final static String ADMIN_MSPA_CONFIG_DIRECTORY = "accountConfig";
 	private final static String ADMIN_MARTUS_CONFIG_DIRECTORY = "deleteOnStartup";
 	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
+	private static final String BANNEDCLIENTS_FILENAME = "banned.txt";
+	private static final String UPLOADSOK_FILENAME = "uploadsok.txt";
+	private static final String CLIENTS_NOTTO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";

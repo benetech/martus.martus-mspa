@@ -22,6 +22,8 @@ public class TestClient
 		TestSuite suite= new TestSuite("All Client MSPA Tests");
 
 		suite.addTest(new TestSuite(TestClientSideXMLRPCHandler.class));
+		suite.addTest(new TestSuite(TestAccountAdminOptions.class));
+		
 		return suite;
 	}
 }

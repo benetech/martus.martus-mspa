@@ -42,6 +42,38 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetContactInfo, params);
 	}	
 	
+	public Vector getAccountManageInfo(String myAccountId, String manageAccountId) throws IOException	
+	{		
+		Vector params = new Vector();
+		params.add(myAccountId);
+		params.add(manageAccountId);		
+		return (Vector)callServer(cmdGetAccountManageInfo, params);
+	}
+	
+	public Vector updateAccountManageInfo(String myAccountId, String manageAccountId, 
+				Vector accountInfo) throws IOException
+	{	
+		Vector params = new Vector();		
+		params.add(myAccountId);		
+		params.add(manageAccountId);
+		params.add(accountInfo);
+		return (Vector)callServer(cmdUpdateAccountManageInfo, params);
+	}	
+	
+	public Vector getNumOfHiddenBulletins(String myAccountId) throws IOException
+	{
+		Vector params = new Vector();
+		params.add(myAccountId);		
+		return (Vector)callServer(cmdGetNumOfHiddenBulletins, params);
+	}
+	
+	public Vector getPacketDirNames(String myAccountId) throws IOException	
+	{		
+		Vector params = new Vector();
+		params.add(myAccountId);		
+		return (Vector)callServer(cmdGetPacketDirNames, params);
+	}
+	
 	public Vector getInactiveMagicWords(String myAccountId) throws IOException
 	{
 		

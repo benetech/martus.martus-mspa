@@ -43,6 +43,9 @@ import org.martus.util.UnicodeWriter;
 
 public class RetrievePublicKey
 {	
+//	TODO: This class is duplicated class from server/tools/RetrievePublicKey due to Scott is  
+//  using this class to retrieve public key in production. 
+//  The refactory is required once the MSPA is ready to use.	
 	public RetrievePublicKey(String mirrorIp, String mirrorPort, String mirrorPublicCode, String outputName)																						
 	{
 		ip = mirrorIp;

@@ -199,6 +199,72 @@ public class MSPAClient
 		return new Vector();
 	}
 	
+	public Vector getAccountManageInfo(String manageAccountId)
+	{	
+		try
+		{						
+			Vector results = handler.getAccountManageInfo(security.getPublicKeyString(), manageAccountId);
+		
+			if (results != null && !results.isEmpty())
+				return (Vector) results.get(1);
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return new Vector();
+	}	
+	
+	public Vector updateAccountManageInfo(String manageAccountId, Vector manageOptions)
+	{		
+		try
+		{									
+			handler.updateAccountManageInfo(security.getPublicKeyString(),
+					manageAccountId, manageOptions);				
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return new Vector();
+	}	
+	
+	public String getNumOfHiddenBulletins()
+	{	
+		try
+		{						
+			Vector results = handler.getNumOfHiddenBulletins(security.getPublicKeyString());
+		
+			if (results != null && !results.isEmpty())
+				return (String) results.get(1);
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return "";
+	}	
+	
+	public Vector getPacketDirNames()
+	{	
+		try
+		{						
+			Vector results = handler.getPacketDirNames(security.getPublicKeyString());
+			
+			if (results != null && !results.isEmpty())
+				return (Vector) results.get(1);
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return new Vector();
+	}	
+	
 	public Vector getInactiveMagicWords()
 	{	
 		try

@@ -13,7 +13,6 @@ import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -324,26 +323,7 @@ public class MagicWordsDlg extends JDialog
 			dispose();			
 		}
 	}
-	
-	class GroupComboBox  extends JComboBox
-	{
-		public static final int MAX_MEM_LEN = 30;
-
-		public GroupComboBox(Vector groups)
-		{
-			super(groups);				
-			setEditable(true);
-		}
-
-		public void add(String item)
-		{
-			removeItem(item);
-			insertItemAt(item, 0);
-			setSelectedItem(item);
-			if (getItemCount() > MAX_MEM_LEN)
-				removeItemAt(getItemCount()-1);
-		}
-	}	
+		
 	
 	JButton saveButton;
 	JButton cancelButton;

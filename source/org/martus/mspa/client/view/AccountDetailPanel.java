@@ -4,6 +4,8 @@ package org.martus.mspa.client.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -18,37 +20,50 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.martus.mspa.client.core.AccountAdminOptions;
+import org.martus.mspa.client.core.MSPAClient;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.UiTextArea;
 
 public class AccountDetailPanel extends JPanel
 {
-	public AccountDetailPanel(String id, Vector contactInfo, String numOfDelBulletins)
+	public AccountDetailPanel(MSPAClient app, String id, Vector contactInfo, String hiddenBulletins, 
+			Vector dirNames, Vector manageAccount)
 	{
-		accountPublicCode = id;
+		accountId = id;	
+		mspaApp = app;
+		numOfHiddenBulletins =	hiddenBulletins;
 		setBorder(new EmptyBorder(5,5,5,5));
-		setLayout(new BorderLayout());			
+		setLayout(new BorderLayout());
+
+		loadAccountAdminInfo(manageAccount);		
 		
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new FlowLayout());
-		centerPanel.add(buildContactInfoPanel(contactInfo));
+		centerPanel.add(buildContactInfoPanel(contactInfo));		
 		centerPanel.add(buildCheckboxes());	
 	
-		add(buildTopPanel(numOfDelBulletins, ""), BorderLayout.NORTH);
+		add(buildTopPanel(dirNames), BorderLayout.NORTH);
 		add(centerPanel, BorderLayout.CENTER);
 		add(buildButtonsPanel(), BorderLayout.SOUTH);
 	}
 
-	private JPanel buildTopPanel(String numOfDelBulletins, String packetDirName)
+	private void loadAccountAdminInfo(Vector accountManagement)
+	{
+		admOptions = new AccountAdminOptions();
+		admOptions.setOptions(accountManagement);		
+	} 
+
+	private JPanel buildTopPanel(Vector packetDirNames)
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new EtchedBorder (EtchedBorder.LOWERED));
 		panel.setLayout(new ParagraphLayout());
 		JLabel numOfDelBulletinLabel = new JLabel("Number of Delete Bulletins: ");
-		JTextField numOfDelBulletineField = new JTextField(numOfDelBulletins,5);
+		JTextField numOfDelBulletineField = new JTextField(numOfHiddenBulletins,5);
 		numOfDelBulletineField.setEditable(false);
 		JLabel dirNameLabel = new JLabel("Directory Name: ");
-		JTextField dirNameField = new JTextField(packetDirName,15);
+		dirNameField = new GroupComboBox(packetDirNames);
 		dirNameField.setEditable(false);
 
 		panel.add(numOfDelBulletinLabel , ParagraphLayout.NEW_PARAGRAPH);
@@ -64,10 +79,14 @@ public class AccountDetailPanel extends JPanel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		JCheckBox canUpload = new JCheckBox("Can Upload");		
-		JCheckBox banned = new JCheckBox("Banned");
-		JCheckBox canSendToAmp = new JCheckBox("Can Send to Amplify");
-		JCheckBox amp = new JCheckBox("Amplifier");		
+		canUpload = new JCheckBox("Can Upload", admOptions.canUploadSelected());	
+		canUpload.addActionListener(new CheckBoxHandler());	
+		banned = new JCheckBox("Banned", admOptions.isBannedSelected());
+		banned.addActionListener(new CheckBoxHandler());	
+		canSendToAmp = new JCheckBox("Can Send to Amplify", admOptions.canSendToAmplifySelected());
+		canSendToAmp.addActionListener(new CheckBoxHandler());	
+		amp = new JCheckBox("Amplifier", admOptions.isAmplifierSelected());		
+		amp.addActionListener(new CheckBoxHandler());	
 		
 		panel.add(canUpload);
 		panel.add(banned);
@@ -130,19 +149,90 @@ public class AccountDetailPanel extends JPanel
 	{
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
-		JButton viewBulletins = new JButton("View Bulletins");
+		viewBulletins = new JButton("View Bulletins");
+		viewBulletins.addActionListener(new CommitButtonHandler());	
 		panel.add(viewBulletins);
-		JButton viewActivity = new JButton("View Activity");
+		viewActivity = new JButton("View Activity");
+		viewActivity.addActionListener(new CommitButtonHandler());	
 		panel.add(viewActivity);
-		JButton viewStatistics = new JButton("View Statistics");
+		viewStatistics = new JButton("View Statistics");
+		viewStatistics.addActionListener(new CommitButtonHandler());
 		panel.add(viewStatistics);
 		saveButton = new JButton("Save");
+		saveButton.addActionListener(new CommitButtonHandler());
 		panel.add(saveButton);
 
 		return panel;
 	}	
 	
+	class CheckBoxHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent ae)
+		{
+			if(canUpload.isSelected())
+			{
+				canUpload.setSelected(true);
+				admOptions.setCanUploadOption(true);
+			}
+			else
+				admOptions.setCanUploadOption(false);
+			
+			if(banned.isSelected())
+			{
+				banned.setSelected(true);
+				admOptions.setBannedOption(true);
+			}
+			else
+				admOptions.setBannedOption(false);
+				
+			if(canSendToAmp.isSelected())
+			{
+				canSendToAmp.setSelected(true);
+				admOptions.setCanSendOption(true);
+			}
+			else
+				admOptions.setCanSendOption(false);
+				
+			if(amp.isSelected())
+			{
+				amp.setSelected(true);
+				admOptions.setAmplifierOption(true);
+			}				
+			else
+				admOptions.setAmplifierOption(false);
+			
+		}
+	}
 	
-	String accountPublicCode;
-	JButton saveButton;		
+	class CommitButtonHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent ae)
+		{
+			if (ae.getSource().equals(saveButton))				
+				handleConfigurationAccountInfo();			
+			
+		}
+
+		private void handleConfigurationAccountInfo()
+		{				
+			mspaApp.updateAccountManageInfo(accountId, admOptions.getOptions());			
+		}
+	}
+	
+	String accountId;
+	String numOfHiddenBulletins;
+	JButton saveButton;
+	GroupComboBox dirNameField;
+	AccountAdminOptions admOptions;
+	
+	JCheckBox canUpload;
+	JCheckBox banned;	
+	JCheckBox canSendToAmp;
+	JCheckBox amp;
+	
+	JButton viewBulletins;
+	JButton viewActivity;
+	JButton viewStatistics;
+
+	MSPAClient mspaApp;
 }
