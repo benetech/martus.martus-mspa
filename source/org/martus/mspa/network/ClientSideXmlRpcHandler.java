@@ -42,23 +42,38 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetContactInfo, params);
 	}	
 	
-	public Vector getMagicWords(String myAccountId, Vector parameters, String signature) throws IOException
+	public Vector getMagicWordsFromMartus(String myAccountId, Vector parameters, String signature) throws IOException
 	{
 		
 		Vector params = new Vector();
 		params.add(myAccountId);
 		params.add(parameters);
 		params.add(signature);
+		return (Vector)callServer(cmdGetMagicWordsFromMartus, params);
+	}	
+	
+	public Vector getMagicWords(String myAccountId) throws IOException
+	{
+		
+		Vector params = new Vector();
+		params.add(myAccountId);	
 		return (Vector)callServer(cmdGetMagicWords, params);
 	}	
 	
-	public Vector updateMagicWords(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException
-	{
-		
-		Vector params = new Vector();
+	public Vector updateMagicWordsToMartus(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException
+	{		
+		Vector params = new Vector();		
 		params.add(myAccountId);
 		params.add(parameters);
-		params.add(signature);
+		params.add(signature);	
+		params.add(magicWords);
+		return (Vector)callServer(cmdUpdateMagicWordsToMarus, params);
+	}	
+	
+	public Vector updateMagicWords(String myAccountId, Vector magicWords) throws IOException
+	{	
+		Vector params = new Vector();		
+		params.add(myAccountId);		
 		params.add(magicWords);
 		return (Vector)callServer(cmdUpdateMagicWords, params);
 	}	

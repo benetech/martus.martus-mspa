@@ -118,7 +118,7 @@ public class ServerSideHandler implements NetworkInterface
 		}											
 	}
 	
-	public Vector getMagicWords(String myAccountId, Vector parameters, String signature)
+	public Vector getMagicWordsFromMartus(String myAccountId, Vector parameters, String signature)
 	{	
 		Vector results = new Vector();
 		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
@@ -126,9 +126,18 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.SIG_ERROR);				
 			return results;
 		}
-		
-		File magicFile=null;		
-		magicFile = server.getMagicWordsFile();
+						
+		return readMagicWords(server.getMartusMagicWordsFile());
+	}
+	
+	public Vector getMagicWords(String myAccountId)
+	{			
+		return readMagicWords(server.getMagicWordsFile());
+	}								
+	
+	private Vector readMagicWords(File magicFile)
+	{
+		Vector results = new Vector();				
 		if(!magicFile.exists())
 		{
 			results.add(NetworkInterfaceConstants.NOT_FOUND);
@@ -161,10 +170,15 @@ public class ServerSideHandler implements NetworkInterface
 			e1.printStackTrace();
 			results.add(NetworkInterfaceConstants.SERVER_ERROR);
 			return results;
-		}											
+		}							
+	}		
+	
+	public Vector updateMagicWords(String myAccountId, Vector magicWords)
+	{			
+		return writeMagicWords(server.getMagicWordsFile(), magicWords );						
 	}					
 	
-	public Vector updateMagicWords(String myAccountId, Vector parameters, String signature, Vector magicWords)
+	public Vector updateMagicWordsToMartus(String myAccountId, Vector parameters, String signature, Vector magicWords)
 	{	
 		Vector results = new Vector();
 		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
@@ -173,9 +187,12 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}
 		
-		File magicFile=null;		
-		magicFile = server.getMagicWordsFile();		
-			
+		return writeMagicWords(server.getMartusMagicWordsFile(),magicWords );					
+	}					
+	
+	private Vector writeMagicWords(File magicFile, Vector magicWords)
+	{
+		Vector results = new Vector();
 		try
 		{
 			UnicodeWriter writer = new UnicodeWriter(magicFile);
@@ -191,8 +208,8 @@ public class ServerSideHandler implements NetworkInterface
 			e1.printStackTrace();
 			results.add(NetworkInterfaceConstants.SERVER_ERROR);
 			return results;
-		}									
-	}					
+		}				
+	}
 	
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
 	{

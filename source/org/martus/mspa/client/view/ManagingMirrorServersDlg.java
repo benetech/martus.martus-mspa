@@ -54,11 +54,15 @@ import org.martus.swing.Utilities;
 
 public class ManagingMirrorServersDlg extends JDialog
 {
-	public ManagingMirrorServersDlg(UiMainWindow owner, int manageType, String serverToManage, String serverToManagePublicCode)
+	public ManagingMirrorServersDlg(UiMainWindow owner, int manageType, 
+			String serverToManage, String serverToManagePublicCode,
+			Vector allList, Vector currentList)
 	{
 		super((JFrame)owner, "Managing Server Mirroring: "+MirrorServerMessageConverter.getTitle(manageType) , true);
 		parent = owner;
-		serverManageType = manageType;	
+		serverManageType = manageType;
+		availableList = allList;
+		assignedList = currentList;	
 	
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(getTopPanel(), BorderLayout.NORTH);
@@ -112,7 +116,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		availableListModel = loadElementsToList(new Vector());
+		availableListModel = loadElementsToList(availableList);
 		availableServers = new JList(availableListModel);
 		availableServers.setFixedCellWidth(200);    
 		JScrollPane ps = new JScrollPane();
@@ -130,7 +134,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		allowedListModel = loadElementsToList(new Vector());
+		allowedListModel = loadElementsToList(assignedList);
 		allowedServers = new JList(allowedListModel);
 		allowedServers.setFixedCellWidth(200);    
 		JScrollPane ps = new JScrollPane();
@@ -222,7 +226,14 @@ public class ManagingMirrorServersDlg extends JDialog
 		}
 		
 		private void handleUpdateMirrorServerInfo()
-		{						
+		{
+			Object[] items = allowedListModel.toArray();
+			Vector magicWords = new Vector();			
+			for (int i=0;i<items.length;i++)
+				magicWords.add(items[i]);
+							
+			parent.getMSPAApp().updateMagicWordsToMartus(magicWords);
+			dispose();							
 		}
 		
 		private void handleRemoveFromAllowedList()
@@ -230,9 +241,11 @@ public class ManagingMirrorServersDlg extends JDialog
 			int selectItem = allowedServers.getSelectedIndex();	
 			if (!allowedServers.isSelectionEmpty())
 			{	
-				String item = (String) allowedServers.getSelectedValue();
-				allowedListModel.remove(selectItem);				
-				availableListModel.addElement(item);
+				String item = (String) allowedServers.getSelectedValue();				
+		
+				allowedListModel.remove(selectItem);
+				if (!availableListModel.contains(item))				
+					availableListModel.addElement(item);
 			}							
 		}				
 	}
@@ -247,6 +260,10 @@ public class ManagingMirrorServersDlg extends JDialog
 	JButton viewComplainButton;
 	JButton updateButton;
 	JButton cancelButton;
+	
+	Vector availableList;
+	Vector assignedList;
+	
 	
 	JList availableServers;
 	JList allowedServers;	

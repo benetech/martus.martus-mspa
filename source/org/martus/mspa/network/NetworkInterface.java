@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.util.Vector;
 
 
-public interface NetworkInterface
+public interface NetworkInterface 
 {
 	public Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws IOException;
 	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId) throws IOException;
-	public Vector getMagicWords(String myAccountId, Vector parameters, String signature) throws IOException;
-	public Vector updateMagicWords(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException;
+	public Vector getMagicWordsFromMartus(String myAccountId, Vector parameters, String signature) throws IOException;
+	public Vector getMagicWords(String myAccountId) throws IOException;
+	public Vector updateMagicWordsToMartus(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException;
+	public Vector updateMagicWords(String myAccountId, Vector magicWords) throws IOException;
 }

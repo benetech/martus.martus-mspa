@@ -65,7 +65,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public String getMartusServerKeyPairFile()
 	{
-		return getConfigDirectory()+KEYPAIR_FILE;
+		return getMartusConfigDirectory()+KEYPAIR_FILE;
 	}
 	
 	public File getPacketDirectory()
@@ -78,14 +78,39 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return serverDirectory;
 	}		
 	
+	public File getServerWhoWeCallDirectory()
+	{
+		return new File(getAppDirectoryPath(),"ServersWhoWeCall");
+	}
+	
+	public File getServerWhoCallUsDirectory()
+	{
+		return new File(getAppDirectoryPath(),"ServersWhoCallUs");
+	}
+	
+	public File getAmplifyWhoCallUsDirectory()
+	{
+		return new File(getAppDirectoryPath(),"AmplifyWhoCallUs");
+	}
+	
 	public File getConfigDirectory()
 	{
-		return new File(getServerDirectory(),ADMIN_STARTUP_CONFIG_DIRECTORY);
+		return new File(getAppDirectoryPath(),ADMIN_MSPA_CONFIG_DIRECTORY);
+	}
+	
+	public File getMartusConfigDirectory()
+	{
+		return new File(getServerDirectory(),ADMIN_MARTUS_CONFIG_DIRECTORY);
 	}
 	
 	public File getMagicWordsFile()
 	{
 		return new File(getConfigDirectory(), MAGICWORDS_FILENAME);
+	}
+	
+	public File getMartusMagicWordsFile()
+	{
+		return new File(getMartusConfigDirectory(), MAGICWORDS_FILENAME);
 	}		
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception
@@ -124,28 +149,29 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return "" + NetworkInterfaceConstants.VERSION;
 	}
 	
-	public static File getDefaultDataDirectory()
+	public static File getMartusDefaultDataDirectory()
 	{
-		return new File(MSPAServer.getDefaultDataDirectoryPath());
+		return new File(MSPAServer.getMartusDefaultDataDirectoryPath());
 	}	
 	
-	public static String getDefaultDataDirectoryPath()
+	public static String getMartusDefaultDataDirectoryPath()
 	{
 		String dataDirectory = null;
 		if(Version.isRunningUnderWindows())
-			dataDirectory = WINDOW_ENVIRONMENT;
+			dataDirectory = WINDOW_MARTUS_ENVIRONMENT;
 		else
-			dataDirectory = System.getProperty("user.home")+UNIX_ENVIRONMENT;
+			dataDirectory = System.getProperty("user.home")+UNIX_MARTUS_ENVIRONMENT;
 		return dataDirectory;
 	}
+	
 	
 	public static File getAppDirectoryPath()
 	{
 		String appDirectory = null;
 		if(Version.isRunningUnderWindows())
-			appDirectory = "C:/MSPAServer/";
+			appDirectory = WINDOW_MSPA_ENVIRONMENT;
 		else
-			appDirectory = System.getProperty("user.home")+"/.MSPAServer/";
+			appDirectory = System.getProperty("user.home")+UNIX_MSPA_ENVIRONMENT;
 		return new File(appDirectory);
 	}	
 	
@@ -199,7 +225,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{					
 			System.out.println("Setting up socket connection for listener ...");
 			
-			MSPAServer server = new MSPAServer(MSPAServer.getDefaultDataDirectory());
+			MSPAServer server = new MSPAServer(MSPAServer.getMartusDefaultDataDirectory());
 			server.processCommandLine(args);			
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());																				
 			System.out.println("Waiting for connection...");
@@ -220,12 +246,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	MartusCrypto security;
 		
 	private File serverDirectory;	
-	private final static String ADMIN_STARTUP_CONFIG_DIRECTORY = "deleteOnStartup";
+	private final static String ADMIN_MSPA_CONFIG_DIRECTORY = "accountConfig";
+	private final static String ADMIN_MARTUS_CONFIG_DIRECTORY = "deleteOnStartup";
 	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
-	private final static String WINDOW_ENVIRONMENT = "C:/MartusServer/";
-	private final static String UNIX_ENVIRONMENT = "/var/MartusServer/";
+	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";
+	private final static String UNIX_MARTUS_ENVIRONMENT = "/var/MartusServer/";
+	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAServer/";
+	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAServer/";
 	
 	private final static int DEFAULT_PORT = 443;	
 	

@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 
@@ -42,9 +43,13 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
-	{						
+	{	
+						
+		Vector availableList = parent.getMSPAApp().getMagicWords();
+		Vector assigedList = parent.getMSPAApp().getMagicWordsFromMartus();
+			
 		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, serverManageType,
-					"", "");
+					"", "", availableList, assigedList);
 		serverManagementDlg.show();
 	}
 
