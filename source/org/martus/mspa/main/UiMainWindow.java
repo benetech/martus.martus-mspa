@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -319,9 +318,6 @@ public class UiMainWindow extends JFrame
 		JMenu mFile = new JMenu("File");
 		mFile.setMnemonic('f');
 		mFile.add(new MenuItemExportPublicKey(this, "Export Public Key", getDefaultDirectoryPath()));
-		mFile.addSeparator();		
-		JMenuItem item = new JMenuItem("Open");				
-		mFile.add(item);
 		mFile.addSeparator();			
 		mFile.add(new MenuItemExitApplication(this));
 		menuBar.add(mFile);
