@@ -30,7 +30,8 @@ import java.io.Serializable;
 
 public class Status implements Serializable
 {
-	public String errorMsg="";
+	public String stdErrorMsg="";
+	public String stdOutMsg="";
 	public String status="";
 	
 	public Status()
@@ -48,12 +49,34 @@ public class Status implements Serializable
 		status = returnStatus;	
 	}	
 	
-	public void setErrorMsg(String msg)
+	public void setStdErrorMsg(String msg)
 	{
-		errorMsg = msg;
+		stdErrorMsg = msg;
 	}
 	
-	public String getErrorMsg() {return errorMsg;}
+	public void setStdOutMsg(String msg)
+	{
+		stdOutMsg = msg;
+	}
+	
+	public boolean isSuccess()
+	{
+		return (status.equals(SUCCESS))?true:false;
+	}
+		
+	public String getAllMessages()
+	{
+		StringBuffer message = new StringBuffer();
+		if (stdErrorMsg != "")
+			message.append("\nstderr: ").append(stdErrorMsg);
+			
+		message.append("\nstdout: ").append(stdOutMsg);
+			
+		return message.toString();	
+	}
+	
+	public String getStdErrorMsg() {return stdErrorMsg;}
+	public String getStdOutMsg() {return stdOutMsg;}	
 	public String getStatus() {return status;}
 
 	public static final String SUCCESS = "success";

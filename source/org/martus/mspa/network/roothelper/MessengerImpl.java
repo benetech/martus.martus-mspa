@@ -25,9 +25,12 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.network.roothelper;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
@@ -71,28 +74,75 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	}
 	
 	private Status callScript(int scriptType)
-	{
-		logWhoCallThisScript(scriptType);
-		
-		Status status = new Status();
+	{					
 		switch (scriptType)
 		{
 			case SERVER_START:
+				return runExec("martus -p restart");
 			case SERVER_STOP:
+				return runExec("martus -p stop");
 			case READONLY:
+				return runExec("remountmartusdata ro");
 			case READ_WRITE:
+				return runExec("remountmartusdata rw");
 			case SERVER_STATUS:
-				break;	
+				return runExec("martus -p status");
+			default:
+			{
+				Status status = new Status(Status.FAILED);
+				status.setStdErrorMsg("Unkown script");
+				return status;
+			}		
 		}		
-		
+	}	
+	
+	private Status runExec(String callScript)
+	{
+		Status status = new Status();	
+		try
+		{
+			logWhoCallThisScript(callScript);						
+			Process process = Runtime.getRuntime().exec(callScript);
+	
+			StringBuffer errorStream = new StringBuffer();			
+			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),errorStream);
+			
+			StringBuffer outputStream = new StringBuffer(); 
+			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputStream);
+			
+			errorGobbler.start();
+			outputGobbler.start();
+			
+			if (process.waitFor() != 0)
+			{															
+				status.setStdErrorMsg(errorStream.toString());			
+				status.setStatus(Status.FAILED);
+				log(errorStream.toString());
+			}
+							
+			status.setStdOutMsg(outputStream.toString());
+			log(outputStream.toString());
+		}
+		catch (IOException e)
+		{
+			status.setStdErrorMsg(e.toString());
+			status.setStatus(Status.FAILED);
+			log("["+callScript+"] "+status.getAllMessages());
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+			log("["+callScript+"] "+e.toString());
+		}
+
 		return status;
 	}
 	
-	private void logWhoCallThisScript(int scriptType)
+	private void logWhoCallThisScript(String scriptType)
 	{
 		try
 		{
-			logger.log( "Script ("+scriptType+") has been called by " + RemoteServer.getClientHost() );
+			log( "["+scriptType+"] has been invoked by " + RemoteServer.getClientHost() );
 		}
 		catch (ServerNotActiveException e)
 		{
@@ -102,17 +152,9 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	
 	public String getInitMsg() throws RemoteException 
 	{
-		try
-		{
-			logger.log( "Init Message called by: " + RemoteServer.getClientHost() );
-		}
-		catch (ServerNotActiveException e)
-		{
-			logger.log("ServerNotActiveException: "+ e.getMessage());
-		}			
+		logWhoCallThisScript("Initialized Message");			
 		return(CONNET_MSG);
-	}
-		
+	}		
 
 	public Status getAdminFile(String key, String fileFrom, String fileTo) throws RemoteException 
 	{
@@ -126,18 +168,51 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		catch(FileNotFoundException nothingToWorryAbout)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg(fileFrom+" not found: ");				
+			status.setStdErrorMsg(fileFrom+" not found: ");				
 		}
 		catch (IOException e)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg("Error loading ("+fileFrom+")file.\n"+e.toString());				
+			status.setStdOutMsg("Error loading ("+fileFrom+")file.\n"+e.toString());				
 			e.printStackTrace();			
 		}		
 				
 		return status;
+	}
+	
+	private synchronized void log(String message)
+	{
+		logger.log(message);
 	}	
 	
+	class StreamGobbler extends Thread
+	{
+		InputStream inputStream;
+		StringBuffer rtStatus;	
+
+		StreamGobbler(InputStream is,StringBuffer status)
+		{
+			inputStream = is;					
+			rtStatus = status;
+		}
+
+		public void run()
+		{
+			try
+			{
+				InputStreamReader isReader = new InputStreamReader(inputStream);
+				BufferedReader br = new BufferedReader(isReader);
+				String line=null;				
+				while ( (line = br.readLine()) != null)
+					rtStatus.append(line).append("\n");    
+			} 
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();  
+			}
+		}
+	}
+	
 	private LoggerInterface logger;
-	public static final String CONNET_MSG = "Connected: Start remote message ...";
+	public static final String CONNET_MSG = "[MessengerImpl] Connected: Ready to invoke ...\n";
 }

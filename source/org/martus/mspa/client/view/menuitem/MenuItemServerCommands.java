@@ -26,8 +26,10 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.network.NetworkInterfaceConstants;
@@ -47,16 +49,25 @@ public class MenuItemServerCommands extends AbstractAction
 		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
 		{	
 			parent.setStatusText("Send Start command to MSPA server ...");
-			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.START_SERVER,"");
-			parent.setStatusText("Start Martus Server status: "+result);
+			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");
+			handleResults(results, "Start");			
 		}
 		
 		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
 		{	
 			parent.setStatusText("Send stop command to MSPA server ...");
-			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.STOP_SERVER,"");
-			parent.setStatusText("Stop Martus Server status: "+result);
+			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
+			handleResults(results, "Stop");
 		}	
+	}
+	
+	private void handleResults(Vector results, String type)
+	{
+		String status = (String) results.get(0);
+		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
+			JOptionPane.showMessageDialog(parent, (String) results.get(1), status, JOptionPane.ERROR_MESSAGE);
+		else
+			parent.setStatusText(type+" Martus Server status: "+status);
 	}
 	
 	UiMainWindow parent;

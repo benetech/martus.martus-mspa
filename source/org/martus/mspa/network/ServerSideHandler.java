@@ -3,6 +3,7 @@ package org.martus.mspa.network;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -13,6 +14,7 @@ import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.packet.BulletinHeaderPacket;
+import org.martus.mspa.network.roothelper.Status;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.mspa.server.MSPAServer;
 
@@ -169,11 +171,41 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return results;
 		}
+		
+		Status status = new Status();
+		try
+		{				
+			if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
+				status = server.getMessenger().startServer("");
+			else if (cmdType.equals(NetworkInterfaceConstants.STOP_SERVER))
+				status = server.getMessenger().stopServer("");
+			else if (cmdType.equals(NetworkInterfaceConstants.READ_WRITE))
+				status = server.getMessenger().setReadWrite("");
+			else if (cmdType.equals(NetworkInterfaceConstants.READ_ONLY))
+				status = server.getMessenger().setReadOnly("");
+			else
+			{
+				results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
+				return results;
+			}													
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 						
-		if (server.sendCmdToStartServer(cmdType, cmd))
+								
+		if (status.isSuccess())
+		{	
 			results.add(NetworkInterfaceConstants.OK);
+			results.add(status.getStdOutMsg());
+		}
 		else
-			results.add(NetworkInterfaceConstants.REJECTED);
+		{	
+			results.add(NetworkInterfaceConstants.EXEC_ERROR);		
+			results.add(status.getAllMessages());
+		}	
 				
 		return results;	
 	}

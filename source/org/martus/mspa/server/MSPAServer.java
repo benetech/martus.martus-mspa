@@ -30,6 +30,7 @@ import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
 import org.martus.mspa.network.roothelper.FileTransfer;
+import org.martus.mspa.network.roothelper.Messenger;
 import org.martus.mspa.network.roothelper.RootHelperConnector;
 import org.martus.util.UnicodeWriter;
 
@@ -382,27 +383,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			e.printStackTrace();
 			log("(Update Mirror Server) Problem when try to update/copy files: "+ e.toString());
 		}	
-	}
-	
-	public boolean sendCmdToStartServer(String cmdType, String cmd)
-	{
-		boolean result = true;
-		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
-		{						
-			try
-			{				
-				//send cmd to root helper...
-				rootConnector.getMessenger().startServer("");
-			}
-			catch (RemoteException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
-		
-		return result;
-	}		
+	}	
 	
 	void deleteAllFilesFromMirrorDirectory(File[] files)
 	{
@@ -413,7 +394,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	FileTransfer getFileTransfer(File from, File to)
 	{
 		return new FileTransfer(from.getPath(), to.getPath());		
-	}
+	}	
 	
 	public synchronized void updateMagicWords(Vector words)
 	{				
@@ -782,6 +763,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private void setRootHelperConnector() throws UnknownHostException, MalformedURLException, RemoteException, NotBoundException
 	{		
 		rootConnector = new RootHelperConnector(getRootHelperPortToUse());	
+		log(rootConnector.getMessenger().getInitMsg());
+	}
+	
+	public Messenger getMessenger()
+	{
+		return rootConnector.getMessenger();
 	}
 	
 	public static File getMirrorDirectory(int type)
