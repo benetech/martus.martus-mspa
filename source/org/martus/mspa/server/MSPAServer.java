@@ -308,7 +308,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File complianceFile = getMartusServerDataComplianceFile();		
 		try
 		{
-			log("Update compliance file.");
+		
+			logAction("Update compliance file", compliantsMsg);			
 			getMessenger().setReadWrite(security.getPublicKeyString());			
 			UnicodeWriter writer = new UnicodeWriter(complianceFile);
 			writer.writeln(compliantsMsg);
@@ -331,8 +332,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private void writeHiddenBulletinToFile()
 	{
 		try
-		{	
-			log("Write hidden bulletin to isHidden.txt");	
+		{		
 			getMessenger().setReadWrite(security.getPublicKeyString());			
 			File backUpFile = new File(getMartusServerDataBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
 			FileTransfer.copyFile(getHiddenPacketsFile(), backUpFile);
@@ -361,6 +361,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public synchronized boolean hideBulletins(String accountId, Vector localIds)
 	{	
 		hiddenBulletins.hideBulletins(accountId, localIds);
+		logActions("Hide Bulletins", localIds);			
 		writeHiddenBulletinToFile();		
 
 		return true;
@@ -370,7 +371,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{	
 		if (!hiddenBulletins.recoverHiddenBulletins(accountId, localIds))
 			return false;
-			
+
+		logActions("Recover Bulletins", localIds);				
 		writeHiddenBulletinToFile();	
 		return true;
 	}
@@ -386,8 +388,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);		
 		
 		try 
-		{	
-			log("Update "+destDirectory.getName());		 
+		{				
+			logActions("Update Other Server configuration <dir>"+destDirectory.getName(), mirrorInfo);					 
 			getMessenger().setReadWrite(security.getPublicKeyString());					
 			deleteAllFilesFromMirrorDirectory(destDirectory.listFiles());
 			
@@ -419,8 +421,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public synchronized void updateMagicWords(Vector words)
 	{				
 		try
-		{		
-			log("Update magicWords");	
+		{					
+			logActions("Update MagicWords", words);				
 			getMessenger().setReadWrite(security.getPublicKeyString());
 								
 			File backUpFile = new File(getMartusServerDataBackupDirectory(),getMagicWordsFile().getName() );			
@@ -469,7 +471,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{
-			log("Update configuration file: "+ file.getName());
+
 			getMessenger().setReadWrite(security.getPublicKeyString());			
 		
 			File backUpFile = new File(getMartusServerDataBackupDirectory(), file.getName());			
@@ -486,32 +488,50 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void updateBannedAccount(boolean isSelected, String accountId)
 	{			
-		if (isSelected)						
+		if (isSelected)
+		{							
 			addBannedAccount(accountId);
-		else			
+			logAction("Add banned account ", accountId);				
+		}
+		else
+		{				
 			clientsBanned.remove(accountId);
+			logAction("Remove banned account ", accountId);				
+		}
 	}
 	
 	private void updateAccountAllowedUpload(boolean isSelected, String accountId)
 	{
-		if (isSelected)						
+		if (isSelected)	
+		{						
 			addAccountAllowedUpload(accountId);
+			logAction("Add allowed upload account ", accountId);			
+		}
 		else
+		{	
 			clientsAllowedUpload.remove(accountId);
+			logAction("Remove allowed upload account ", accountId);
+		}	
 	}
 	
 	private void updateAccountSendToAmplifier(boolean isSelected, String accountId)
 	{
-		if (isSelected)		
-			clientNotSendToAmplifier.remove(accountId);	
+		if (isSelected)
+		{					
+			clientNotSendToAmplifier.remove(accountId);
+			logAction("Remove <mirrorsWhoWeCall> from directory", accountId);				
+		}	
 		else			
+		{	
 			addAccountNotSendToAmplifier(accountId);
+			logAction("Add <mirrorsWhoWeCall> to directory", accountId);
+		}
 	}
 	
 	private void addBannedAccount(String clientId)
 	{
 		if (!isAccountBanned(clientId))
-			clientsBanned.add(clientId);			
+			clientsBanned.add(clientId);
 	}
 	
 	private void addAccountAllowedUpload(String clientId)
@@ -550,6 +570,26 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public ServerSideHandler getMSPAHandler()
 	{
 		return mspaHandler;
+	}
+	
+	public void logActions(String action, Vector data)
+	{
+		String actionMsg = "["+action+"]: "; 
+		StringBuffer recordMsg = new StringBuffer();
+		recordMsg.append(actionMsg).append("\n");
+		for (int i=0;i<data.size();++i)
+		{
+			recordMsg.append("("+i+")").append((String)data.get(i)).append("\n");
+		}
+		log(recordMsg.toString());		
+	}
+	
+	public void logAction(String action, String msg)
+	{
+		String actionMsg = "["+action+"]: "; 
+		StringBuffer recordMsg = new StringBuffer();
+		recordMsg.append(actionMsg).append(msg);
+		log(recordMsg.toString());		
 	}
 	
 	public LoggerInterface getLogger()
