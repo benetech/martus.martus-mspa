@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import org.martus.common.LoggerInterface;
@@ -1005,9 +1006,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		
 		if (isSecureMode())
-			System.out.println("Running in SECURE mode");
+			System.out.println("**** Running in SECURE mode ****");
 		else
-			System.out.println("Running in INSECURE mode");
+			System.out.println("**** Running in INSECURE mode ****");
 			
 		System.out.println("");
 	}
@@ -1033,6 +1034,27 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File runningFile = new File(getTriggerDirectory(), "running");
 		return runningFile;
 	}
+	
+	private File getShutdownFile()
+	{
+		return new File(getTriggerDirectory(), SHUTDOWN_FILENAME);
+	}
+	
+	private boolean isShutdownRequested()
+	{
+		boolean exitFile = getShutdownFile().exists();
+		if(exitFile && !loggedShutdownRequested)
+		{
+			loggedShutdownRequested = true;
+			log("Exit file found, attempting to shutdown.");
+		}
+		return(exitFile);
+	}
+	
+	protected void startBackgroundTimers()
+	{
+		MartusUtilities.startTimer(new ShutdownRequestMonitor(), shutdownRequestIntervalMillis);
+	}	
 	
 	public static File getMirrorDirectory(int type)
 	{		
@@ -1080,6 +1102,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			if(!server.deleteStartupFiles())
 				System.exit(5);		
 				
+			server.startBackgroundTimers();		
 			ServerSideUtilities.writeSyncFile(server.getRunningFile(), "MSPAServer.main");
 			System.out.println("\nWaiting for connection...");	
 		
@@ -1090,6 +1113,27 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			System.exit(1);			
 		}
 	}	
+	
+	private class ShutdownRequestMonitor extends TimerTask
+	{
+		public void run()
+		{
+			if( isShutdownRequested())
+			{
+				log("Shutdown request acknowledged, preparing to shutdown.");										
+				getShutdownFile().delete();
+				log("Server has exited.");
+				try
+				{
+					System.exit(0);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 		
 	ServerSideHandler mspaHandler;
 	String ipAddress;
@@ -1110,6 +1154,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private boolean secureMode;
 	private int rootHelperPortToUse;	
 	public char[] insecurePassword;
+	private boolean loggedShutdownRequested;
 		
 	private final static String DELETE_ON_STARTUP = "deleteOnStartup";	
 	private static final String ADMINTRIGGERDIRECTORY = "adminTriggers";
@@ -1124,11 +1169,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "serverarguments.props";
 	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "clientsWhoCallUs"; 
 
+	private static final String SHUTDOWN_FILENAME = "exit";
 	private final static String KEYPAIR_FILE ="keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";
 	private final static String UNIX_MARTUS_ENVIRONMENT = "/var/MartusServer/";
 	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAServer/";
 	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAServer/";
+	private static final long shutdownRequestIntervalMillis = 1000;
 	
 	private final static int DEFAULT_PORT = 984;
 	private final static int ROOTHELPER_DEFAULT_PORT=983;
