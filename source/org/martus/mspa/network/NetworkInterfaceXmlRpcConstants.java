@@ -14,8 +14,10 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdGetMagicWordsFromMartus = "getMagicWordsFromMartus";
 	public static final String cmdUpdateMagicWords = "updateMagicWords";
 	public static final String cmdUpdateMagicWordsToMarus = "updateMagicWordsToMartus";
-	public static final String cmdGetMirrorServerList = "getMirrorServerListAccounts";
-	public static final String cmdGetAmplifierList = "getAmplifierListAccounts";
-	public static final String cmdGetClientList = "getClientListAccounts";
+	
+	public static final String cmdGetListOfServersWhoWeCall = "getServersWhoWeCallAccounts";
+	public static final String cmdGetListOfAmplifyWhoWeCall = "getAmplifyWhoCallUsAccounts";
+	public static final String cmdGetListOfServersWhoCallUs = "getServersWhoCallUsAccounts";
+	
 
 }
