@@ -1,7 +1,7 @@
 
 package org.martus.mspa.client.test;
 
-import org.martus.common.test.TestCaseEnhanced;
+import org.martus.util.TestCaseEnhanced;
 
 
 public class TestClientSideXMLRPCHandler extends TestCaseEnhanced 

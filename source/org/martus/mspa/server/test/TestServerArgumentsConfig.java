@@ -28,12 +28,12 @@ package org.martus.mspa.server.test;
 import java.io.File;
 import java.io.IOException;
 
-import org.martus.common.test.TestCaseEnhanced;
 import org.martus.mspa.network.roothelper.Messenger;
 import org.martus.mspa.network.roothelper.RootHelperConnector;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.mspa.server.LoadProperty;
 import org.martus.mspa.server.MSPAServer;
+import org.martus.util.TestCaseEnhanced;
 
 
 public class TestServerArgumentsConfig extends TestCaseEnhanced

@@ -27,8 +27,8 @@ package org.martus.mspa.client.test;
 
 import java.util.Vector;
 
-import org.martus.common.test.TestCaseEnhanced;
 import org.martus.mspa.client.core.AccountAdminOptions;
+import org.martus.util.TestCaseEnhanced;
 
 
 public class TestAccountAdminOptions extends TestCaseEnhanced 

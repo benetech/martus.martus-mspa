@@ -32,8 +32,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import org.martus.common.test.TestCaseEnhanced;
 import org.martus.mspa.server.MSPAServer;
+import org.martus.util.TestCaseEnhanced;
 
 
 public class TestRootHelperConnecter extends TestCaseEnhanced
