@@ -336,11 +336,11 @@ public class UiMainWindow extends JFrame
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVER_WHO_WE_CALL));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVER_WE_AMPLIFY));
+				ManagingMirrorServerConstants.MIRRORS_WHO_WE_CALL));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.AMP_WHO_CALLS_US));
+				ManagingMirrorServerConstants.AMPS_WHO_CALL_US));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.WHO_CALLS_US));		
+				ManagingMirrorServerConstants.MIRRORS_WHO_CALL_US));		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		

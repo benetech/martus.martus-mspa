@@ -29,16 +29,14 @@ package org.martus.mspa.client.core;
 public interface ManagingMirrorServerConstants
 {
 	public static int SERVER_WHO_WE_CALL	=100;
-	public static int SERVER_WE_AMPLIFY		=101;
-	public static int AMP_WHO_CALLS_US		=102;
-	public static int WHO_CALLS_US			=103;
-	public static int LISTEN_FOR_CLIENTS	=104;
-	
+	public static int MIRRORS_WHO_WE_CALL	=101;
+	public static int AMPS_WHO_CALL_US		=102;
+	public static int MIRRORS_WHO_CALL_US	=103;
+
 	public static String SERVER_WHO_WE_CALL_TITLE			="Server Who We Call";
-	public static String SERVER_WE_AMPLIFY_TITLE			="Server We Amplify";
-	public static String AMP_WHO_CALLS_US_TITLE				="Amplify Who Calls Us";
-	public static String WHO_CALLS_US_TITLE					="Who Calls Us";
-	public static String LISTEN_FOR_CLIENT_TITLE			="Listen for Clients";
+	public static String MIRRORS_WHO_WE_CALL_TITLE			="Mirrors Who We Call";
+	public static String AMPS_WHO_CALL_US_TITLE				="Amplify Who Call Us";
+	public static String MIRRORS_WHO_CALL_US_TITLE			="Mirrors Who Call Us";
 	
 	public static String SERVER_WHO_WE_CALL_HEADER			="Backup My Data to Other Servers";
 	public static String SERVER_WHO_WE_CALL_ALLOWED_LABEL	="Can Backup My Data:";
@@ -48,8 +46,6 @@ public interface ManagingMirrorServerConstants
 	public static String AMP_WHO_WE_CALL_ALLOWED_LABEL		="Amplier Data:";
 	public static String WHO_CALLS_US_HEADER				="Act as A Backup For Other Servers";
 	public static String WHO_CALLS_US_ALLOWED_LABEL			="Can Upload Data";	
-	public static String LISTEN_FOR_CLIENT_HEADER			="Act as a server to Listen for Clients";
-	public static String LISTEN_FOR_CLIENT_ALLOWED_LABEL	="Active Magic Words:";
 	
 	public static String AVAILABLE_SERVER_LABEL				="Available Servers:";
 	public static String AVAILABLE_MAGIC_LABEL				="Available Magic Words:";	

@@ -55,8 +55,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private void initializedEnvironmentDirectory()
 	{
 		getServerWhoWeCallDirectory().mkdirs();
-		getServerWhoCallUsDirectory().mkdirs();
-		getAmplifyWhoCallUsDirectory().mkdirs();
+		getMirrorServerWhoCallUsDirectory().mkdirs();
+		getMirrorServerWhoWeCallDirectory().mkdirs();
+		getAmpsWhoCallUsDirectory().mkdirs();
 		getAvailableMirrorServerDirectory().mkdirs();
 		getMartusServerDataDirectory().mkdirs();
 		
@@ -228,14 +229,19 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getMartusServerDataDirectory(),"serversWhoWeCall");
 	}
 	
-	public static File getServerWhoCallUsDirectory()
+	public static File getMirrorServerWhoCallUsDirectory()
 	{
 		return new File(getMartusServerDataDirectory(),"mirrorsWhoCallUs");
 	}
 	
-	public static File getAmplifyWhoCallUsDirectory()
+	public static File getMirrorServerWhoWeCallDirectory()
 	{
-		return new File(getMartusServerDataDirectory(),"ampWhoCallUs");
+		return new File(getMartusServerDataDirectory(),"mirrorsWhoWeUs");
+	}
+	
+	public static File getAmpsWhoCallUsDirectory()
+	{
+		return new File(getMartusServerDataDirectory(),"ampsWhoCallUs");
 	}
 	
 	public static File getAvailableMirrorServerDirectory()
@@ -463,7 +469,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		catch (Exception ieo)
 		{	
-			logger.log(file.getPath()+" file not found."+ ieo.toString());		
+			log(file.getPath()+" file not found."+ ieo.toString());		
 		}
 	}	
 	
@@ -782,11 +788,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{		
 		if (type == ManagingMirrorServerConstants.SERVER_WHO_WE_CALL)
 			return getServerWhoWeCallDirectory();
-		
-		if (type == ManagingMirrorServerConstants.WHO_CALLS_US)
-			return getServerWhoCallUsDirectory();
-			
-		return getAmplifyWhoCallUsDirectory();		
+		else if (type == ManagingMirrorServerConstants.MIRRORS_WHO_CALL_US)
+			return getMirrorServerWhoCallUsDirectory();
+		else if (type == ManagingMirrorServerConstants.AMPS_WHO_CALL_US)
+			return getAmpsWhoCallUsDirectory();	
+
+		return getMirrorServerWhoWeCallDirectory();		
 	}	
 	
 	public static void main(String[] args)

@@ -48,13 +48,11 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.core.MirrorServerLabelFinder;
 import org.martus.mspa.client.core.MirrorServerLabelInfo;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.Utilities;
-
 
 public class ManagingMirrorServersDlg extends JDialog
 {
@@ -95,9 +93,8 @@ public class ManagingMirrorServersDlg extends JDialog
 		mirrorServerName = new JTextField(20);
 		panel.add(new JLabel("Server Name: "), ParagraphLayout.NEW_PARAGRAPH);	
 		panel.add(mirrorServerName);			
-		
-		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)				
-			collectMirrorInfo(panel);
+				
+		collectMirrorInfo(panel);
 		
 		return panel;				
 	}	
@@ -129,8 +126,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(getShiftButtons());
 		panel.add(getAllowedPanel());
 		
-		if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)	
-			configureTabList();	
+		configureTabList();	
 
 		return panel;
 	}
@@ -342,25 +338,8 @@ public class ManagingMirrorServersDlg extends JDialog
 			for (int i=0;i<items.length;i++)
 				itemCollection.add(items[i]);
 				
-			if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
-			{									
-				items = availableListModel.toArray();	
-				for (int i=0;i<items.length;i++)
-				{
-					String itemString = (String) items[i];
-					if (serverManageType == MirrorServerLabelFinder.LISTEN_FOR_CLIENTS)	
-							itemCollection.add("#"+itemString);
-					else
-						itemCollection.add(itemString);
-				}							
-				parent.getMSPAApp().updateMagicWords(itemCollection);
-				postStatus("Update Magiewords: ");
-			}
-			else
-			{					
-				parent.getMSPAApp().updateManageMirrorAccounts(itemCollection, serverManageType);
-				postStatus("Update manage mirror accounts: ");
-			}
+			parent.getMSPAApp().updateManageMirrorAccounts(itemCollection, serverManageType);
+			postStatus("Update manage mirror accounts: ");
 		
 			dispose();							
 		}

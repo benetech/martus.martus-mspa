@@ -30,7 +30,6 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 
-import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.core.MirrorServerLabelFinder;
 import org.martus.mspa.client.view.ManagingMirrorServersDlg;
 import org.martus.mspa.main.UiMainWindow;
@@ -45,16 +44,8 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
-	{						
-		if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
-		{			
-			availableList = parent.getMSPAApp().getInactiveMagicWords();
-			assignedList  = parent.getMSPAApp().getActiveMagicWords();
-		}
-		else
-		{			
-			getMirrorServers(parent.getMSPAApp().getAvailableAccounts());		
-		}			
+	{							
+		getMirrorServers(parent.getMSPAApp().getAvailableAccounts());					
 			
 		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, 
 					serverManageType, "", "", availableList, assignedList);
