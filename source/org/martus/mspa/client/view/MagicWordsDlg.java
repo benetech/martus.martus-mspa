@@ -14,7 +14,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -42,7 +41,7 @@ public class MagicWordsDlg extends JDialog
 {
 	public MagicWordsDlg(UiMainWindow owner, Vector magicWords)
 	{
-		super((JFrame)owner, "Magic Words", true);		
+		super(owner, "Magic Words", true);		
 		parent = owner;				
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		

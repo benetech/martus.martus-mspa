@@ -45,45 +45,45 @@ public class LoadMartusServerArguments extends LoadProperty
 	
 	public String getListenerIP()
 	{
-		return (String) getValue(LISTENER_IP);
+		return getValue(LISTENER_IP);
 	}
 	
 	public String getPassword()
 	{
-		return (String) getValue(PASSWORD);
+		return getValue(PASSWORD);
 	}
 	
 	public String getAmplifierIP()
 	{
-		return (String) getValue(AMPLIFIER_IP);
+		return getValue(AMPLIFIER_IP);
 	}
 	
 	public String getMinutes()
 	{
-		return (String) getValue(AMPLIFIER_INDEXING_MINUTES);		
+		return getValue(AMPLIFIER_INDEXING_MINUTES);		
 	}
 	
 	public boolean getAmplifierStatus()
 	{
-		String status = (String) getValue(AMPLIFIER);
+		String status = getValue(AMPLIFIER);
 		return status.equalsIgnoreCase("yes")?true:false;			
 	}
 	
 	public boolean getClientListenerStatus()
 	{
-		String status = (String)getValue(CLIENT_LISTENER);
+		String status = getValue(CLIENT_LISTENER);
 		return status.equalsIgnoreCase("yes")?true:false;
 	}
 	
 	public boolean getMirrorListenerStatus()
 	{
-		String status = (String)getValue(MIRROR_LISTENER);
+		String status = getValue(MIRROR_LISTENER);
 		return status.equalsIgnoreCase("yes")?true:false;
 	}
 	
 	public boolean getAmplifierListenerStatus()
 	{
-		String status = (String)getValue(AMPLIFIER_LISTENER);
+		String status = getValue(AMPLIFIER_LISTENER);
 		return status.equalsIgnoreCase("yes")?true:false;
 	}	
 	

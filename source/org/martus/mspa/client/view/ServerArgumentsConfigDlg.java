@@ -36,7 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,7 +54,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 {
 	public ServerArgumentsConfigDlg(UiMainWindow owner)
 	{
-		super((JFrame)owner, "Martus Server Arguments Configuration", true);		
+		super(owner, "Martus Server Arguments Configuration", true);		
 		parent = owner;				
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		

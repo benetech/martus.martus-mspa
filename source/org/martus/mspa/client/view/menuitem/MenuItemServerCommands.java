@@ -75,7 +75,7 @@ public class MenuItemServerCommands extends AbstractAction
 		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
 		{	
 			parent.setStatusText(type+" Martus Server status: failed");
-			JOptionPane.showMessageDialog(parent, (String) results.get(1), status, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
 			parent.setStatusText("");			
 		}
 		else

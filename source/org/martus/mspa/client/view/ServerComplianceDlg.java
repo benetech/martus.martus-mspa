@@ -35,7 +35,6 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -51,7 +50,7 @@ public class ServerComplianceDlg extends JDialog
 {
 	public ServerComplianceDlg(UiMainWindow owner, String compliants)
 	{
-		super((JFrame)owner, "View Server Compliance", true);	
+		super(owner, "View Server Compliance", true);	
 		parent = owner;				
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
