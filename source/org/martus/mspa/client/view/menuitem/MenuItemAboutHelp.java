@@ -23,30 +23,28 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.client.view;
+package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import org.martus.mspa.client.view.AboutDlg;
 import org.martus.mspa.main.UiMainWindow;
 
 
-public class MenuItemMartusServerArgumentsConfig extends AbstractAction
+public class MenuItemAboutHelp extends AbstractAction
 {
-	public MenuItemMartusServerArgumentsConfig(UiMainWindow mainWindow, String label)
+	public MenuItemAboutHelp(UiMainWindow mainWindow, String label)
 	{
-		super(label);	
+		super(label);		
 		parent = mainWindow;
-		
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
-	{								
-		ServerArgumentsConfigDlg dlg = new ServerArgumentsConfigDlg(parent);
-		dlg.show();
-
+	{						
+		new AboutDlg(parent);
+		
 	}
-	
-	UiMainWindow parent;	
+	UiMainWindow parent;		
 }

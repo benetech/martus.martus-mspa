@@ -39,7 +39,7 @@ public class EnglishStrings
 "wintitle:notifyPasswordInvalid=Invalid Setup Information",
 "wintitle:notifyPasswordMatchesUserName=Invalid Setup Information",
 "wintitle:confirmWarningSwitchToNormalKeyboard=Security Warning",
-
+"wintitle:about=About Martus Policy Administor Application (MSPA)",
 
 "button:VirtualKeyboardSwitchToNormal=Switch to using regular keyboard",
 "button:VirtualKeyboardSwitchToVirtual=Switch to using on-screen keyboard",
@@ -69,7 +69,10 @@ public class EnglishStrings
 "field:timedout1=For security reasons, you must sign into MSPA again.",
 
 "field:password1=Password",
-"field:password2=(same password again)"
+"field:password2=(same password again)",
+
+"field:aboutDlgVersionInfo=software version",
+"field:aboutDlgBuildDate=Built on",
 
 	};	
 }

@@ -1,11 +1,12 @@
 
-package org.martus.mspa.client.view;
+package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
 
+import org.martus.mspa.client.view.MagicWordsDlg;
 import org.martus.mspa.main.UiMainWindow;
 
 

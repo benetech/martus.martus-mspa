@@ -34,18 +34,19 @@ import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
-import org.martus.mspa.client.view.MenuItemExitApplication;
-import org.martus.mspa.client.view.MenuItemManageMagicWords;
-import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
-import org.martus.mspa.client.view.MenuItemMartusServerArgumentsConfig;
-import org.martus.mspa.client.view.MenuItemServerCommands;
+import org.martus.mspa.client.view.menuitem.MenuItemAboutHelp;
+import org.martus.mspa.client.view.menuitem.MenuItemExitApplication;
+import org.martus.mspa.client.view.menuitem.MenuItemManageMagicWords;
+import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
+import org.martus.mspa.client.view.menuitem.MenuItemMartusServerArgumentsConfig;
+import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.swing.Utilities;
 
 public class UiMainWindow extends JFrame
 {
 	public UiMainWindow()
 	{		
-		super("Martus Server Policy Administrator (MSPA)");		
+		super("Martus Server Policy Administrator (MSPA)");	
 		
 		try
 		{			
@@ -69,7 +70,7 @@ public class UiMainWindow extends JFrame
 			localization.addTranslation(Localization.ENGLISH, EnglishStrings.strings[i]);
 		}					
 		localization.currentLanguageCode = Localization.ENGLISH;
-	}	
+	}		
 	
 	public UiBasicLocalization getLocalization()
 	{
@@ -104,7 +105,7 @@ public class UiMainWindow extends JFrame
 		setSize(800, 680);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
-		mainPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));
+		mainPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));		
 	
 		JMenuBar menuBar = createMenuBar();
 		setJMenuBar(menuBar);
@@ -283,6 +284,7 @@ public class UiMainWindow extends JFrame
 						
 		JMenu mHelp = new JMenu("Help");
 		mHelp.setMnemonic('h');
+		mHelp.add(new MenuItemAboutHelp(this, "About MSPA"));
 		menuBar.add(mHelp);
 		
 		return menuBar;

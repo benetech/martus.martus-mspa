@@ -23,7 +23,7 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.client.view;
+package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
 import java.util.Vector;
@@ -32,6 +32,7 @@ import javax.swing.AbstractAction;
 
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.core.MirrorServerLabelFinder;
+import org.martus.mspa.client.view.ManagingMirrorServersDlg;
 import org.martus.mspa.main.UiMainWindow;
 
 public class MenuItemManagingMirrorServers extends AbstractAction

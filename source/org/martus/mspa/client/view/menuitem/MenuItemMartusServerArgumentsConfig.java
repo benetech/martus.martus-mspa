@@ -23,42 +23,31 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.client.view;
+package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import org.martus.mspa.client.view.ServerArgumentsConfigDlg;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.mspa.network.NetworkInterfaceConstants;
 
 
-public class MenuItemServerCommands extends AbstractAction
+public class MenuItemMartusServerArgumentsConfig extends AbstractAction
 {
-	public MenuItemServerCommands(UiMainWindow mainWindow, String type)
+	public MenuItemMartusServerArgumentsConfig(UiMainWindow mainWindow, String label)
 	{
-		super(type);	
+		super(label);	
 		parent = mainWindow;
-		menuType = type;		
+		
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
-	{
-		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
-		{	
-			parent.setStatusText("Send Start command to MSPA server ...");
-			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.START_SERVER,"");
-			parent.setStatusText("Start Martus Server status: "+result);
-		}
-		
-		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
-		{	
-			parent.setStatusText("Send stop command to MSPA server ...");
-			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.STOP_SERVER,"");
-			parent.setStatusText("Stop Martus Server status: "+result);
-		}	
+	{								
+		ServerArgumentsConfigDlg dlg = new ServerArgumentsConfigDlg(parent);
+		dlg.show();
+
 	}
 	
-	UiMainWindow parent;
-	String menuType;	
+	UiMainWindow parent;	
 }
