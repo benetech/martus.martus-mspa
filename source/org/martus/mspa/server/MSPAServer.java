@@ -23,7 +23,6 @@ import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
-import org.martus.mspa.network.NetworkInterface;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
@@ -170,6 +169,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return serverDirectory;
 	}		
 	
+	private File getHiddenPacketsFile()
+	{
+		return new File(getConfigDirectory(), HIDDEN_PACKETS_FILENAME);
+	}
+	
 	public static File getServerWhoWeCallDirectory()
 	{
 		return new File(getAppDirectoryPath(),"ServersWhoWeCall");
@@ -226,10 +230,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}	
 	}
 	
-	public boolean sendCmdToStartServer(int cmdType)
+	public boolean sendCmdToStartServer(String cmdType)
 	{
 		boolean result = true;
-		if (cmdType == NetworkInterface.COMMAND_START_SERVER)
+		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
 		{			
 			result = copyAllManageFilesToMartusDeleteOnStart();
 			//send cmd to root helper...
@@ -342,13 +346,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{	
 			logger.log(file.getPath()+" file not found."+ ieo.toString());		
 		}
-	}
-	
-	public String getNumOfHiddenBulletins(String accountId)
-	{	
-		String numOfHiddenBulletins="0";
-		return numOfHiddenBulletins;
-	}
+	}	
 	
 	private void updateBannedAccount(boolean isSelected, String accountId)
 	{
@@ -578,6 +576,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
 	private static final String BANNEDCLIENTS_FILENAME = "banned.txt";
 	private static final String UPLOADSOK_FILENAME = "uploadsok.txt";
+	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 

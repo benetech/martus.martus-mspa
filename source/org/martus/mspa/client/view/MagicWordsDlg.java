@@ -66,7 +66,7 @@ public class MagicWordsDlg extends JDialog
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Manage Magic Word and Group"));
-		panel.setLayout(new ParagraphLayout());	
+		panel.setLayout(new ParagraphLayout());
 				
 		addMagicWordsField = new JTextField(20);
 		addMagicWordsField.requestFocus();	

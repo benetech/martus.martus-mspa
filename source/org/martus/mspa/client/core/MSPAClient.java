@@ -216,7 +216,7 @@ public class MSPAClient
 		return new Vector();
 	}	
 	
-	public String sendCmdToServer(int cmdType)
+	public String sendCmdToServer(String cmdType)
 	{
 		String msg = "";
 		try
@@ -447,6 +447,4 @@ public class MSPAClient
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private static final String SERVER_WHO_WE_CALL_DIRIRECTORY = "serverToCall";
 	
-	public static final String draftQuarantinePrefix = "qd-p";
-	public static final String sealedQuarantinePrefix = "qs-p";
 }

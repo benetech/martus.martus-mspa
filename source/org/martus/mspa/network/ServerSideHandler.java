@@ -150,7 +150,7 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
-	public Vector sendCommandToServer(String myAccountId, int cmdType) throws IOException
+	public Vector sendCommandToServer(String myAccountId, String cmdType) throws IOException
 	{
 		Vector results = new Vector();		
 			
@@ -160,15 +160,36 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.REJECTED);
 				
 		return results;	
-	}
+	}	
 	
 	public Vector getNumOfHiddenBulletins(String myAccountId) 
 	{
-		Vector results = new Vector();				
-		String hiddenBulletins = server.getNumOfHiddenBulletins(myAccountId);
+		class Collector implements Database.PacketVisitor
+		{
+			public void visit(DatabaseKey key)
+			{
+				try
+				{					
+					if (server.getDatabase().isHidden(key))
+					{					
+						++numOfHiddens;
+					}		
+				}
+				catch (Exception e)
+				{		
+					server.getLogger().log("ListBulletins: Problem when visited record for account."+ e.toString());
+				}
+			}			
+			int numOfHiddens=0;
+		}		
 		
+		Collector collector = new Collector();		
+		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);
+		String numOfHiddens = new Integer(collector.numOfHiddens).toString();
+		
+		Vector results = new Vector();								
 		results.add(NetworkInterfaceConstants.OK);
-		results.add(hiddenBulletins);		
+		results.add(numOfHiddens);		
 
 		return results;		
 	}

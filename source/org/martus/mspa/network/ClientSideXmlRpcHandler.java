@@ -60,11 +60,11 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdUpdateAccountManageInfo, params);
 	}
 	
-	public Vector sendCommandToServer(String myAccountId, int cmdType) throws IOException
+	public Vector sendCommandToServer(String myAccountId, String cmdType) throws IOException
 	{
 		Vector params = new Vector();
 		params.add(myAccountId);		
-		params.add(new Integer(cmdType));
+		params.add(cmdType);
 		return (Vector)callServer(cmdSendCommandToServer, params);
 	}	
 	

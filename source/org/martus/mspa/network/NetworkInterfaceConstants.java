@@ -16,4 +16,7 @@ public class NetworkInterfaceConstants
 	public static final String NOT_FOUND = "not found";
 	public static final String REJECTED = "account rejected";	
 	
+	public static final String START_SERVER= "Start";
+	public static final String STOP_SERVER = "Stop";
+	
 }

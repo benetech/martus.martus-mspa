@@ -78,17 +78,29 @@ public class UiMainWindow extends JFrame
 	public boolean run()	
 	{
 		int result = signIn(UiBasicSigninDlg.INITIAL); 
-	
-		if(result == UiBasicSigninDlg.CANCEL)
-			return false;
+		int loginTimes=0;
+		while (result != UiBasicSigninDlg.SIGN_IN)
+		{	
+			if(result == UiBasicSigninDlg.CANCEL)
+				return false;
+				
+			if (loginTimes > 2)	
+			{
+				String msg = "Login Failed. Exit application.";
+				initializationErrorDlg(msg);	
+				return false;
+			}	
 			
-		if (result != UiBasicSigninDlg.SIGN_IN)
-		{
-			String msg = "User Name and Passphrase not match.";
-			initializationErrorDlg(msg);					
+			if (result != UiBasicSigninDlg.SIGN_IN)
+			{
+				String msg = "User Name and Passphrase not match.";
+				initializationErrorDlg(msg);					
+			}
+			result = signIn(UiBasicSigninDlg.INITIAL);
+			++loginTimes; 
 		}				
 		
-		setSize(800, 650);
+		setSize(800, 680);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));
@@ -200,7 +212,6 @@ public class UiMainWindow extends JFrame
 				 JOptionPane.DEFAULT_OPTION, null, buttons);
 		JDialog dialog = pane.createDialog(null, title);
 		dialog.show();
-		System.exit(1);
 	}
 	
 

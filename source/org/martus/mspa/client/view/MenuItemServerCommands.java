@@ -30,7 +30,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.mspa.network.NetworkInterface;
+import org.martus.mspa.network.NetworkInterfaceConstants;
 
 
 public class MenuItemServerCommands extends AbstractAction
@@ -47,14 +47,14 @@ public class MenuItemServerCommands extends AbstractAction
 		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
 		{	
 			parent.setStatusText("Send start command to MSPA server ...");
-			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterface.COMMAND_START_SERVER);
+			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.START_SERVER);
 			parent.setStatusText("Start Martus Server Status: "+result);
 		}
 		
 		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
 		{	
 			parent.setStatusText("Send stop command to MSPA server ...");
-			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterface.COMMAND_STOP_SERVER);
+			String result = parent.getMSPAApp().sendCmdToServer(NetworkInterfaceConstants.STOP_SERVER);
 			parent.setStatusText("Stop Martus Server status: "+result);
 		}	
 	}

@@ -171,14 +171,13 @@ public class AccountDetailPanel extends JPanel
 	
 	private JPanel buildButtonsPanel()
 	{
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel();	
 		panel.setLayout(new FlowLayout());
-		viewBulletins = new JButton("View Bulletins");
-		viewBulletins.addActionListener(new CommitButtonHandler());	
-		panel.add(viewBulletins);
+				
 		viewActivity = new JButton("View Activity");
 		viewActivity.addActionListener(new CommitButtonHandler());	
-		panel.add(viewActivity);
+		panel.add(viewActivity);					
+		
 		viewStatistics = new JButton("View Statistics");
 		viewStatistics.addActionListener(new CommitButtonHandler());
 		panel.add(viewStatistics);
@@ -219,7 +218,19 @@ public class AccountDetailPanel extends JPanel
 		bulletinListModel = loadElementsToList(bulletinsIds);
 		bulletinList = new JList(bulletinListModel);
 		bulletinList.setFixedCellWidth(220);
-		configureTabList();   
+		configureTabList();
+		
+		JPanel buttonPanel = new JPanel();
+		FlowLayout layout = new FlowLayout();
+		layout.setAlignment(FlowLayout.RIGHT);
+		buttonPanel.setLayout(layout);
+		
+		viewBulletins = new JButton("View Bulletin");
+		viewBulletins.addActionListener(new CommitButtonHandler());	
+		buttonPanel.add(viewBulletins);
+		delBulletins = new JButton("Delete Bulletin");
+		delBulletins.addActionListener(new CommitButtonHandler());	
+		buttonPanel.add(delBulletins);		
 
 		JScrollPane ps = createScrollPane();
 		ps.setPreferredSize(new Dimension(220, 150));
@@ -228,6 +239,7 @@ public class AccountDetailPanel extends JPanel
 		ps.getViewport().add(bulletinList);	
 
 		panel.add(ps, BorderLayout.CENTER);
+		panel.add(buttonPanel, BorderLayout.SOUTH);
 
 		return panel;
 	}	
@@ -258,11 +270,18 @@ public class AccountDetailPanel extends JPanel
 		public void actionPerformed(ActionEvent ae)
 		{
 			if (ae.getSource().equals(saveButton))				
-				handleConfigurationAccountInfo();			
-			
+				handleConfigurationAccountInfo();
+
+			if (ae.getSource().equals(delBulletins))				
+				handleDeleteBulletin();				
 		}
 
 		private void handleConfigurationAccountInfo()
+		{								
+			mspaApp.updateAccountManageInfo(accountId, admOptions.getOptions());			
+		}
+
+		private void handleDeleteBulletin()
 		{								
 			mspaApp.updateAccountManageInfo(accountId, admOptions.getOptions());			
 		}
@@ -279,6 +298,7 @@ public class AccountDetailPanel extends JPanel
 	JCheckBox amp;
 	
 	JButton viewBulletins;
+	JButton delBulletins;
 	JButton viewActivity;
 	JButton viewStatistics;
 
