@@ -1007,7 +1007,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAServer/";
 	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAServer/";
 	
-	private final static int DEFAULT_PORT = 443;
-	private final static int ROOTHELPER_DEFAULT_PORT=1099;
+	private final static int DEFAULT_PORT = 984;
+	private final static int ROOTHELPER_DEFAULT_PORT=983;
 	
 }
