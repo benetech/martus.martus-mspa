@@ -66,11 +66,13 @@ public class Status implements Serializable
 		
 	public String getAllMessages()
 	{
+		String newLine = System.getProperty("line.separator");
 		StringBuffer message = new StringBuffer();
 		if (stdErrorMsg != "")
-			message.append("\nstderr: ").append(stdErrorMsg);
+			message.append(newLine).append("stderr: ").append(stdErrorMsg);
 			
-		message.append("\nstdout: ").append(stdOutMsg);
+		if (stdOutMsg != "")	
+			message.append(newLine).append("stdout: ").append(stdOutMsg);
 			
 		return message.toString();	
 	}
