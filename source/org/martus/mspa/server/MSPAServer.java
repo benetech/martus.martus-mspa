@@ -208,9 +208,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void loadConfigurationFiles()
 	{						
-		clientsBanned = MartusUtilities.loadBannedClients(getBannedFile());
-		clientsAllowedUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
-		clientNotSendToAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
+		clientsBanned = MartusUtilities.loadClientListAndExitOnError(getBannedFile());
+		clientsAllowedUpload = MartusUtilities.loadClientList(getAllowUploadFile());		
+		clientNotSendToAmplifier = MartusUtilities.loadClientListAndExitOnError(getClientsNotToAmplifiyFile());
 				
 		hiddenBulletins = new HiddenBulletins(getDatabase(),security, getLogger(), getHiddenPacketsFile());
 		loadAuthorizedClients();
