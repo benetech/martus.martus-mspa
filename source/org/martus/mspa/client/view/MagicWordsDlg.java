@@ -24,6 +24,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
@@ -107,6 +109,7 @@ public class MagicWordsDlg extends JDialog
 		fTable.setAutoCreateColumnsFromModel(false);
 		fTable.setModel(fData); 
 		fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
+		fTable.getSelectionModel().addListSelectionListener(new SelectionListener(fTable));    		
 
 		for (int k = 0; k < MagicWordColumnInfo.m_columns.length; k++) 
 		{		
@@ -212,6 +215,26 @@ public class MagicWordsDlg extends JDialog
 		return result;    
 	}
 	
+	class SelectionListener implements ListSelectionListener 
+	{		
+		SelectionListener(JTable table) 
+		{
+			this.table = table;
+		}
+		public void valueChanged(ListSelectionEvent e) 
+		{			
+			if (e.getSource() == table.getSelectionModel()&& table.getRowSelectionAllowed()) 
+			{	
+				int row = table.getSelectedRow();
+				String word = (String) fData.getValueAt(row, MagicWordColumnInfo.COL_WORD);
+				String group = (String) fData.getValueAt(row, MagicWordColumnInfo.COL_GROUPNAME);
+				addMagicWordsField.setText(word);
+				groupComboField.setSelectedItem(group);
+			}
+		}
+		JTable table;		
+	}
+	
 	class MagicWordButtonHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
@@ -231,14 +254,15 @@ public class MagicWordsDlg extends JDialog
 			
 			if (row < 0)
 			{
-				JOptionPane.showMessageDialog(parent, "There is no magic word selected from list.", "", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "There is no magic word selected from list.", "Update Magic Word", JOptionPane.INFORMATION_MESSAGE);
 				return;
+			}				
+
+			if (!fData.update(row, word, assignedGroup))
+			{
+				JOptionPane.showMessageDialog(parent, "Modify the existing magic word is not allow at this time.", "Update Magic Word", JOptionPane.WARNING_MESSAGE);
 			}	
 			
-			if (!verifyMagicWord(word))
-				return;
-
-			fData.update(row, word, assignedGroup);
 			fTable.tableChanged(new TableModelEvent(
 			  fData, row, row, TableModelEvent.ALL_COLUMNS,TableModelEvent.UPDATE)); 
 			fTable.repaint();

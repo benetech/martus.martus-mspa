@@ -216,28 +216,28 @@ public class MagicWordTableData extends AbstractTableModel
 		rowDataList.insertElementAt(new MagicWordData(getToday(), false,word, group), row);
 	}
 	  
-	public void update(int row, String word, String group)
+	public boolean update(int row, String word, String group)
 	{
+		boolean success=true;
 		if (row < 0)
 		  row = 0;
 		  
 		if (row > rowDataList.size())
-		  row = rowDataList.size();
-		  
-		if (containMagicWord(word))
-			return;	
+		  row = rowDataList.size();		  
 	
 		MagicWordData selectedData = (MagicWordData) rowDataList.get(row);
-		if (word != null && word.length()>=1)
-			selectedData.fWord = word;
+		if (!selectedData.fWord.equals(word))
+			success = false;
 
 		if (group != null && group.length()>=1)
 			selectedData.fGroup = group;
 		
 		rowDataList.setElementAt(selectedData, row);
 
-		if (isValidGroupName(group))
-			groupList.add(group);							
+		if (!isValidGroupName(group))
+			groupList.add(group);	
+			
+		return success;							
 	}
 
 	public boolean delete(int row) 
