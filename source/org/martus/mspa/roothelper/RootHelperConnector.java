@@ -23,28 +23,43 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.network.roothelper;
+package org.martus.mspa.roothelper;
 
-import java.rmi.Remote;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 
-public interface Messenger extends Remote 
+public class RootHelperConnector
 {
-	public Status startServer(String accountKey) throws RemoteException;
-	public Status stopServer(String accountKey) throws RemoteException;
-	public Status getStatus(String accountKey, int statusType) throws RemoteException;
-	public Status setReadOnly(String accountKey) throws RemoteException;
-	public Status setReadWrite(String accountKey) throws RemoteException;
-		
-	public Status getAdminFile(String accountKey, String fileFrom, String fileTo) throws RemoteException;
+	public RootHelperConnector(int portToUse) 
+	{			
+		try
+		{	
+			Registry registry = LocateRegistry.getRegistry( portToUse );							
+			String hostToBind = "//"+DEFAULT_HOSTNAME_TO_BIND+":"+portToUse+"/RootHelper";
+			System.out.println("Lookup RootHelper connector from registry: "+ hostToBind);			
+			messenger = (Messenger)registry.lookup(hostToBind);
+			System.out.println("\n");
+		}
+		catch (RemoteException e)
+		{	
+			System.out.println("Lookup status: failled ...");		
+			e.printStackTrace();			
+		}
+		catch (NotBoundException e)
+		{
+			System.out.println("Lookup status: failled ...");	
+			e.printStackTrace();
+		}			
+	}	
 	
-	public String getInitMsg() throws RemoteException;
-
+	public Messenger getMessenger()
+	{
+		return messenger;
+	}		
+		
+	Messenger messenger;
+	private final static String DEFAULT_HOSTNAME_TO_BIND = "127.0.0.1";
 }
-
-
-
-
-
-

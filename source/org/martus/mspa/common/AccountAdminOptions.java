@@ -1,5 +1,5 @@
 
-package org.martus.mspa.client.core;
+package org.martus.mspa.common;
 
 import java.util.Vector;
 

@@ -1,5 +1,5 @@
 
-package org.martus.mspa.network;
+package org.martus.mspa.common.network;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.martus.common.bulletin.BulletinConstants;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.packet.BulletinHeaderPacket;
-import org.martus.mspa.network.roothelper.Status;
+import org.martus.mspa.roothelper.Status;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.mspa.server.MSPAServer;
 

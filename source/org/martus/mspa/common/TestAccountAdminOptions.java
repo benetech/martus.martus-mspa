@@ -23,11 +23,10 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.client.test;
+package org.martus.mspa.common;
 
 import java.util.Vector;
 
-import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.util.TestCaseEnhanced;
 
 

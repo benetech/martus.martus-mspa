@@ -23,7 +23,7 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-package org.martus.mspa.network.roothelper;
+package org.martus.mspa.roothelper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,8 +31,11 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.TimerTask;
 
 import org.martus.common.LoggerInterface;
+import org.martus.common.LoggerToConsole;
+import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
 import org.martus.util.UnicodeReader;
 
@@ -41,6 +44,7 @@ public class RootHelper
 {
 	public RootHelper(String[] args, final String passphrase)
 	{			
+		logger = new LoggerToConsole();	
 		processCommandLine(args);		
 		try 
 		{		
@@ -51,15 +55,17 @@ public class RootHelper
 			registry.bind(hostname, localObject);			
 			System.out.println("Port to use for clients: "+ portToUse);							  
 			System.out.println("MessengerImpl object has been bound in the registry");
+			
+			startBackgroundTimers();	
 		} 
 		catch(RemoteException re) 
 		{
-		   	logger.log("RemoteExecption: "+re.getMessage());
+		   	log("RemoteExecption: "+re.getMessage());
 		}
 		catch (AlreadyBoundException e)
 		{
 			e.printStackTrace();
-			logger.log("Port already bound: "+ e.getMessage());
+			log("Port already bound: "+ e.getMessage());
 		}
 	}
 
@@ -95,7 +101,39 @@ public class RootHelper
 	private void setPortToUse(int port)
 	{
 		portToUse = port;
-	}	
+	}
+	
+	public synchronized void log(String message)
+	{
+		logger.log(message);
+	}
+
+	
+	public File getTriggerDirectory()
+	{
+		return new File(getRootHelperDirectory(), ADMINTRIGGERDIRECTORY);
+	}
+	
+	public File getShutdownFile()
+	{
+		return new File(getTriggerDirectory(), SHUTDOWN_FILENAME);
+	}
+	
+	public boolean isShutdownRequested()
+	{
+		boolean exitFile = getShutdownFile().exists();
+		if(exitFile && !loggedShutdownRequested)
+		{
+			loggedShutdownRequested = true;
+			log("Exit file found, attempting to shutdown.");
+		}
+		return(exitFile);
+	}
+	
+	protected void startBackgroundTimers()
+	{
+		MartusUtilities.startTimer(new ShutdownRequestMonitor(), shutdownRequestIntervalMillis);
+	}		
 	
 	private void processCommandLine(String[] args) 
 	{			
@@ -134,14 +172,39 @@ public class RootHelper
 		
 		new RootHelper(args, passphrase);
 	}	
+	
+	private class ShutdownRequestMonitor extends TimerTask
+	{
+		public void run()
+		{
+			if( isShutdownRequested())
+			{
+				log("Shutdown request acknowledged, preparing to shutdown.");										
+				getShutdownFile().delete();
+				log("RootHelper has exited.");
+				try
+				{
+					System.exit(0);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 		
 	private int portToUse = DEFAULT_PORT;	
 	private String hostToBind=DEFAULT_HOSTNAME_TO_BIND;
 	private LoggerInterface logger;
+	private boolean loggedShutdownRequested;
 	
 	private final static int DEFAULT_PORT = 983;
 	private final static String DEFAULT_HOSTNAME_TO_BIND = "127.0.0.1";
-	private final static String UNIX_ENVIRONMENT = "/var/MSPARootHelper/";
-	private final static String WINDOW_ENVIRONMENT = "C:/MSPARootHelper/";
+	private final static String UNIX_ENVIRONMENT = "/var/RootHelper/";
+	private final static String WINDOW_ENVIRONMENT = "C:/RootHelper/";
 	private final static String AUTHORIZED_CLIENTS_FILE = "authorizedClient.txt";
+	private static final String SHUTDOWN_FILENAME = "exit";
+	private static final String ADMINTRIGGERDIRECTORY = "adminTriggers";
+	private static final long shutdownRequestIntervalMillis = 1000;
 }

@@ -26,8 +26,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.martus.common.bulletin.BulletinConstants;
-import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.MSPAClient;
+import org.martus.mspa.common.AccountAdminOptions;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.UiTextArea;

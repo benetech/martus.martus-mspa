@@ -32,7 +32,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.mspa.network.NetworkInterfaceConstants;
+import org.martus.mspa.common.network.NetworkInterfaceConstants;
 
 
 public class MenuItemServerCommands extends AbstractAction

@@ -1,4 +1,4 @@
-package org.martus.mspa.network;
+package org.martus.mspa.common.network;
 
 import java.io.IOException;
 import java.util.Vector;

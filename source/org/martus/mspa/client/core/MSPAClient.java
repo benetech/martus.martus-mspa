@@ -16,8 +16,8 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.mspa.network.ClientSideXmlRpcHandler;
-import org.martus.mspa.network.NetworkInterfaceConstants;
+import org.martus.mspa.common.network.ClientSideXmlRpcHandler;
+import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.util.Base64.InvalidBase64Exception;
 

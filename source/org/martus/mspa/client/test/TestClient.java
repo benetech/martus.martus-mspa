@@ -1,6 +1,8 @@
 
 package org.martus.mspa.client.test;
 
+import org.martus.mspa.common.*;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

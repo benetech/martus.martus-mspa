@@ -1,5 +1,5 @@
 
-package org.martus.mspa.network;
+package org.martus.mspa.common.network;
 
 
 public class NetworkInterfaceConstants

@@ -31,15 +31,15 @@ import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.packet.UniversalId;
 import org.martus.common.serverside.ServerSideUtilities;
 import org.martus.common.utilities.MartusServerUtilities;
-import org.martus.mspa.client.core.AccountAdminOptions;
-import org.martus.mspa.client.core.ManagingMirrorServerConstants;
-import org.martus.mspa.network.NetworkInterfaceConstants;
-import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
-import org.martus.mspa.network.RetrievePublicKey;
-import org.martus.mspa.network.ServerSideHandler;
-import org.martus.mspa.network.roothelper.FileTransfer;
-import org.martus.mspa.network.roothelper.Messenger;
-import org.martus.mspa.network.roothelper.RootHelperConnector;
+import org.martus.mspa.common.AccountAdminOptions;
+import org.martus.mspa.common.ManagingMirrorServerConstants;
+import org.martus.mspa.common.RetrievePublicKey;
+import org.martus.mspa.common.network.NetworkInterfaceConstants;
+import org.martus.mspa.common.network.NetworkInterfaceXmlRpcConstants;
+import org.martus.mspa.common.network.ServerSideHandler;
+import org.martus.mspa.roothelper.FileTransfer;
+import org.martus.mspa.roothelper.Messenger;
+import org.martus.mspa.roothelper.RootHelperConnector;
 import org.martus.util.UnicodeWriter;
 
 

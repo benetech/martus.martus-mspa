@@ -27,6 +27,8 @@ package org.martus.mspa.client.core;
 
 import java.util.Vector;
 
+import org.martus.mspa.common.ManagingMirrorServerConstants;
+
 
 public class MirrorServerLabelFinder implements ManagingMirrorServerConstants
 {	

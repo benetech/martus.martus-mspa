@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 */
 
-package org.martus.mspa.network.roothelper;
+package org.martus.mspa.roothelper;
 
 import java.io.File;
 import java.io.FileInputStream;
