@@ -32,8 +32,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import org.martus.common.MagicWords;
 import org.martus.common.test.TestCaseEnhanced;
+import org.martus.mspa.server.MSPAServer;
 import org.martus.util.UnicodeWriter;
 
 
@@ -43,33 +43,17 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 	{
 		super(name);
 		setup();
-	}
-	
-	private void setupTestData()
-	{	
-		try
-		{
-			tempFile = createTempFileFromName("$$$MartusTestFileMagicWords");
-			UnicodeWriter writer = new UnicodeWriter(tempFile);
-			writer.writeln(MAGICWORD1+ MagicWords.FIELD_DELIMITER + GROUPNAME1+ MagicWords.FIELD_DELIMITER +CREATIONDATE);
-			writer.writeln(MAGICWORD2+ MagicWords.FIELD_DELIMITER + GROUPNAME1+ MagicWords.FIELD_DELIMITER +CREATIONDATE);	
-			writer.close();		
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	}	
 	
 	private void setup()
 	{
+		String martusAppDir = MSPAServer.getMartusDefaultDataDirectoryPath();
+		martusDeleteOnStartDir = new File(martusAppDir, "deleteOnStartup");
+		
 		try 
 		{		
-		  register = new RootHelperConnector("localhost");
-		  messenger = register.getMessenger();			
-		  System.out.println(register.getMessenger().getMessage());
-		  
+		  register = new RootHelperConnector("localhost");	
+		  				 		 
 		} 
 		catch(RemoteException re) 
 		{
@@ -83,52 +67,85 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 		{
 		  System.out.println("MalformedURLException: "+ mfe);
 		}			
-	}
+	}	
 	
-	public void testGetAdminFile()
+	public void testGetInitMessage()
 	{
-		setupTestData();		
-
 		try
-		{	
-			Status status = messenger.getAdminFile("", tempFile.getPath());
-			assertEquals(Status.SUCCESS, status.getStatus());
-			
-			Vector list = status.getListOfFileTransfer();
-			for (int i=0;i<list.size();i++)
-			{
-				FilesTransfer transfer = (FilesTransfer) list.get(i);
-				Vector entries = transfer.getLineOfEntries();
-				
-				if (entries.size() <=0) break;
-				
-				assertTrue("should be two entries?", entries.size() == 2);	
-				assertEquals("Test 1	Group 1	2/12/2004", (String) entries.get(0));
-				assertEquals("Test 2	Group 1	2/12/2004", (String) entries.get(1));
-			}	
+		{
+			messenger = register.getMessenger();
+			assertEquals("Got init message", MessengerImpl.CONNET_MSG,register.getMessenger().getInitMsg());			
 		}
 		catch (RemoteException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		tempFile.delete();
-	}	
+	}
+	
+	public void testGetAdminFile()
+	{
+		try
+		{
+			File magicFile = new File(martusDeleteOnStartDir.getPath(), "magicwords.txt");			
+			tempFile = createTempFileFromName("$$$MartusTestAdminFile");
+			messenger = register.getMessenger();
+			
+			Status status = messenger.getAdminFile("", magicFile.getPath(), tempFile.getPath());
+			assertEquals("Status should be success.", Status.SUCCESS, status.getStatus());
+			
+			Vector entries = FileTransfer.readDataFromFile(tempFile);
+			assertTrue("Should contain some magicwords", entries.size() >0);
+			tempFile.delete();		
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void testCopyFilesTo()
+	{
+		try
+		{
+			File toFile = createTempFileFromName("$$$MartusCopyToFile");
+			tempFile = createTempFileFromName("$$$MartusTestAdminFile");
+
+			UnicodeWriter writer = new UnicodeWriter(tempFile);
+			writer.writeln("Test 1");
+			writer.writeln("Test 2");	
+			writer.close();		
+			messenger = register.getMessenger();
+			FileTransfer transfer = new FileTransfer(tempFile.getPath(), toFile.getPath());
+			Vector transfers = new Vector();
+			transfers.add(transfer);
+
+			Status status = messenger.copyFilesTo("", transfers);
+			assertEquals("Status should be success.", Status.SUCCESS, status.getStatus());
+			
+			Vector entries = FileTransfer.readDataFromFile(toFile);
+			assertTrue("entries size should be 2", entries.size()==2);
+			assertEquals("Test 1", (String) entries.get(0));
+
+			toFile.delete();
+			tempFile.delete(); 
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+	}
 	
 	public void tearDown() throws Exception
-	{		
-		tempFile.delete();
+	{				
 		super.tearDown();
 	}
 	
 	RootHelperConnector register;
 	Messenger messenger;
-	File tempFile;
-	
-	MagicWords magicWords;
-	
-	private static final String MAGICWORD1 = "Test 1";
-	private static final String MAGICWORD2 = "Test 2";
-	private static final String GROUPNAME1 = "Group 1";	
-	private static final String CREATIONDATE = "2/12/2004";
+	File tempFile;	
+	File martusDeleteOnStartDir;
 }

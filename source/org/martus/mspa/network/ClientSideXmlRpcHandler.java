@@ -42,6 +42,21 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetContactInfo, params);
 	}	
 	
+	public Vector getServerCompliance(String myAccountId) throws IOException
+	{
+		Vector params = new Vector();
+		params.add(myAccountId);	
+		return (Vector)callServer(cmdGetCompliance, params);
+	}
+	
+	public Vector updateServerCompliance(String myAccountId, String compliantsMsg) throws IOException
+	{
+		Vector params = new Vector();
+		params.add(myAccountId);	
+		params.add(compliantsMsg);
+		return (Vector)callServer(cmdUpdateCompliance, params);
+	}
+	
 	public Vector getAccountManageInfo(String myAccountId, String manageAccountId) throws IOException	
 	{		
 		Vector params = new Vector();
@@ -60,11 +75,12 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdUpdateAccountManageInfo, params);
 	}
 	
-	public Vector sendCommandToServer(String myAccountId, String cmdType) throws IOException
+	public Vector sendCommandToServer(String myAccountId, String cmdType, String cmd) throws IOException
 	{
 		Vector params = new Vector();
-		params.add(myAccountId);		
-		params.add(cmdType);
+		params.add(myAccountId);
+		params.add(cmdType);		
+		params.add(cmd);
 		return (Vector)callServer(cmdSendCommandToServer, params);
 	}	
 	

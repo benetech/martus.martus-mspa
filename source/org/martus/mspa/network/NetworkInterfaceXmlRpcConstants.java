@@ -7,6 +7,8 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String serverObjectName = "MSPAServer";
 	
 	public final static String cmdPing = "ping";
+	public final static String cmdGetCompliance = "getServerCompliance";
+	public final static String cmdUpdateCompliance = "updateServerCompliance";
 	public static final String cmdGetAccountIds = "getAccountIds";
 	public static final String cmdGetListPackets = "getListPackets";
 	public static final String cmdGetContactInfo = "getContactInfo";

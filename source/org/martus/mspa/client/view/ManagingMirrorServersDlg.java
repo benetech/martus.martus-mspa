@@ -265,7 +265,9 @@ public class ManagingMirrorServersDlg extends JDialog
 			else if (ae.getSource().equals(removeButton))
 				handleRemoveFromAllowedList();
 			else if (ae.getSource().equals(addNewMirrorServer))
-				handleRequestAddNewMirrorServer();			
+				handleRequestAddNewMirrorServer();	
+			else if (ae.getSource().equals(viewComplainButton))
+				handleRequestViewCompliant();			
 		}
 		
 		private void handleRequestAddNewMirrorServer()
@@ -367,6 +369,13 @@ public class ManagingMirrorServersDlg extends JDialog
 					availableListModel.addElement(item);
 			}							
 		}		
+		
+		private void handleRequestViewCompliant()
+		{			
+			String compliants = parent.getMSPAApp().getServerCompliant();
+			ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
+			dlg.show();
+		}	
 	}
 	
 	UiMainWindow parent; 	

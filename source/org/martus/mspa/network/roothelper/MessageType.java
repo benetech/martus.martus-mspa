@@ -27,7 +27,7 @@ package org.martus.mspa.network.roothelper;
 
 public interface MessageType
 {
-	public static int HIDE_BULLETIN	=100;
-	public static int START_SERVER	=101;
-	public static int STOP_SERVER	=102;
+	public static int HIDE_BULLETIN	=500;
+	public static int START_SERVER	=501;
+	public static int STOP_SERVER	=502;
 }

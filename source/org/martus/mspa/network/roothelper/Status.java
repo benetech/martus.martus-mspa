@@ -26,13 +26,11 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.network.roothelper;
 
 import java.io.Serializable;
-import java.util.Vector;
 
 
 public class Status implements Serializable
 {
 	public String errorMsg="";
-	public Vector listOfFileTransfer = new Vector();
 	public String status="";
 	
 	public Status()
@@ -48,12 +46,7 @@ public class Status implements Serializable
 	public void setStatus(String returnStatus)
 	{
 		status = returnStatus;	
-	}
-	
-	public void setListOfFileTransfer(Vector fileTransfers)
-	{
-		listOfFileTransfer = fileTransfers;
-	}
+	}	
 	
 	public void setErrorMsg(String msg)
 	{
@@ -62,7 +55,6 @@ public class Status implements Serializable
 	
 	public String getErrorMsg() {return errorMsg;}
 	public String getStatus() {return status;}
-	public Vector getListOfFileTransfer() {return listOfFileTransfer;}
 
 	public static String SUCCESS = "success";
 	public static String FAILED = "failed";

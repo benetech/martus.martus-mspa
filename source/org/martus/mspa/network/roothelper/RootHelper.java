@@ -37,7 +37,7 @@ public class RootHelper
 	{			
 		
 	  try 
-	  {
+	  {		
 		MessengerImpl localObject = new MessengerImpl();
 		Naming.rebind("rmi:///RootHelper", localObject);							  
 		System.out.println("MessengerImpl object has been bound");
@@ -49,8 +49,7 @@ public class RootHelper
 	  } 
 	  catch(MalformedURLException mfe) 
 	  {
-		System.out.println("MalformedURLException: "
-						   + mfe);
+		System.out.println("MalformedURLException: "+ mfe);
 	  }
 
 	}

@@ -33,8 +33,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
 
 import org.martus.common.Version;
-import org.martus.util.UnicodeReader;
-import org.martus.util.UnicodeWriter;
 
 
 public class MessengerImpl extends UnicastRemoteObject implements Messenger, MessageType 
@@ -42,17 +40,19 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	public MessengerImpl() throws RemoteException 
 	{
 		super();
+		
 	}
 	
-	public Status callSystemCommand(int msgType, String cmd) throws RemoteException 
-	{		
+	public Status sendCommand(String accountKey, int msgType, String cmd) throws RemoteException 
+	{
 		try
 		{
 			switch (msgType)
 			{
 				case START_SERVER:
-				case STOP_SERVER:
 					return executeCommand(cmd);
+				case STOP_SERVER:
+					return stopMartusServer(cmd);
 				case HIDE_BULLETIN:
 					break;	
 			}		
@@ -62,112 +62,105 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-		
-		return new Status(Status.FAILED);		
+		return new Status(Status.FAILED);
 	}
 	
-	public Status filesTransferTo(Vector transfers) throws RemoteException 
+	public Status copyFilesTo(String accountKey, Vector transfers) throws RemoteException 
 	{
 		Status status = new Status();
-		String fileName=null;
+		String from=null;		
 		try
 		{		
 			for (int i=0;i<transfers.size();++i)
 			{
-				FilesTransfer fileTransfer = (FilesTransfer) transfers.get(i);
-				fileName = fileTransfer.getFileName();
-				writeDataToFile(new File(fileName), fileTransfer.getLineOfEntries());			
+				FileTransfer fileTransfer = (FileTransfer) transfers.get(i);
+				from = fileTransfer.getFromFileName();
+				String to = fileTransfer.getToFileName();			
+				FileTransfer.copyFile(new File(from), new File(to));
+				status.setStatus(Status.SUCCESS);								
 			}
 		}
 		catch(FileNotFoundException nothingToWorryAbout)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg(fileName+" not found: "+nothingToWorryAbout.getMessage());							
+			status.setErrorMsg(from+" not found: "+nothingToWorryAbout.getMessage());							
 		}
 		catch (IOException e)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg("Error loading ("+ fileName+ ")file.\n"+e.toString());				
+			status.setErrorMsg("Error loading ("+ from+ ")file.\n"+e.toString());				
 			e.printStackTrace();		
 		}		
 	
 		return status;		
 	}
 	
-	public Status filesTransferFrom(Vector transfers) throws RemoteException 
+	public Status copyFilesFrom(String accountKey, Vector transfers) throws RemoteException 
 	{
-		String fileName=null;
-		Vector results = new Vector();
+		String from=null;
 		Status status = new Status();
 		
 		try
 		{		
 			for (int i=0;i<transfers.size();++i)
 			{
-				fileName = (String) transfers.get(i);
-				Vector entries = readDataFromFile(new File(fileName));
-				if (entries.size() >0)
-					results.add(new FilesTransfer(fileName, entries));			
-			}
-			
-			if (results.size() > 0)
-			{				
-				status.setListOfFileTransfer(results);
-				return status;
-			}	
+				FileTransfer fileTransfer = (FileTransfer) transfers.get(i);			
+				from = fileTransfer.getFromFileName();
+				String to = fileTransfer.getToFileName();			
+				FileTransfer.copyFile(new File(from), new File(to));
+				status.setStatus(Status.SUCCESS);
+			}									
 		}
 		catch(FileNotFoundException nothingToWorryAbout)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg(fileName+" not found: "+ nothingToWorryAbout.toString());			
-		}
+			status.setErrorMsg(from+" not found: "+ nothingToWorryAbout.toString());			
+		}		
 		catch (IOException e)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg("Error loading ("+ fileName+ ")file.\n"+e.toString());			
-			e.printStackTrace();			
-		}		
+			status.setErrorMsg("Error loading ("+ from+ ")file.\n"+e.toString());				
+			e.printStackTrace();		
+		}	
 		
 		return status;
 	}
 
-	public Status getAdminFile(String key, String adminFile) throws RemoteException 
+	public Status getAdminFile(String key, String fileFrom, String fileTo) throws RemoteException 
 	{
-		Status status = new Status();
-		Vector results = new Vector();
-				
+		Status status = new Status();		
+								
 		try
 		{
-			Vector entries = readDataFromFile(new File(adminFile));
-			if (entries.size() >0)
-				results.add(new FilesTransfer(adminFile, entries));		
-			
-			if (results.size() > 0)
-			{				
-				status.setListOfFileTransfer(results);
-				return status;
-			}	
+			FileTransfer.copyFile(new File(fileFrom), new File(fileTo));			
+			status.setStatus(Status.SUCCESS);		
 		}
 		catch(FileNotFoundException nothingToWorryAbout)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg(adminFile+" not found: ");				
+			status.setErrorMsg(fileFrom+" not found: ");				
 		}
 		catch (IOException e)
 		{
 			status.setStatus(Status.FAILED);			
-			status.setErrorMsg("Error loading ("+adminFile+")file.\n"+e.toString());				
+			status.setErrorMsg("Error loading ("+fileFrom+")file.\n"+e.toString());				
 			e.printStackTrace();			
 		}		
 				
 		return status;
+	}	
+	
+	private Status stopMartusServer(String command) throws IOException
+	{
+		//Need to get process id
+		return executeCommand(command);
 	}
 	
 		
-	private static Status executeCommand (String externCommand) throws IOException 
+	private Status executeCommand (String externCommand) throws IOException 
 	{ 
 		Status status = new Status();		
-		String command = externCommand;
+		String command = externCommand;	
 		if(Version.isRunningUnderWindows())
 			command = "cmd.exe /C "+externCommand;
 		
@@ -180,6 +173,8 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 				status.setStatus(Status.FAILED);			
 				status.setErrorMsg("Process return code: "+ exitVal);		
 			}	 
+			else
+				status.setStatus(Status.SUCCESS);
 		} 
 		catch (InterruptedException e) 
 		{ 
@@ -190,45 +185,13 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		} 
 		
 		return status;
-	} 
-	
+	} 	
 
-	private void writeDataToFile(File fileName, Vector lineEntries) throws IOException
-	{		
-		UnicodeWriter writer = new UnicodeWriter(fileName);
-		for (int i=0;i<lineEntries.size();++i)
-		{
-			writer.writeln((String)lineEntries.get(i));
-		}								
-		writer.close();			
-	}
 
-	private Vector readDataFromFile(File adminFile) throws IOException
+	public String getInitMsg() throws RemoteException 
 	{
-		Vector list = new Vector();
-		UnicodeReader reader = new UnicodeReader(adminFile);
-		String line = null;
-		while( (line = reader.readLine()) != null)
-		{
-			if(line.trim().length() == 0)
-				System.out.println("Warning: Found blank line in " + adminFile.getPath());
-			else
-				list.add(line);					
-		}
-		
-		reader.close();
-		
-		return list;
-	}
-
-
-
-
-
-
-	public String getMessage() throws RemoteException 
-	{
-	  return("Here is a remote message.");
+	  return(CONNET_MSG);
 	}
 	
+	public static final String CONNET_MSG = "Connected: Start remote message ...";
 }

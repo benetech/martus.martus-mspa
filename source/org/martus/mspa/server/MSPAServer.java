@@ -1,12 +1,10 @@
 package org.martus.mspa.server;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.channels.FileChannel;
+import java.rmi.RemoteException;
 import java.util.Vector;
 
 import org.martus.common.LoggerInterface;
@@ -26,6 +24,10 @@ import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
+import org.martus.mspa.network.roothelper.FileTransfer;
+import org.martus.mspa.network.roothelper.MessageType;
+import org.martus.mspa.network.roothelper.Messenger;
+import org.martus.mspa.network.roothelper.RootHelperConnector;
 import org.martus.util.UnicodeWriter;
 
 
@@ -45,6 +47,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		magicWords = new MagicWords(logger);
 		magicWords.loadMagicWords(getMagicWordsFile());	
 		loadConfigurationFiles();		
+		
+		rootConnector = new RootHelperConnector("localhost");
 	}	
 	
 	private void initializedEnvironmentDirectory()
@@ -179,6 +183,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getConfigDirectory(), HIDDEN_PACKETS_FILENAME);
 	}
 	
+	public File getMartusHiddenPacketsFile()
+	{
+		return new File(getMartusConfigDirectory(), HIDDEN_PACKETS_FILENAME);
+	}
+	
 	public static File getServerWhoWeCallDirectory()
 	{
 		return new File(getAppDirectoryPath(),"ServersWhoWeCall");
@@ -199,6 +208,21 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getAppDirectoryPath(),"AvailableMirrorServers");
 	}
 	
+	public File getMartusMagicWordsFile()
+	{
+		return new File(getMartusConfigDirectory(), MAGICWORDS_FILENAME);
+	}
+	
+	public File getMartusComplianceFile()
+	{
+		return new File(getMartusConfigDirectory(),COMPLIANCE_FILE );
+	}	
+	
+	public File getMSPAComplianceFile()
+	{
+		return new File(getConfigDirectory(),COMPLIANCE_FILE );
+	}	
+	
 	public File getConfigDirectory()
 	{
 		return new File(getAppDirectoryPath(),ADMIN_MSPA_CONFIG_DIRECTORY);
@@ -214,6 +238,65 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return magicWords;
 	}
 	
+	public Vector getComplianceFile(String accountId)
+	{
+		Vector results = new Vector();
+		File complianceFile = getMSPAComplianceFile();
+		File martusComplianceFile = getMartusComplianceFile();
+
+		try
+		{
+			if (!complianceFile.exists())
+			{
+				rootConnector.getMessenger().getAdminFile(accountId, 
+					martusComplianceFile.getPath(),complianceFile.getPath());
+			}
+			results = FileTransfer.readDataFromFile(complianceFile);
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return results;	
+	}
+
+	public void updateComplianceFile(String accountId, String compliantsMsg)
+	{		
+		File complianceFile = getMSPAComplianceFile();
+		File martusComplianceFile = getMartusComplianceFile();
+		try
+		{
+			UnicodeWriter writer = new UnicodeWriter(complianceFile);
+			writer.writeln(compliantsMsg);
+			writer.close();
+
+			if (complianceFile.exists())
+			{
+				FileTransfer transfer = new FileTransfer(complianceFile.getPath(),martusComplianceFile.getPath() );
+				Vector transfers = new Vector();	
+				transfers.add(transfer);
+				rootConnector.getMessenger().copyFilesTo(accountId, transfers);	
+			}
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
 	public boolean hideBulletins(String accountId, Vector localIds)
 	{
 		hiddenBulletins.hideBulletins(accountId, localIds);
@@ -221,7 +304,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{	
 			File backUpFile = new File(getHiddenPacketsFile() + ".bak");			
-			MSPAServer.copyFile(getHiddenPacketsFile(), backUpFile);
+			FileTransfer.copyFile(getHiddenPacketsFile(), backUpFile);
 						
 			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());							
 			for (int aId = 0; aId < authorizedMartusAccounts.size();++aId)
@@ -255,7 +338,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			for (int i =0; i<mirrorInfo.size();i++)
 			{
 				String file = (String) mirrorInfo.get(i);
-				copyFile(new File(sourceDirectory, file), new File(destDirectory, file));
+				FileTransfer.copyFile(new File(sourceDirectory, file), new File(destDirectory, file));
 			}	
 		}
 		catch (Exception e) 
@@ -265,13 +348,22 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}	
 	}
 	
-	public boolean sendCmdToStartServer(String cmdType)
+	public boolean sendCmdToStartServer(String cmdType, String cmd)
 	{
 		boolean result = true;
 		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
-		{			
-			result = copyAllManageFilesToMartusDeleteOnStart();
-			//send cmd to root helper...
+		{						
+			try
+			{
+				result = copyAllManageFilesToMartusDeleteOnStart();
+				//send cmd to root helper...
+				rootConnector.getMessenger().sendCommand("", MessageType.START_SERVER, cmd);
+			}
+			catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}	
 		
 		return result;
@@ -283,43 +375,26 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			files[i].delete();
 	}
 	
-	boolean copyAllManageFilesToMartusDeleteOnStart()
+	FileTransfer getFileTransfer(File from, File to)
 	{
-		File file = getMagicWordsFile();
-		try
-		{	
-			copyFile(file, getMartusServerMagicWordFile());
-			
-			file = getBannedFile();
-			copyFile(file, getMartusServerBannedFile());
-			
-			file = getClientsNotToAmplifiyFile();
-			copyFile(file, getMartusServerClientsNotToAmplifiyFile());
-			
-			file = getAllowUploadFile();
-			copyFile(file, getMartusServerAllowUploadFile());
-			
-			file = getHiddenPacketsFile();
-			copyFile(file, getServerDirectory());
-		}
-		catch (Exception ieo)
-		{	
-			logger.log(file.getPath()+" not found."+ ieo.toString());
-			return false;		
-		}
+		return new FileTransfer(from.getPath(), to.getPath());		
+	}
+	
+	boolean copyAllManageFilesToMartusDeleteOnStart() throws RemoteException
+	{
+		Messenger messenger = rootConnector.getMessenger();
+		Vector listOfFiles = new Vector();
+	
+		listOfFiles.add(getFileTransfer(getMagicWordsFile(),getMartusServerMagicWordFile()));
+		listOfFiles.add(getFileTransfer(getBannedFile(), getMartusServerBannedFile()));
+		listOfFiles.add(getFileTransfer(getClientsNotToAmplifiyFile(), getMartusServerClientsNotToAmplifiyFile()));
+		listOfFiles.add(getFileTransfer(getAllowUploadFile(), getMartusServerAllowUploadFile()));
+		listOfFiles.add(getFileTransfer(getHiddenPacketsFile(), getMartusHiddenPacketsFile()));
+					
+		messenger.copyFilesTo("", listOfFiles);
 		
 		return true;
 		
-	}
-	
-	public static void copyFile(File in, File out) throws Exception 
-	{
-		 FileChannel sourceChannel = new FileInputStream(in).getChannel();
-		 FileChannel destinationChannel = new FileOutputStream(out).getChannel();
-		 sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
-		
-		 sourceChannel.close();
-		 destinationChannel.close();
 	}
 	
 	public void updateMagicWords(Vector words)
@@ -327,7 +402,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{			
 			File backUpFile = new File(getMagicWordsFile().getPath() + ".bak");			
-			copyFile(getMagicWordsFile(), backUpFile);
+			FileTransfer.copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
 			magicWords.loadMagicWords(getMagicWordsFile());							
 		}
@@ -336,11 +411,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			logger.log("MagicWord.txt file not found."+ ieo.toString());		
 		}	
 	}	
-	
-	public File getMartusMagicWordsFile()
-	{
-		return new File(getMartusConfigDirectory(), MAGICWORDS_FILENAME);
-	}		
 	
 	public Vector getAccountAdminInfo(String manageAccountId)
 	{		
@@ -377,7 +447,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{
 			File backUpFile = new File(file.getPath() + ".bak");			
-			MSPAServer.copyFile(file, backUpFile);
+			FileTransfer.copyFile(file, backUpFile);
 			MartusUtilities.writeListToFile(file, list);
 		}
 		catch (Exception ieo)
@@ -624,6 +694,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector clientsAllowedUpload;
 	Vector clientNotSendToAmplifier;
 	HiddenBulletins hiddenBulletins;
+	RootHelperConnector rootConnector;
 		
 	private File serverDirectory;
 		
@@ -634,6 +705,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String UPLOADSOK_FILENAME = "uploadsok.txt";
 	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
+	private static final String COMPLIANCE_FILE =  "compliance.txt";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";

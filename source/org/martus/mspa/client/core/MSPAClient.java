@@ -219,12 +219,49 @@ public class MSPAClient
 		return new Vector();
 	}	
 	
-	public String sendCmdToServer(String cmdType)
+	public String getServerCompliant()
+	{
+		StringBuffer msg = new StringBuffer();
+		try
+		{
+			Vector results = handler.getServerCompliance(security.getPublicKeyString());
+			if (results != null && !results.isEmpty())
+			{
+				Vector compliants = (Vector) results.get(1);				
+				for (int i=0; i< compliants.size();++i)
+					msg.append((String) compliants.get(i)).append("\n");
+			}				
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return msg.toString();
+	}
+	
+	public Vector updateServerCompliant(String msg)
+	{
+		try
+		{
+			Vector results =  handler.updateServerCompliance(security.getPublicKeyString(), msg);
+			if (results != null && !results.isEmpty())
+				return results;
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new Vector();
+	}
+	
+	public String sendCmdToServer(String cmdType, String cmd)
 	{
 		String msg = "";
 		try
 		{												
-			Vector results = handler.sendCommandToServer(security.getPublicKeyString(), cmdType);
+			Vector results = handler.sendCommandToServer(security.getPublicKeyString(), cmdType, cmd);
 			
 			if (results != null && !results.isEmpty())
 				msg = (String) results.get(0);					

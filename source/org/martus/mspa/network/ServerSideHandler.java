@@ -153,11 +153,11 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
-	public Vector sendCommandToServer(String myAccountId, String cmdType) throws IOException
+	public Vector sendCommandToServer(String myAccountId, String cmdType, String cmd) throws IOException
 	{
 		Vector results = new Vector();		
 			
-		if (server.sendCmdToStartServer(cmdType))
+		if (server.sendCmdToStartServer(cmdType, cmd))
 			results.add(NetworkInterfaceConstants.OK);
 		else
 			results.add(NetworkInterfaceConstants.REJECTED);
@@ -235,6 +235,26 @@ public class ServerSideHandler implements NetworkInterface
 		results.add(collector.infos);		
 
 		return results;					
+	}
+	
+	public Vector getServerCompliance(String myAccountId)
+	{
+		Vector results = new Vector();				
+		Vector compliances = server.getComplianceFile(myAccountId);
+		
+		results.add(NetworkInterfaceConstants.OK);
+		results.add(compliances);		
+
+		return results;		
+	}
+	
+	public Vector updateServerCompliance(String myAccountId, String compliantsMsg)
+	{		
+		Vector results = new Vector();		
+		server.updateComplianceFile(myAccountId, compliantsMsg);
+		results.add(NetworkInterfaceConstants.OK);
+		
+		return results;
 	}
 	
 	public Vector getInactiveMagicWords(String myAccountId)

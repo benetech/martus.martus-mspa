@@ -32,14 +32,13 @@ import java.util.Vector;
 
 public interface Messenger extends Remote 
 {
-	public Status filesTransferTo(Vector transfers) throws RemoteException;
+	public Status sendCommand(String accountKey, int msgType, String cmd) throws RemoteException;
+	public Status getAdminFile(String accountKey, String fileFrom, String fileTo) throws RemoteException;
 	
-	public Status filesTransferFrom(Vector transfers) throws RemoteException; 
-	public Status getAdminFile(String accountKey, String adminFile) throws RemoteException;
-	public Status callSystemCommand(int msgType, String cmd) throws RemoteException;
-	
-	
-	public String getMessage() throws RemoteException;
+	public Status copyFilesTo(String accountKey, Vector transfers) throws RemoteException;	
+	public Status copyFilesFrom(String accountKey, Vector transfers) throws RemoteException; 
+		
+	public String getInitMsg() throws RemoteException;
 
 }
 
