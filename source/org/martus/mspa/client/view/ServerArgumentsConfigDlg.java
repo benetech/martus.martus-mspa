@@ -164,7 +164,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 		return panel;
 	}	
 
-	private LoadMartusServerArguments populateData()
+	LoadMartusServerArguments populateData()
 	{
 		LoadMartusServerArguments arguments = new LoadMartusServerArguments();
 

@@ -247,7 +247,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		return true;	
 	}
 	
-	private void postStatus(String msgHeader)
+	void postStatus(String msgHeader)
 	{
 		parent.setStatusText(parent.getMSPAApp().getStatus());
 	}

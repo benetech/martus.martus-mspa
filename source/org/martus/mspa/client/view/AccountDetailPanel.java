@@ -52,7 +52,7 @@ public class AccountDetailPanel extends JPanel
 		add(loadBulletinDisplayPane(), BorderLayout.CENTER);			
 	}
 
-	private Vector loadBulletinIds(Vector bulletins)
+	Vector loadBulletinIds(Vector bulletins)
 	{
 		Vector newBulletinIds = new Vector();		
 		if (bulletins == null || bulletins.size() <=0)
@@ -315,7 +315,7 @@ public class AccountDetailPanel extends JPanel
 		return ps;
 	}
 	
-	private void postStatus(String msgHeader)
+	void postStatus(String msgHeader)
 	{
 		parent.setStatusText(msgHeader+app.getStatus());
 	}

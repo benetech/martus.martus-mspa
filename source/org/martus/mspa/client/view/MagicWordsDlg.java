@@ -160,7 +160,7 @@ public class MagicWordsDlg extends JDialog
 		return panel;
 	}		
 	
-	private void resetFields()
+	void resetFields()
 	{
 		addMagicWordsField.setText("");
 		groupComboField.setSelectedItem(null);		
@@ -171,12 +171,12 @@ public class MagicWordsDlg extends JDialog
 		return fData.containMagicWord(word);
 	}
 
-	private boolean containGroupName(String groupName)
+	boolean containGroupName(String groupName)
 	{
 		return fData.getGroupList().contains(groupName);
 	}
 	
-	private boolean verifyMagicWord(String word)
+	boolean verifyMagicWord(String word)
 	{
 		if (word.startsWith(MagicWords.INACTIVE_SIGN))
 		{			

@@ -42,14 +42,14 @@ public class MagicWordTableData extends AbstractTableModel
 {
 	public MagicWordTableData(Vector magicLines) 
 	{	  		
-		fRowDataList = new Vector();
+		rowDataList = new Vector();
 		groupList = new Vector();
 		loadMagicWords(magicLines);
 	}
 
 	private void loadMagicWords(Vector items) 
 	{
-	  fRowDataList.removeAllElements();
+	  rowDataList.removeAllElements();
 	  MagicWords magicWordsInfo = new MagicWords(new LoggerToConsole());
 	
 	  for (int i=0; i<items.size();++i)
@@ -58,7 +58,7 @@ public class MagicWordTableData extends AbstractTableModel
 		  MagicWordEntry entry = magicWordsInfo.add(lineOfEntry);
 		  String groupName = entry.getGroupName();		
 		
-		  fRowDataList.addElement(new MagicWordData(entry.getCreationDate(), entry.isActive(), entry.getMagicWord(),groupName));
+		  rowDataList.addElement(new MagicWordData(entry.getCreationDate(), entry.isActive(), entry.getMagicWord(),groupName));
 		  		  
 		  if (groupName != null && !isValidGroupName(groupName))			
 		  	groupList.add(groupName);				
@@ -67,9 +67,9 @@ public class MagicWordTableData extends AbstractTableModel
 
 	public boolean containMagicWord(String word)
 	{
-		for (int i=0; i<fRowDataList.size();++i)
+		for (int i=0; i<rowDataList.size();++i)
 		{
-			MagicWordData data = (MagicWordData)fRowDataList.get(i);
+			MagicWordData data = (MagicWordData)rowDataList.get(i);
 			if (data.fWord.equals(word))
 				return true;
 		}
@@ -89,7 +89,7 @@ public class MagicWordTableData extends AbstractTableModel
 
 	private MagicWordEntry dataMapping(int row)
 	{
-		MagicWordData data = (MagicWordData)fRowDataList.elementAt(row);
+		MagicWordData data = (MagicWordData)rowDataList.elementAt(row);
 
 		MagicWordEntry entry = new MagicWordEntry(data.fWord, data.fGroup);
 		entry.setActive(data.fActived.booleanValue());
@@ -132,7 +132,7 @@ public class MagicWordTableData extends AbstractTableModel
 
 	public int getRowCount() 
 	{
-	  return fRowDataList==null ? 0 : fRowDataList.size(); 
+	  return rowDataList==null ? 0 : rowDataList.size(); 
 	}
 
 	public int getColumnCount() 
@@ -158,7 +158,7 @@ public class MagicWordTableData extends AbstractTableModel
 		if (nRow < 0 || nRow>=getRowCount())
 			return "";
 		
-		MagicWordData row = (MagicWordData)fRowDataList.elementAt(nRow);
+		MagicWordData row = (MagicWordData)rowDataList.elementAt(nRow);
 		switch (nCol) 
 		{
 			case MagicWordColumnInfo.COL_DATE		: return row.fDate;
@@ -174,7 +174,7 @@ public class MagicWordTableData extends AbstractTableModel
 		if (nRow < 0 || nRow >= getRowCount())
 		  return;
 		  
-		MagicWordData row = (MagicWordData)fRowDataList.elementAt(nRow);
+		MagicWordData row = (MagicWordData)rowDataList.elementAt(nRow);
 		String svalue = value.toString();
 
 		switch (nCol) 
@@ -204,8 +204,8 @@ public class MagicWordTableData extends AbstractTableModel
 		if (row < 0)
 			row = 0;
 	  
-		if (row > fRowDataList.size())
-			row = fRowDataList.size();
+		if (row > rowDataList.size())
+			row = rowDataList.size();
 	
 		if (containMagicWord(word))
 			return;	
@@ -213,7 +213,7 @@ public class MagicWordTableData extends AbstractTableModel
 		if (isValidGroupName(group))
 			groupList.add(group);
 
-		fRowDataList.insertElementAt(new MagicWordData(getToday(), false,word, group), row);
+		rowDataList.insertElementAt(new MagicWordData(getToday(), false,word, group), row);
 	}
 	  
 	public void update(int row, String word, String group)
@@ -221,20 +221,20 @@ public class MagicWordTableData extends AbstractTableModel
 		if (row < 0)
 		  row = 0;
 		  
-		if (row > fRowDataList.size())
-		  row = fRowDataList.size();
+		if (row > rowDataList.size())
+		  row = rowDataList.size();
 		  
 		if (containMagicWord(word))
 			return;	
 	
-		MagicWordData selectedData = (MagicWordData) fRowDataList.get(row);
+		MagicWordData selectedData = (MagicWordData) rowDataList.get(row);
 		if (word != null && word.length()>=1)
 			selectedData.fWord = word;
 
 		if (group != null && group.length()>=1)
 			selectedData.fGroup = group;
 		
-		fRowDataList.setElementAt(selectedData, row);
+		rowDataList.setElementAt(selectedData, row);
 
 		if (isValidGroupName(group))
 			groupList.add(group);							
@@ -242,10 +242,10 @@ public class MagicWordTableData extends AbstractTableModel
 
 	public boolean delete(int row) 
 	{
-		if (row < 0 || row >= fRowDataList.size())
+		if (row < 0 || row >= rowDataList.size())
 		  return false;
 		  
-		fRowDataList.remove(row);
+		rowDataList.remove(row);
 		  return true;
 	}	  
 	
@@ -265,8 +265,8 @@ public class MagicWordTableData extends AbstractTableModel
 		}		
 	}
 	
-	Vector fRowDataList;
-	Date   fDate;
+	Vector rowDataList;
+	Date   date;
 	Vector groupList;
 }
 
