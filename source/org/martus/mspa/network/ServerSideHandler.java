@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
+import org.martus.common.ContactInfo;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
-import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
 
 public class ServerSideHandler implements NetworkInterface
@@ -102,7 +102,7 @@ public class ServerSideHandler implements NetworkInterface
 
 		try
 		{
-			Vector contactInfo = MartusServerUtilities.getContactInfo(contactFile);
+			Vector contactInfo = ContactInfo.loadFromFile(contactFile);
 			if(!server.getSecurity().verifySignatureOfVectorOfStrings(contactInfo, accountId))
 			{						
 				results.add(NetworkInterfaceConstants.SIG_ERROR);
