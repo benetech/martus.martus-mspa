@@ -635,10 +635,20 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File propertyFile = new File(getConfigDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
 		LoadMartusServerArguments property = null;
 
-		if (!propertyFile.exists())
-			property = loadDefaultMartusServerArguments(propertyFile.getPath());
-		else
-			property = new LoadMartusServerArguments( propertyFile.getPath());
+		try
+		{
+			if (propertyFile.createNewFile())
+			{				
+				property = loadDefaultMartusServerArguments(propertyFile.getPath());			
+			}
+			else
+				property = new LoadMartusServerArguments( propertyFile.getPath());
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 						
 		return property;
 	}	
