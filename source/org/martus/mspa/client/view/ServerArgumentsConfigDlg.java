@@ -65,7 +65,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 
 		getContentPane().add(mainPanel);
 		Utilities.centerDlg(this);
-		setResizable(false);
+		setResizable(true);
 	}
 	
 	private JPanel buildArgumentsConfig()

@@ -58,7 +58,7 @@ public class MagicWordsDlg extends JDialog
 
 		getContentPane().add(mainPanel);
 		Utilities.centerDlg(this);
-		setResizable(false);
+		setResizable(true);
 		
 		resetFields();		
 	}	

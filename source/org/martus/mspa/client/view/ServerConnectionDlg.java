@@ -63,7 +63,7 @@ public class ServerConnectionDlg extends JDialog
 		
 		getContentPane().add(mainPanel);
 		Utilities.centerDlg(this);
-		setResizable(false);
+		setResizable(true);
 	}	
 	
 	private JScrollPane createDisplayServerListPane(Vector availableServers)
