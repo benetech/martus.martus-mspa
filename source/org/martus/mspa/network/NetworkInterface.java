@@ -14,4 +14,6 @@ public interface NetworkInterface
 	public Vector getAllMagicWords(String myAccountId) throws IOException;
 	public Vector updateMagicWords(String myAccountId, Vector magicWords) throws IOException;
 	
+	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo) throws IOException;
+	
 }

@@ -100,6 +100,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getAppDirectoryPath(),"AmplifyWhoCallUs");
 	}
 	
+	public File getAvailableMirrorServerDirectory()
+	{
+		return new File(getAppDirectoryPath(),"AvailableMirrorServers");
+	}
+	
 	public File getConfigDirectory()
 	{
 		return new File(getAppDirectoryPath(),ADMIN_MSPA_CONFIG_DIRECTORY);

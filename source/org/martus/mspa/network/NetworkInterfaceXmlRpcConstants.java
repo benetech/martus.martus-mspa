@@ -19,5 +19,6 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdGetListOfAmplifyWhoWeCall = "getAmplifyWhoCallUsAccounts";
 	public static final String cmdGetListOfServersWhoCallUs = "getServersWhoCallUsAccounts";
 	
-
+	public static final String cmdAddAvailableMirrorServer = "addAvailableMirrorServer";
+	
 }

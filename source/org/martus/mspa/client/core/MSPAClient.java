@@ -12,6 +12,7 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.network.ClientSideXmlRpcHandler;
+import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.util.Base64.InvalidBase64Exception;
 
 public class MSPAClient 
@@ -202,11 +203,7 @@ public class MSPAClient
 			Vector results = handler.getInactiveMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
-			{
-				Vector info = (Vector) results.get(1);
-				if (!info.isEmpty())
-					return info;
-			}	 
+				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
 		{
@@ -223,11 +220,7 @@ public class MSPAClient
 			Vector results = handler.getActiveMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
-			{
-				Vector info = (Vector) results.get(1);
-				if (!info.isEmpty())
-					return info;
-			}	 
+				return (Vector) results.get(1);			
 		}		
 		catch (Exception e)
 		{
@@ -244,11 +237,7 @@ public class MSPAClient
 			Vector results = handler.getAllMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
-			{
-				Vector info = (Vector) results.get(1);
-				if (!info.isEmpty())
-					return info;
-			}	 
+				return (Vector) results.get(1);
 		}		
 		catch (Exception e)
 		{
@@ -271,6 +260,28 @@ public class MSPAClient
 		}				
 	}	
 	
+	public boolean addMirrorServer(Vector serverInfo)	
+	{	
+		try
+		{						
+			Vector results = handler.addAvailableMirrorServer(security.getPublicKeyString(), serverInfo);
+			
+			if (results != null && !results.isEmpty())
+			{
+				String returnCode = (String) results.get(0);		
+				if (returnCode.equals(NetworkInterfaceConstants.OK))
+					return true;
+			}	 
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return false;
+	}		
+		
+
 	public String getPublicCode(String accountId)
 	{
 		String publicCode = null;
@@ -284,7 +295,8 @@ public class MSPAClient
 		}
 		
 		return publicCode;
-	}			
+	}
+				
 	
 	ClientSideXmlRpcHandler handler;
 	String ipToUse;

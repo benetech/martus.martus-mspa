@@ -73,6 +73,15 @@ public class ClientSideXmlRpcHandler
 		params.add(magicWords);
 		return (Vector)callServer(cmdUpdateMagicWords, params);
 	}	
+	
+	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo) throws IOException
+	{	
+		Vector params = new Vector();		
+		params.add(myAccountId);		
+		params.add(mirrorInfo);
+		
+		return (Vector)callServer(cmdAddAvailableMirrorServer, params);
+	}	
 		
 	public Object callServer(String method, Vector params) throws IOException
 	{		

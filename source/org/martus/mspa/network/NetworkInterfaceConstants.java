@@ -15,6 +15,5 @@ public class NetworkInterfaceConstants
 	public static final String NOT_AUTHORIZED = "not authorized";
 	public static final String NOT_FOUND = "not found";
 	public static final String REJECTED = "account rejected";	
-	public static final String NO_DATA_AVAILABLE = "No data available";
-
+	
 }

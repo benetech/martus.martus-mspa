@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
-;
 
 public class ServerSideHandler implements NetworkInterface
 {
@@ -120,13 +120,7 @@ public class ServerSideHandler implements NetworkInterface
 	{	
 		Vector results = new Vector();				
 		Vector magicWords = server.getMagicWordsInfo().getInactiveMagicWords();
-		if(magicWords.size()<=0)
-		{
-			results.add(NetworkInterfaceConstants.NO_DATA_AVAILABLE);
-			results.add(new Vector());
-			return results;
-		}		
-
+		
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);		
 
@@ -137,13 +131,6 @@ public class ServerSideHandler implements NetworkInterface
 	{	
 		Vector results = new Vector();				
 		Vector magicWords = server.getMagicWordsInfo().getActiveMagicWords();
-		if(magicWords.size()<=0)
-		{
-			results.add(NetworkInterfaceConstants.NO_DATA_AVAILABLE);
-			results.add(new Vector());
-			return results;
-		}		
-
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);
 
@@ -154,14 +141,7 @@ public class ServerSideHandler implements NetworkInterface
 	{			
 		Vector results = new Vector();		
 
-		Vector magicWords = server.getMagicWordsInfo().getAllMagicWords();		
-		if(magicWords.size()<=0)
-		{
-			results.add(NetworkInterfaceConstants.NO_DATA_AVAILABLE);
-			results.add(new Vector());
-			return results;
-		}		
-
+		Vector magicWords = server.getMagicWordsInfo().getAllMagicWords();			
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);		
 
@@ -189,6 +169,42 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.SERVER_ERROR);
 			return results;
 		}				
+	}
+	
+	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo)
+	{
+		Vector results = new Vector();
+		try
+		{						
+			if (mirrorInfo.size() > 0)
+			{	
+				String ip = (String) mirrorInfo.get(0);
+				String publicCode = (String) mirrorInfo.get(1);
+				String port = (String) mirrorInfo.get(2);
+				String fileName = (String) mirrorInfo.get(3);
+				
+				File outputFileName = new File(server.getAvailableMirrorServerDirectory(), fileName.trim()+".txt");
+				
+				RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());
+				 
+				if (retrievePubKey.isSuccess())
+					results.add(NetworkInterfaceConstants.OK);
+				else
+					results.add(NetworkInterfaceConstants.NO_SERVER);
+			}										
+		}
+		catch (MartusSignatureException e)
+		{
+			e.printStackTrace();
+			System.out.println("Error signing request");
+		}
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}		
+		return results;		
 	}
 	
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
