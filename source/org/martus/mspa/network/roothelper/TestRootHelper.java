@@ -49,10 +49,10 @@ public class TestRootHelper
 	{	
 		try 
 		{		 
-		  Registry registery = RootHelper.getRegistry(portToUse);	
+		  Registry registry = RootHelper.getRegistry(portToUse);	
 			
 		  MessengerImpl localObject = new MessengerImpl("password");
-		  registery.rebind("RootHelper", localObject);			  		 
+		  registry.rebind("RootHelper", localObject);			  		 
 									  
 		  System.out.println("MessengerImpl object has been bound");
 
@@ -60,9 +60,9 @@ public class TestRootHelper
 		catch(RemoteException re) 
 		{
 		  System.out.println("RemoteException: " + re);
-		} 
+		}
 	}		
-
+	
 	public static Test suite ( )
 	{
 		TestSuite suite= new TestSuite("All RootHelper Tests");

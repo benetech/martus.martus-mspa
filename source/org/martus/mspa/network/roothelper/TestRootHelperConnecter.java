@@ -27,7 +27,10 @@ package org.martus.mspa.network.roothelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Vector;
 
 import org.martus.mspa.server.MSPAServer;
@@ -45,17 +48,30 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 	private void setup()
 	{
 		String martusAppDir = MSPAServer.getMartusDefaultDataDirectoryPath();
-		martusDeleteOnStartDir = new File(martusAppDir, "deleteOnStartup");
-		
-		register = new RootHelperConnector(TestRootHelper.portToUse);	 	
+		martusDeleteOnStartDir = new File(martusAppDir, "deleteOnStartup");		
+
+		try
+		{	
+			Registry registry = LocateRegistry.getRegistry( TestRootHelper.portToUse );								
+			messenger = (Messenger)registry.lookup("RootHelper");			
+		}
+		catch (RemoteException e)
+		{	
+			System.out.println("Lookup status: failled ...");		
+			e.printStackTrace();			
+		}
+		catch (NotBoundException e)
+		{
+			System.out.println("Lookup status: failled ...");	
+			e.printStackTrace();
+		}					 	
 	}	
 	
 	public void testGetInitMessage()
 	{
 		try
-		{
-			messenger = register.getMessenger();
-			assertEquals("Got init message", MessengerImpl.CONNET_MSG,register.getMessenger().getInitMsg());			
+		{			
+			assertEquals("Got init message", MessengerImpl.CONNET_MSG, messenger.getInitMsg());			
 		}
 		catch (RemoteException e)
 		{
@@ -68,8 +84,7 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 		try
 		{
 			File magicFile = new File(martusDeleteOnStartDir.getPath(), "magicwords.txt");			
-			tempFile = createTempFileFromName("$$$MartusTestAdminFile");
-			messenger = register.getMessenger();
+			tempFile = createTempFileFromName("$$$MartusTestAdminFile");			
 			
 			Status status = messenger.getAdminFile("", magicFile.getPath(), tempFile.getPath());
 			assertEquals("Status should be success.", Status.SUCCESS, status.getStatus());
