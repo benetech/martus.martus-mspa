@@ -298,6 +298,7 @@ public class UiMainWindow extends JFrame
 		}
 		catch (Exception e)
 		{			
+			e.printStackTrace();
 		}
 		return seconds;
 	}		
