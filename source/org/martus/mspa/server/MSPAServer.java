@@ -623,6 +623,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
 	}
+	
+	public void setRootHelperPortToUse(int port)
+	{
+		rootHelperPortToUse = port;
+	}
+
+	public int getRootHelperPortToUse()
+	{
+		return (rootHelperPortToUse <= 0)? ROOTHELPER_DEFAULT_PORT:rootHelperPortToUse;
+	}
 
 	public synchronized void addAuthorizedMartusAccounts(String authorizedClientId)
 	{
@@ -746,6 +756,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		String listenersIpTag = "--listener-ip=";	
 		String portToListenTag = "--port=";
 		String secureModeTag = "--secure";
+		String rootPortTag = "--roothelper-port=";
 		
 		System.out.println("");
 		for(int arg = 0; arg < args.length; ++arg)
@@ -765,6 +776,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				setPortToUse(Integer.parseInt(portToUse));	
 				System.out.println("Port to use for clients: "+ getPortToUse());
 			}
+			
+			if(argument.startsWith(rootPortTag))
+			{	
+				String portToUse = argument.substring(rootPortTag.length());
+				setRootHelperPortToUse(Integer.parseInt(portToUse));	
+				System.out.println("Port to use for connect to RootHelper: "+ getRootHelperPortToUse());
+			}
 
 			System.out.println("");
 			if(argument.equals(secureModeTag))
@@ -779,9 +797,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	}
 
 	private void setRootHelperConnector() throws UnknownHostException, MalformedURLException, RemoteException, NotBoundException
-	{
-		InetAddress iNetAddr = InetAddress.getByName(ipAddress);
-		rootConnector = new RootHelperConnector(iNetAddr.getHostName());	
+	{		
+		rootConnector = new RootHelperConnector(getRootHelperPortToUse());	
 	}
 	
 	public static File getMirrorDirectory(int type)
@@ -836,7 +853,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	RootHelperConnector rootConnector;	
 		
 	private File serverDirectory;
-	private boolean secureMode;	
+	private boolean secureMode;
+	private int rootHelperPortToUse;	
 		
 	private final static String DELETE_ON_STARTUP = "deleteOnStartup";	
 	private final static String MARTUSSERVER_BACKUP_DIRECTORY = "Backups";
@@ -858,5 +876,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private final static String UNIX_MSPA_ENVIRONMENT = "/var/MSPAServer/";
 	
 	private final static int DEFAULT_PORT = 443;
+	private final static int ROOTHELPER_DEFAULT_PORT=1099;
 	
 }

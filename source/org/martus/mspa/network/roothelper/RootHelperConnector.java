@@ -25,18 +25,33 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.network.roothelper;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 
 public class RootHelperConnector
 {
-	public RootHelperConnector(String host) throws MalformedURLException, RemoteException, NotBoundException
-	{	
-		messenger = (Messenger)Naming.lookup("rmi://" + host + "/RootHelper");
-	}
+	public RootHelperConnector(int portToUse) 
+	{			
+		try
+		{						
+			Registry local = LocateRegistry.getRegistry(portToUse);
+			messenger = (Messenger)local.lookup("RootHelper");
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (NotBoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("RootHelper port connect to : "+ portToUse);
+	}	
 	
 	public Messenger getMessenger()
 	{

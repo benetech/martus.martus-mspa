@@ -29,7 +29,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+
+import org.martus.common.LoggerInterface;
+import org.martus.common.LoggerToConsole;
 
 
 public class MessengerImpl extends UnicastRemoteObject implements Messenger, MessageType 
@@ -37,7 +42,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	public MessengerImpl() throws RemoteException 
 	{
 		super();
-		
+		logger = new LoggerToConsole();	
 	}
 	
 	public Status startServer(String accountKey) throws RemoteException
@@ -67,6 +72,8 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	
 	private Status callScript(int scriptType)
 	{
+		logWhoCallThisScript(scriptType);
+		
 		Status status = new Status();
 		switch (scriptType)
 		{
@@ -81,9 +88,29 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		return status;
 	}
 	
+	private void logWhoCallThisScript(int scriptType)
+	{
+		try
+		{
+			logger.log( "Who call this script ("+scriptType+"): " + RemoteServer.getClientHost() );
+		}
+		catch (ServerNotActiveException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public String getInitMsg() throws RemoteException 
 	{
-	  return(CONNET_MSG);
+		try
+		{
+			logger.log( "Init Message called by: " + RemoteServer.getClientHost() );
+		}
+		catch (ServerNotActiveException e)
+		{
+			logger.log("ServerNotActiveException: "+ e.getMessage());
+		}			
+		return(CONNET_MSG);
 	}
 		
 
@@ -111,5 +138,6 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		return status;
 	}	
 	
+	private LoggerInterface logger;
 	public static final String CONNET_MSG = "Connected: Start remote message ...";
 }

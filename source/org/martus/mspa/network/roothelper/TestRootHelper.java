@@ -25,9 +25,8 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.network.roothelper;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -49,9 +48,12 @@ public class TestRootHelper
 	private static void startRootHelper()
 	{	
 		try 
-		{
+		{		 
+		  Registry registery = RootHelper.getRegistry(portToUse);	
+			
 		  MessengerImpl localObject = new MessengerImpl();
-		  Naming.rebind("rmi:///RootHelper", localObject);							  
+		  registery.rebind("RootHelper", localObject);			  		 
+									  
 		  System.out.println("MessengerImpl object has been bound");
 
 		} 
@@ -59,41 +61,16 @@ public class TestRootHelper
 		{
 		  System.out.println("RemoteException: " + re);
 		} 
-		catch(MalformedURLException mfe) 
-		{
-		  System.out.println("MalformedURLException: "+ mfe);
-		}
-	}	
-	
-//	private static void setupEnviornment()
-//	{		
-//		try
-//		{
-//			proc = Runtime.getRuntime().exec("cmd.exe /C start rmiregistry");
-//			proc.waitFor();
-//			startRootHelper(); 
-//		}
-//		catch (IOException e1)
-//		{
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		catch (InterruptedException e) 
-//		{ 
-//			System.out.println("InterruptedException raised: "+e.getMessage()); 
-//		} 
-//				
-//	}
+	}		
 
 	public static Test suite ( )
 	{
 		TestSuite suite= new TestSuite("All RootHelper Tests");
-//		setupEnviornment();		
 		startRootHelper(); 
 		suite.addTest(new TestSuite(TestRootHelperConnecter.class));
 
 		return suite;
 	}	
 	
-//	static Process proc = null;
+	public static final int portToUse = 1099;
 }

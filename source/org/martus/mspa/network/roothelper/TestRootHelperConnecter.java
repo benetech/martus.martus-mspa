@@ -27,8 +27,6 @@ package org.martus.mspa.network.roothelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
@@ -49,23 +47,7 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 		String martusAppDir = MSPAServer.getMartusDefaultDataDirectoryPath();
 		martusDeleteOnStartDir = new File(martusAppDir, "deleteOnStartup");
 		
-		try 
-		{		
-		  register = new RootHelperConnector("localhost");	
-		  				 		 
-		} 
-		catch(RemoteException re) 
-		{
-		  System.out.println("RemoteException: " + re);
-		} 
-		catch(NotBoundException nbe) 
-		{
-		  System.out.println("NotBoundException: " + nbe);
-		} 
-		catch(MalformedURLException mfe) 
-		{
-		  System.out.println("MalformedURLException: "+ mfe);
-		}			
+		register = new RootHelperConnector(TestRootHelper.portToUse);	 	
 	}	
 	
 	public void testGetInitMessage()
