@@ -32,12 +32,12 @@ import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.clientside.UiBasicSigninDlg;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
-import org.martus.mspa.client.tools.MSPASwingUtils;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
 import org.martus.mspa.client.view.MenuItemExitApplication;
 import org.martus.mspa.client.view.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
+import org.martus.swing.Utilities;
 
 public class UiMainWindow extends JFrame
 {
@@ -108,7 +108,7 @@ public class UiMainWindow extends JFrame
 		addWindowListener(wndCloser);
 		getContentPane().add(mainPanel);
 			
-		MSPASwingUtils.center(this);	
+		Utilities.centerFrame(this);	
 		setVisible(true);
 						
 		return true;
