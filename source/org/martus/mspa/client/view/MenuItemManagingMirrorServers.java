@@ -46,7 +46,7 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	public void actionPerformed(ActionEvent arg0) 
 	{						
 		if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
-		{
+		{			
 			availableList = parent.getMSPAApp().getInactiveMagicWords();
 			assignedList  = parent.getMSPAApp().getActiveMagicWords();
 		}
@@ -89,4 +89,5 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	int serverManageType;
 	Vector assignedList = null;
 	Vector availableList = null;
+	
 }

@@ -24,6 +24,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.martus.common.LoggerToConsole;
+import org.martus.common.MagicWordEntry;
 import org.martus.common.MagicWords;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
@@ -37,7 +39,7 @@ public class MagicWordsDlg extends JDialog
 		super((JFrame)owner, "Manage Magic Words", true);
 		parent = owner;		
 		
-		magicWordsInfo = new Vector();
+		magicWordsInfo = new MagicWords(new LoggerToConsole());
 		loadMagicWordElementsToList(magicWords);
 			
 		getContentPane().setLayout(new BorderLayout());
@@ -94,7 +96,7 @@ public class MagicWordsDlg extends JDialog
 		panel.setLayout(new ParagraphLayout());	
 				
 		activeWords = new JList(magicListModel);
-		activeWords.setFixedCellWidth(320);
+		activeWords.setFixedCellWidth(320);	
 		
 		TabListCellRenderer renderer = new TabListCellRenderer();
 		renderer.setTabs(new int[] {180, 200, 300});
@@ -142,9 +144,9 @@ public class MagicWordsDlg extends JDialog
 		
 		for (int i=0; i<items.size();++i)
 		{			
-			String word = (String) items.get(i);			
-			magicListModel.add(i, word);
-			magicWordsInfo.add(word);
+			String word = (String) items.get(i);
+			MagicWordEntry entry = magicWordsInfo.add(word);	
+			magicListModel.add(i, entry.getLineOfMagicWordNoSign());					
 			
 			String groupName = getGroupName(word);
 			if (groupName != null && !isValidGroupName(groupName))			
@@ -174,19 +176,9 @@ public class MagicWordsDlg extends JDialog
 	}
 	
 	private boolean isValidMagicWord(String word)
-	{		
-		for (int i=0; i<magicWordsInfo.size();i++)
-		{
-			String lineOfMagicWord = (String) magicWordsInfo.get(i);
-			String magicWord = MagicWords.filterActiveSign(getMagicWord(lineOfMagicWord));
-			String normalizeMagicWord = MagicWords.normalizeMagicWord(magicWord);
-			String normalizeNewMagicWord = MagicWords.normalizeMagicWord(word);
-		
-			if (normalizeMagicWord.equals(normalizeNewMagicWord))
-				return false;
-		}			
-		return true;
-	}
+	{	
+		return magicWordsInfo.contains(word);	
+	}	
 	
 	class MagicWordButtonHandler implements ActionListener
 	{
@@ -207,12 +199,27 @@ public class MagicWordsDlg extends JDialog
 							
 			if (!activeWords.isSelectionEmpty())
 			{				
-				String item = (String) activeWords.getSelectedValue();	
-				magicListModel.remove(selectedItem);
-				magicWordsInfo.remove(item);
+				String item = (String) activeWords.getSelectedValue();				
+				String orgWord = getMagicWord(item);												
+				
+				String newWord = addMagicWordsField.getText();
+				String assignedGroup = (String) groupComboField.getSelectedItem();
+									
+				magicListModel.remove(selectedItem);				
+				MagicWordEntry entry = magicWordsInfo.getMagicWordEntry(orgWord);				
+				if (orgWord.equals(newWord))
+				{							
+					entry.setGroupname(assignedGroup);
+					magicListModel.addElement(entry.getLineOfMagicWordNoSign());					
+				}
+				else
+				{
+					magicWordsInfo.remove(orgWord);	
+					handleAddNewMagicWord();
+				}												
 			}			
 				
-			handleAddNewMagicWord();
+			
 		}
 		
 		private void handleAddNewMagicWord()
@@ -220,32 +227,29 @@ public class MagicWordsDlg extends JDialog
 			String word = addMagicWordsField.getText();
 			String assignedGroup = (String) groupComboField.getSelectedItem();
 			
-//			if (word.startsWith(MagicWords.INACTIVE_SIGN))
-//			{			
-//				JOptionPane.showMessageDialog(parent, MagicWords.INACTIVE_SIGN+" denotes an inactive magic words", "Invalid character", JOptionPane.ERROR_MESSAGE);				
-//				resetFields();					
-//				return;
-//			}
+			if (word.startsWith(MagicWords.INACTIVE_SIGN))
+			{			
+				JOptionPane.showMessageDialog(parent, MagicWords.INACTIVE_SIGN+" denotes an inactive magic words", "Invalid character", JOptionPane.ERROR_MESSAGE);				
+				resetFields();					
+				return;
+			}
 			
-			if (!isValidMagicWord(word))
+			if (isValidMagicWord(word))
 			{
 				JOptionPane.showMessageDialog(parent, "The magic word already exists. Please try other magic word ..", "Duplicate Magic word", JOptionPane.ERROR_MESSAGE);				
 				resetFields();					
 				return;
 			}	
 			
-			
-			String magicWord = MagicWords.INACTIVE_SIGN+ word + MagicWords.FIELD_DELIMITER;
 			if (assignedGroup == null)			
 				assignedGroup = word;
-			else
-				magicWord += assignedGroup;		
 									
-					
-			if (!magicListModel.contains(magicWord))
+			MagicWordEntry entry = magicWordsInfo.add(word, assignedGroup);
+			entry.setActive(false);
+			String lineOfMagicWord = entry.getLineOfMagicWordNoSign();	
+			if (!magicListModel.contains(lineOfMagicWord))
 			{	
-				magicListModel.addElement(magicWord);
-				magicWordsInfo.add(magicWord);
+				magicListModel.addElement(lineOfMagicWord);			
 				groupComboField.add(assignedGroup);
 			}
 			resetFields();	
@@ -260,8 +264,8 @@ public class MagicWordsDlg extends JDialog
 			{	
 				String item = (String) activeWords.getSelectedValue();	
 				
-				magicListModel.remove(selectItem);					
-				magicWordsInfo.remove(item);
+				magicListModel.remove(selectItem);				
+				magicWordsInfo.remove(getMagicWord(item));
 				groupList.remove(getGroupName(item));
 			}	
 			resetFields();						
@@ -281,7 +285,7 @@ public class MagicWordsDlg extends JDialog
 
 		private void handleUpdateMagicWords()
 		{			
-			parent.getMSPAApp().updateMagicWords(magicWordsInfo);	
+			parent.getMSPAApp().updateMagicWords(magicWordsInfo.getAllMagicWords());	
 			dispose();			
 		}
 	}
@@ -320,7 +324,7 @@ public class MagicWordsDlg extends JDialog
 	GroupComboBox groupComboField;
 
 	UiMainWindow parent;
-	Vector magicWordsInfo;
+	MagicWords magicWordsInfo;
 	Vector groupList;
 	String selectedMagicWord;	
 }
