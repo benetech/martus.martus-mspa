@@ -26,7 +26,7 @@ public class CreateAccountsTree
 		JTree tree = null;
 
 		Object[] nodes = new Object[accounts.size()+1];
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new AccountNode(1, whichServerToView, ""));
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new AccountNode(whichServerToView, ""));
 		DefaultMutableTreeNode parent = top;
 		nodes[0] = top;
 		
@@ -60,7 +60,7 @@ public class CreateAccountsTree
 	{
 		for (int i=0;i<accountArray.length;i++)
 		{		
-			DefaultMutableTreeNode account = new DefaultMutableTreeNode(new AccountNode(0, (String) accountArray[i], ""));
+			DefaultMutableTreeNode account = new DefaultMutableTreeNode(new AccountNode((String) accountArray[i], ""));
 			parent.add(account);		
 			nodes[i+1] = account;
 		}
@@ -79,7 +79,8 @@ public class CreateAccountsTree
 			if (node != null)
 			{
 				AccountNode selectedAccountNode = (AccountNode) node.getUserObject();
-				parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());		
+				if (!node.isRoot())
+				 parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());		
 			}		
 		}
 	}

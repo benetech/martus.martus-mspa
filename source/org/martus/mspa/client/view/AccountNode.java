@@ -6,9 +6,8 @@ import org.martus.util.Base64.InvalidBase64Exception;
 
 public class AccountNode
 {
-	public AccountNode(int id, String accountString, String status)
-	{
-		nodeId = id;
+	public AccountNode(String accountString, String status)
+	{		
 		accountId = accountString;
 		try
 		{																		
@@ -19,11 +18,6 @@ public class AccountNode
 			e.printStackTrace();					
 		}		
 		accountStatus = status;
-	}
-
-	public int getNodeId() 
-	{ 
-		return nodeId;
 	}
 
 	public String getDisplayName() 
@@ -41,13 +35,11 @@ public class AccountNode
 		return accountId;
 	}
 	
-
 	public String toString() 
 	{ 
 		return publicCode;
 	}
 
-	protected int    nodeId;
 	protected String publicCode;
 	protected String accountStatus;
 	protected String accountId;
