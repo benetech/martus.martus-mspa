@@ -322,10 +322,6 @@ public class UiMainWindow extends JFrame
 		mFile.add(new MenuItemExitApplication(this));
 		menuBar.add(mFile);
 		
-		JMenu mEdit = new JMenu("Edit");
-		mFile.setMnemonic('d');
-		menuBar.add(mEdit);		
-		
 		JMenu mTool = new JMenu("Tools");
 		mTool.add(new MenuItemMartusServerCompliance(this,"View Server Compliance"));
 		mTool.addSeparator();
