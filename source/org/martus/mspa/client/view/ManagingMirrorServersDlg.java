@@ -51,6 +51,7 @@ import org.martus.mspa.client.core.MirrorServerLabelFinder;
 import org.martus.mspa.client.core.MirrorServerLabelInfo;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
@@ -222,7 +223,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	private JButton createButton(String label)
 	{
-		JButton button = new JButton(label);
+		JButton button = new UiButton(label);
 		button.addActionListener(new ButtonHandler());
 		return button;
 	}

@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.UiWrappedTextArea;
 import org.martus.swing.Utilities;
@@ -93,9 +94,9 @@ public class ServerComplianceDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());		
 		
-		saveButton = new JButton("Save");	
+		saveButton = new UiButton("Save");	
 		saveButton.addActionListener(new CommitButtonHandler());	
-		closeButton = new JButton("Close");
+		closeButton = new UiButton("Close");
 		closeButton.addActionListener(new CommitButtonHandler());
 
 		panel.add(saveButton);

@@ -56,6 +56,7 @@ import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.common.AccountAdminOptions;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.UiTextArea;
 
@@ -144,7 +145,7 @@ public class AccountDetailPanel extends JPanel
 		canSendToAmp = new JCheckBox("Amplified", admOptions.canSendToAmplifySelected());
 		canSendToAmp.addActionListener(new CheckBoxHandler());	
 		
-		saveButton = new JButton("Save");
+		saveButton = new UiButton("Save");
 		saveButton.addActionListener(new CommitButtonHandler());
 		
 		panel.add(canUpload);
@@ -229,9 +230,9 @@ public class AccountDetailPanel extends JPanel
 //		layout.setAlignment(FlowLayout.CENTER);
 //		panel.setLayout(layout);
 //		
-//		viewStatistics = new JButton("View Statistics");
+//		viewStatistics = new UiButton("View Statistics");
 //		viewStatistics.addActionListener(new CommitButtonHandler());									
-//		viewActivity = new JButton("View Activity");
+//		viewActivity = new UiButton("View Activity");
 //		viewActivity.addActionListener(new CommitButtonHandler());						
 //		
 //		panel.add(viewStatistics);
@@ -271,7 +272,7 @@ public class AccountDetailPanel extends JPanel
 		bulletinList = createBulletinList(bulletinListModel);
 		bulletinList.setName("bulletin");
 		
-		viewBulletinButton = new JButton("View Bulletin");
+		viewBulletinButton = new UiButton("View Bulletin");
 		bulletinTabPane.add(getDisplayBulletinPanel(bulletinList, viewBulletinButton), 0);
 		bulletinTabPane.setTitleAt(0, "Active Bulletins");
 
@@ -279,7 +280,7 @@ public class AccountDetailPanel extends JPanel
 		hiddenList = createBulletinList(hiddenListModel);
 		hiddenList.setName("hidden");
 		hiddenList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		viewHiddenButton = new JButton("View Deleted Bulletin");
+		viewHiddenButton = new UiButton("View Deleted Bulletin");
 		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
 		bulletinTabPane.setTitleAt(1, "Deleted Bulletins");			
 
@@ -307,13 +308,13 @@ public class AccountDetailPanel extends JPanel
 
 		if (list.getName().equals("bulletin"))
 		{
-			delBulletins = new JButton("Delete Bulletin");
+			delBulletins = new UiButton("Delete Bulletin");
 			delBulletins.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(delBulletins);
 		}	
 		else
 		{
-			recoverHiddenButton = new JButton("Recover Deleted Bulletin");
+			recoverHiddenButton = new UiButton("Recover Deleted Bulletin");
 			recoverHiddenButton.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(recoverHiddenButton);
 		}		

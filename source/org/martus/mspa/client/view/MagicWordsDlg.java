@@ -61,6 +61,7 @@ import javax.swing.table.TableColumn;
 import org.martus.common.MagicWords;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
@@ -101,9 +102,9 @@ public class MagicWordsDlg extends JDialog
 		groupComboField = new GroupComboBox(fData.getGroupList());		
 		groupComboField.setEditable(true);	
 	
-		addMagicWordButton = new JButton("Add");
+		addMagicWordButton = new UiButton("Add");
 		addMagicWordButton.addActionListener(new MagicWordButtonHandler());	
-		updateMagicWordButton = new JButton("Update");
+		updateMagicWordButton = new UiButton("Update");
 		updateMagicWordButton.addActionListener(new MagicWordButtonHandler());						
 				
 		panel.add(new UiLabel(""), ParagraphLayout.NEW_PARAGRAPH);
@@ -178,9 +179,9 @@ public class MagicWordsDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());		
 		
-		saveButton = new JButton("Save");	
+		saveButton = new UiButton("Save");	
 		saveButton.addActionListener(new CommitButtonHandler());	
-		cancelButton = new JButton("Cancel");
+		cancelButton = new UiButton("Cancel");
 		cancelButton.addActionListener(new CommitButtonHandler());
 
 		panel.add(saveButton);

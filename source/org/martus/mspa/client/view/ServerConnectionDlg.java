@@ -43,6 +43,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import org.martus.mspa.main.UiMainWindow;
+import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
@@ -110,7 +111,7 @@ public class ServerConnectionDlg extends JDialog
 		JPanel panel = new JPanel();		
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 							
-		connect = new JButton("Connect");
+		connect = new UiButton("Connect");
 		connect.addActionListener(new CommitButtonHandler());	
 		panel.add(connect);					
 
