@@ -31,13 +31,13 @@ import java.rmi.RemoteException;
 
 public interface Messenger extends Remote 
 {
-	public ServerStatus startServer(String accountKey) throws RemoteException;
-	public ServerStatus stopServer(String accountKey) throws RemoteException;
-	public ServerStatus getStatus(String accountKey, int statusType) throws RemoteException;
-	public ServerStatus setReadOnly(String accountKey) throws RemoteException;
-	public ServerStatus setReadWrite(String accountKey) throws RemoteException;
+	public Status startServer(String accountKey) throws RemoteException;
+	public Status stopServer(String accountKey) throws RemoteException;
+	public Status getStatus(String accountKey, int statusType) throws RemoteException;
+	public Status setReadOnly(String accountKey) throws RemoteException;
+	public Status setReadWrite(String accountKey) throws RemoteException;
 		
-	public ServerStatus getAdminFile(String accountKey, String fileFrom, String fileTo) throws RemoteException;
+	public Status getAdminFile(String accountKey, String fileFrom, String fileTo) throws RemoteException;
 	
 	public String getInitMsg() throws RemoteException;
 

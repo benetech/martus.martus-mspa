@@ -40,41 +40,41 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		
 	}
 	
-	public ServerStatus startServer(String accountKey) throws RemoteException
+	public Status startServer(String accountKey) throws RemoteException
 	{
 		return callScript(SERVER_START);
 	}
 	
-	public ServerStatus stopServer(String accountKey) throws RemoteException
+	public Status stopServer(String accountKey) throws RemoteException
 	{	
 		return callScript(SERVER_STOP);
 	}
 	
-	public ServerStatus getStatus(String accountKey, int statusType) throws RemoteException
+	public Status getStatus(String accountKey, int statusType) throws RemoteException
 	{		
 		return callScript(statusType);
 	}
 	
-	public ServerStatus setReadOnly(String accountKey) throws RemoteException
+	public Status setReadOnly(String accountKey) throws RemoteException
 	{	
 		return callScript(READONLY);
 	}
 	
-	public ServerStatus setReadWrite(String accountKey) throws RemoteException
+	public Status setReadWrite(String accountKey) throws RemoteException
 	{			
 		return callScript(READ_WRITE);
 	}
 	
-	private ServerStatus callScript(int scriptType)
+	private Status callScript(int scriptType)
 	{
-		ServerStatus status = new ServerStatus();
+		Status status = new Status();
 		switch (scriptType)
 		{
 			case SERVER_START:
 			case SERVER_STOP:
 			case READONLY:
 			case READ_WRITE:
-			case STATUS:
+			case SERVER_STATUS:
 				break;	
 		}		
 		
@@ -87,23 +87,23 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	}
 		
 
-	public ServerStatus getAdminFile(String key, String fileFrom, String fileTo) throws RemoteException 
+	public Status getAdminFile(String key, String fileFrom, String fileTo) throws RemoteException 
 	{
-		ServerStatus status = new ServerStatus();		
+		Status status = new Status();		
 								
 		try
 		{
 			FileTransfer.copyFile(new File(fileFrom), new File(fileTo));			
-			status.setStatus(ServerStatus.SUCCESS);		
+			status.setStatus(Status.SUCCESS);		
 		}
 		catch(FileNotFoundException nothingToWorryAbout)
 		{
-			status.setStatus(ServerStatus.FAILED);			
+			status.setStatus(Status.FAILED);			
 			status.setErrorMsg(fileFrom+" not found: ");				
 		}
 		catch (IOException e)
 		{
-			status.setStatus(ServerStatus.FAILED);			
+			status.setStatus(Status.FAILED);			
 			status.setErrorMsg("Error loading ("+fileFrom+")file.\n"+e.toString());				
 			e.printStackTrace();			
 		}		

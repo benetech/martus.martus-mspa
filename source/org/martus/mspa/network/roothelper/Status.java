@@ -28,17 +28,17 @@ package org.martus.mspa.network.roothelper;
 import java.io.Serializable;
 
 
-public class ServerStatus implements Serializable
+public class Status implements Serializable
 {
 	public String errorMsg="";
 	public String status="";
 	
-	public ServerStatus()
+	public Status()
 	{
 		this(SUCCESS);
 	}
 	
-	public ServerStatus(String msgStatus) 
+	public Status(String msgStatus) 
 	{		
 		status = msgStatus;
 	}	
