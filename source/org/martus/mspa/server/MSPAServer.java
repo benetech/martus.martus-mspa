@@ -47,16 +47,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 	public MSPAServer(File dir) 
 	{				
-		serverDirectory = dir;	
+		serverDirectory = dir;			
 		authorizedMartusAccounts = new Vector();
 		authorizeMSPAClients = new Vector();
 		logger = new LoggerToConsole();	
-		mspaHandler = new ServerSideHandler(this);										
+		mspaHandler = new ServerSideHandler(this);
+								
 	}
 	
 	public void initConfig()
-	{		
-		initializedEnvironmentDirectory();				
+	{							
+		initializedEnvironmentDirectory();	
 		loadConfigurationFiles();	
 	}
 	
@@ -72,6 +73,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{
 			System.out.println("Initialize environments ...");
 			getMessenger().setReadWrite(security.getPublicKeyString());
+											
 			getServerWhoWeCallDirectory().mkdirs();
 			getMirrorServerWhoCallUsDirectory().mkdirs();
 			getMirrorServerWhoWeCallDirectory().mkdirs();
@@ -869,8 +871,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			
 		Vector deleteList = new Vector();	
 		File[] startupFiles = getMSPADeleteOnStartup().listFiles();
-		for (int i=0; i<startupFiles.length;++i)			
+		for (int i=0; i<startupFiles.length;++i)
+		{
+			if (startupFiles[i].isDirectory())
+			{
+				File[] files = startupFiles[i].listFiles();				
+				MartusUtilities.deleteAllFiles(new Vector(Arrays.asList(files)));				
+			}
+		
 			deleteList.add(startupFiles[i]);
+		}
 				
 		MartusUtilities.deleteAllFiles(deleteList);
 		
