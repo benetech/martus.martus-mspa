@@ -1001,7 +1001,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "authorizedClients"; 
 	private static final String MSPA_CLIENT_AUTHORIZED_FILES = "authorizedClients.txt"; 
 
-	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
+	private final static String KEYPAIR_FILE ="keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";
 	private final static String UNIX_MARTUS_ENVIRONMENT = "/var/MartusServer/";
 	private final static String WINDOW_MSPA_ENVIRONMENT = "C:/MSPAServer/";
