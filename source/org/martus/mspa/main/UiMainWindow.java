@@ -250,7 +250,7 @@ public class UiMainWindow extends JFrame
 		Vector hiddenBulletins = mspaApp.getListOfHiddenBulletins(accountId);
 
 		tabPane.remove(0);
-		tabPane.add(new AccountDetailPanel(mspaApp, accountId, contactInfo, hiddenBulletins, 
+		tabPane.add(new AccountDetailPanel(this, accountId, contactInfo, hiddenBulletins, 
 					packetDir, accountAdmin), "Account Detail");			
 	}		
 	

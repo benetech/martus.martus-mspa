@@ -28,16 +28,18 @@ import javax.swing.border.TitledBorder;
 import org.martus.common.bulletin.BulletinConstants;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.MSPAClient;
+import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.UiTextArea;
 
 public class AccountDetailPanel extends JPanel
 {
-	public AccountDetailPanel(MSPAClient appToUse, String id, Vector contactInfo, Vector hiddenBulletins, 
+	public AccountDetailPanel(UiMainWindow windowToUse, String id, Vector contactInfo, Vector hiddenBulletins, 
 			Vector bulletinIds, Vector manageAccount)
 	{
 		accountId = id;	
-		app = appToUse;		
+		parent = windowToUse;
+		app = parent.getMSPAApp();		
 		hiddenBulletinIds =	hiddenBulletins;
 		originalBulletinIds = bulletinIds;
 		
@@ -292,6 +294,11 @@ public class AccountDetailPanel extends JPanel
 		return ps;
 	}
 	
+	private void postStatus(String msgHeader)
+	{
+		parent.setStatusText(msgHeader+app.getStatus());
+	}
+	
 	class CheckBoxHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
@@ -335,12 +342,15 @@ public class AccountDetailPanel extends JPanel
 				}
 				
 				app.recoverHiddenBulletin(accountId, recoverList);
+				postStatus("Recover Hidden Bulletin :");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
+				postStatus("List of Hidden Bulletins :");
 				if (hiddenBulletins != null)
 					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));
 					
-				Vector rawBullectins = app.getPacketDirNames(accountId);	
+				Vector rawBullectins = app.getPacketDirNames(accountId);
+				postStatus("Get Packets directory :");	
 				Vector listOfFormattedBulletins = loadBulletinIds(rawBullectins);
 				bulletinListModel.removeAllElements();
 				for (int i=0; i<listOfFormattedBulletins.size();++i)
@@ -374,8 +384,10 @@ public class AccountDetailPanel extends JPanel
 				}
 				
 				app.removeBulletin(accountId, hiddenList);
+				postStatus("Remove Bulletins: ");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
+				postStatus("Get a list of Hidden Bulletings :");
 				if (hiddenBulletins != null)
 				{
 					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));
@@ -408,6 +420,7 @@ public class AccountDetailPanel extends JPanel
 	DefaultListModel hiddenListModel;
 
 	MSPAClient app;
+	UiMainWindow parent;
 	Vector originalBulletinIds;
 	Vector hiddenBulletinIds;	
 	JTabbedPane bulletinTabPane;

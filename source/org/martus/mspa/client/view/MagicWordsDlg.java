@@ -289,7 +289,8 @@ public class MagicWordsDlg extends JDialog
 
 		private void handleUpdateMagicWords()
 		{			
-			parent.getMSPAApp().updateMagicWords(fData.populatedDataFromTable());	
+			parent.getMSPAApp().updateMagicWords(fData.populatedDataFromTable());
+			parent.setStatusText("Update Magicwords: "+ parent.getMSPAApp().getStatus());	
 			dispose();			
 		}
 	}

@@ -252,6 +252,11 @@ public class ManagingMirrorServersDlg extends JDialog
 		return true;	
 	}
 	
+	private void postStatus(String msgHeader)
+	{
+		parent.setStatusText(parent.getMSPAApp().getStatus());
+	}
+	
 	class ButtonHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
@@ -299,6 +304,7 @@ public class ManagingMirrorServersDlg extends JDialog
 			mirrorServerInfo.add(mirrorFileName);										
 				
 			boolean result = parent.getMSPAApp().addMirrorServer(mirrorServerInfo);
+			postStatus("Request add mirror server: ");
 			if (result)
 			{			
 				availableItems.add(mirrorFileName);
@@ -348,10 +354,12 @@ public class ManagingMirrorServersDlg extends JDialog
 						itemCollection.add(itemString);
 				}							
 				parent.getMSPAApp().updateMagicWords(itemCollection);
+				postStatus("Update Magiewords: ");
 			}
 			else
 			{					
 				parent.getMSPAApp().updateManageMirrorAccounts(itemCollection, serverManageType);
+				postStatus("Update manage mirror accounts: ");
 			}
 		
 			dispose();							
@@ -373,6 +381,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		private void handleRequestViewCompliant()
 		{			
 			String compliants = parent.getMSPAApp().getServerCompliant();
+			postStatus("Request Serve Compliant: ");
 			ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
 			dlg.show();
 		}	

@@ -21,7 +21,7 @@ public class MenuItemManageMagicWords extends AbstractAction
 	public void actionPerformed(ActionEvent arg0) 
 	{
 		Vector magicWords = parent.getMSPAApp().getAllMagicWords();
-		parent.setStatusText(parent.getMSPAApp().getStatus());
+		parent.setStatusText("Retrieve available magicwords: "+parent.getMSPAApp().getStatus());
 		
 		MagicWordsDlg magicWordsDlg = new MagicWordsDlg(parent, magicWords);
 		magicWordsDlg.show();
