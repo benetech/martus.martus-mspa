@@ -51,8 +51,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		logger = new LoggerToConsole();	
 		mspaHandler = new ServerSideHandler(this);								
 		initalizeFileDatabase();
-		initializedEnvironmentDirectory();
-				
+	}
+	
+	public void initConfig()
+	{		
+		initializedEnvironmentDirectory();				
 		loadConfigurationFiles();	
 	}
 	
@@ -63,33 +66,42 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	}			
 	
 	private void initializedEnvironmentDirectory()
-	{
-		getServerWhoWeCallDirectory().mkdirs();
-		getMirrorServerWhoCallUsDirectory().mkdirs();
-		getMirrorServerWhoWeCallDirectory().mkdirs();
-		getAmpsWhoCallUsDirectory().mkdirs();
-		getAvailableMirrorServerDirectory().mkdirs();
-		getMartusServerDataDirectory().mkdirs();
-		
-		initAccountConfigFiles(new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME));
-		initAccountConfigFiles(new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME));		
-		initAccountConfigFiles(new File(getMartusServerDataDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME));
-		initAccountConfigFiles(new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME));
-		initAccountConfigFiles(new File(getMartusServerDataDirectory(), BANNEDCLIENTS_FILENAME));
-		initAccountConfigFiles(new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME));
-	}
-	
-	private void initAccountConfigFiles(File targetFile)
-	{
+	{			
 		try
 		{
-			targetFile.createNewFile();
+			log("Initialize environments ...");
+			getMessenger().setReadWrite(security.getPublicKeyString());
+			getServerWhoWeCallDirectory().mkdirs();
+			getMirrorServerWhoCallUsDirectory().mkdirs();
+			getMirrorServerWhoWeCallDirectory().mkdirs();
+			getAmpsWhoCallUsDirectory().mkdirs();
+			getAvailableMirrorServerDirectory().mkdirs();
+			getMartusServerDataDirectory().mkdirs();
+				
+			initAccountConfigFiles(new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME));
+			initAccountConfigFiles(new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME));		
+			initAccountConfigFiles(new File(getMartusServerDataDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME));
+			initAccountConfigFiles(new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME));
+			initAccountConfigFiles(new File(getMartusServerDataDirectory(), BANNEDCLIENTS_FILENAME));
+			initAccountConfigFiles(new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME));
+			
+			getMessenger().setReadOnly(security.getPublicKeyString());
+			log("Completed setting up server environments...\n");	
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();			
-			log(targetFile.getPath()+" error when created."+e.toString());
+			log(" Error when initialized configuration files."+e.toString());
 		}		
+	}
+	
+	private void initAccountConfigFiles(File targetFile) throws IOException
+	{			
+		targetFile.createNewFile();
+		log(targetFile.getPath()+" (ready)" );				
 	}
 	
 	private void loadConfigurationFiles()
@@ -942,8 +954,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.processCommandLine(args);
 			server.setMagicWords();			
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
-			server.setRootHelperConnector();																			
-			System.out.println("Waiting for connection...");
+			server.setRootHelperConnector();
+			server.initConfig();																			
+			System.out.println("\nWaiting for connection...");
 						
 			if(!server.deleteStartupFiles())
 				System.exit(5);		
