@@ -1,4 +1,8 @@
 Notes for getting the MSPA client working on your workstation.
+2004-04-07 Kevin B. Smith
+
+These are TEMPORARY instructions, and will probably be obsolete 
+within a week or two!
 
 
 1. You will need to create a keypair as c:/MSPAClient/keypair.dat
