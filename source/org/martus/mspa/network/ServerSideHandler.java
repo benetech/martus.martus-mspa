@@ -119,10 +119,11 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector getInActiveMagicWords(String myAccountId)
 	{	
 		Vector results = new Vector();				
-		Vector magicWords = server.getMagicWordsInfo().getInActiveMagicWords();
+		Vector magicWords = server.getMagicWordsInfo().getInactiveMagicWords();
 		if(magicWords.size()<=0)
 		{
-			results.add(NetworkInterfaceConstants.NOT_FOUND);
+			results.add(NetworkInterfaceConstants.NO_DATA_AVAILABLE);
+			results.add(new Vector());
 			return results;
 		}		
 
@@ -138,12 +139,13 @@ public class ServerSideHandler implements NetworkInterface
 		Vector magicWords = server.getMagicWordsInfo().getActiveMagicWords();
 		if(magicWords.size()<=0)
 		{
-			results.add(NetworkInterfaceConstants.NOT_FOUND);
+			results.add(NetworkInterfaceConstants.NO_DATA_AVAILABLE);
+			results.add(new Vector());
 			return results;
 		}		
 
 		results.add(NetworkInterfaceConstants.OK);
-		results.add(magicWords);		
+		results.add(magicWords);
 
 		return results;					
 	}
@@ -155,7 +157,8 @@ public class ServerSideHandler implements NetworkInterface
 		Vector magicWords = server.getMagicWordsInfo().getAllMagicWords();		
 		if(magicWords.size()<=0)
 		{
-			results.add(NetworkInterfaceConstants.NOT_FOUND);
+			results.add(NetworkInterfaceConstants.NO_DATA_AVAILABLE);
+			results.add(new Vector());
 			return results;
 		}		
 

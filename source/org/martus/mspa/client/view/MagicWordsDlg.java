@@ -31,7 +31,7 @@ public class MagicWordsDlg extends JDialog
 	public MagicWordsDlg(UiMainWindow owner, Vector magicWords)
 	{
 		super((JFrame)owner, "Manage Magic Words", true);
-		parent = owner;	
+		parent = owner;		
 		
 		magicWordsInfo = new MagicWords(new LoggerToConsole());	
 		getContentPane().setLayout(new BorderLayout());

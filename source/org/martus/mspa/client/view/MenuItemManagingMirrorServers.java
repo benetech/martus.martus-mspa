@@ -44,14 +44,24 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 
 	public void actionPerformed(ActionEvent arg0) 
 	{	
-						
-		Vector availableList = parent.getMSPAApp().getInActiveMagicWords();
-		Vector assigedList = parent.getMSPAApp().getActiveMagicWords();
+		Vector availableList;
+		Vector assignedList;			
+		
+		if (serverManageType == MirrorServerLabelFinder.LISTEN_FOR_CLIENTS)
+		{							
+			availableList = parent.getMSPAApp().getInActiveMagicWords();
+			assignedList = parent.getMSPAApp().getActiveMagicWords();
+		}
+		else
+		{
+			availableList = new Vector();
+			assignedList = new Vector();
+		}			
 			
 		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, serverManageType,
-					"", "", availableList, assigedList);
+					"", "", availableList, assignedList);
 		serverManagementDlg.show();
-	}
+	}	
 
 	UiMainWindow parent;	
 	int serverManageType;

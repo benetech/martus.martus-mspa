@@ -150,13 +150,12 @@ public class MSPAClient
 	}	
 	
 	public Vector displayAccounst()
-	{
-		Vector results=null;	
+	{	
 		try
 		{			
 			Vector parameters = new Vector();							
 			String signature = security.createSignatureOfVectorOfStrings(parameters);	
-			results = getAccountIds(security.getPublicKeyString(), parameters, signature);
+			Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -170,17 +169,16 @@ public class MSPAClient
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return results;
+		return new Vector();
 	}
 	
 	public Vector getContactInfo(String accountId)
-	{
-		Vector results=null;	
+	{	
 		try
 		{			
 			Vector parameters = new Vector();			
 			String signature = security.createSignatureOfVectorOfStrings(parameters);		
-			results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
+			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -194,15 +192,14 @@ public class MSPAClient
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return results;
+		return new Vector();
 	}
 	
 	public Vector getInActiveMagicWords()
-	{
-		Vector results=null;	
+	{	
 		try
 		{						
-			results = handler.getInActiveMagicWords(security.getPublicKeyString());
+			Vector results = handler.getInActiveMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -216,15 +213,14 @@ public class MSPAClient
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return results;
+		return new Vector();
 	}	
 	
 	public Vector getActiveMagicWords()
-	{
-		Vector results=null;	
+	{	
 		try
 		{						
-			results = handler.getActiveMagicWords(security.getPublicKeyString());
+			Vector results = handler.getActiveMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -238,15 +234,14 @@ public class MSPAClient
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return results;
+		return new Vector();
 	}	
 	
 	public Vector getAllMagicWords()
-	{
-		Vector results=null;	
+	{	
 		try
 		{					
-			results = handler.getAllMagicWords(security.getPublicKeyString());
+			Vector results = handler.getAllMagicWords(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -260,7 +255,7 @@ public class MSPAClient
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return results;
+		return new Vector();
 	}		
 	
 	public void updateMagicWords(Vector magicWords)	

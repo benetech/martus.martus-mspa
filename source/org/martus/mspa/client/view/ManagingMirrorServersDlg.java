@@ -228,7 +228,7 @@ public class ManagingMirrorServersDlg extends JDialog
 				String item = (String) availableServers.getSelectedValue();
 				if (!allowedListModel.contains(item))
 				{						
-					allowedListModel.addElement(item.replace('#', '\0').trim());
+					allowedListModel.addElement(item);
 					availableListModel.remove(selectItem);
 				}				
 			}
