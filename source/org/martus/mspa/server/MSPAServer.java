@@ -200,11 +200,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP);
 	}
-	
-	public static File getAuthorizedClientsFile()
-	{
-		return new File(getAppDirectoryPath(), MSPA_CLIENT_AUTHORIZED_FILES);
-	}	
 
 	public static File getAuthorizedClientsDir()
 	{
@@ -1003,8 +998,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
 	private static final String COMPLIANCE_FILE =  "compliance.txt";
 	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "serverarguments.props";
-	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "authorizedClients"; 
-	private static final String MSPA_CLIENT_AUTHORIZED_FILES = "authorizedClients.txt"; 
+	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "clientsWhoCallUs"; 
 
 	private final static String KEYPAIR_FILE ="keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";
