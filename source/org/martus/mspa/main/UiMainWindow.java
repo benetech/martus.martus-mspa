@@ -77,9 +77,15 @@ public class UiMainWindow extends JFrame
 	public boolean run()	
 	{
 		int result = signIn(UiBasicSigninDlg.INITIAL); 
+	
 		if(result == UiBasicSigninDlg.CANCEL)
 			return false;
-		
+			
+		if (result != UiBasicSigninDlg.SIGN_IN)
+		{
+			String msg = "User Name and Passphrase not match.";
+			initializationErrorDlg(msg);					
+		}				
 		
 		setSize(800, 550);
 		JPanel mainPanel = new JPanel();
@@ -248,9 +254,7 @@ public class UiMainWindow extends JFrame
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.AMP_WHO_CALLS_US));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.WHO_CALLS_US));
-		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS));		
+				ManagingMirrorServerConstants.WHO_CALLS_US));		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		

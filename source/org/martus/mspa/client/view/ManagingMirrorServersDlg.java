@@ -92,9 +92,9 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(manageIPAddr);
 		panel.add(new JLabel("Public Code: "), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(managePublicCode);
-		mirrorServerPort = new JTextField(20);
-		panel.add(new JLabel("Which Port: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
-		panel.add(mirrorServerPort);			
+		mirrorServerName = new JTextField(20);
+		panel.add(new JLabel("Server Name: "), ParagraphLayout.NEW_PARAGRAPH);	
+		panel.add(mirrorServerName);			
 		
 		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)				
 			collectMirrorInfo(panel);
@@ -231,10 +231,25 @@ public class ManagingMirrorServersDlg extends JDialog
 		return button;
 	}
 	
-	String generateFileName(String ip, String publicKey)
+	String generateFileName(String serverName, String ip, String publicKey)
 	{
-		String fileName ="ip="+ip+"-code="+publicKey+".txt";
+		String fileName =serverName+"-ip="+ip+"-code="+publicKey+".txt";
 		return fileName.trim();
+	}
+	
+	boolean isValidServerName(String name)
+	{
+		if (name == null || name.length() <=0)
+			return false;
+			
+		if (name.indexOf("-") >0)
+			return false;						
+			
+		char ch = name.charAt(0);				
+		if (Character.isDigit(ch))
+			return false;
+							
+		return true;	
 	}
 	
 	class ButtonHandler implements ActionListener
@@ -258,39 +273,43 @@ public class ManagingMirrorServersDlg extends JDialog
 			Vector mirrorServerInfo = new Vector();
 			String mirrorIP = manageIPAddr.getText();
 			String mirrorPublicCode = managePublicCode.getText();
-			String port = mirrorServerPort.getText();
+			String serverName = mirrorServerName.getText();
 			
 			if (mirrorIP.length()<=0 || 
-				mirrorPublicCode.length()<=0 || 
-				port.length()<=0)
+				mirrorPublicCode.length()<=0) 
 			{	
 				JOptionPane.showMessageDialog(parent, "Ip address, public code and port are required.", 
 					"Missing Infomation", JOptionPane.ERROR_MESSAGE);
 				return;
-			}				
+			}
+			
+			if (!isValidServerName(serverName))
+			{
+				JOptionPane.showMessageDialog(parent, "Serve Name contains invalid character(s).", 
+					"Illegal Server Name", JOptionPane.ERROR_MESSAGE);
+				return;
+			}					
 			
 			mirrorServerInfo.add(mirrorIP);
 			mirrorServerInfo.add(mirrorPublicCode);		
-			mirrorServerInfo.add(port);	
 			
-			mirrorFileName = generateFileName(mirrorIP,mirrorPublicCode); 
+			mirrorFileName = generateFileName(serverName, mirrorIP,mirrorPublicCode); 
 			mirrorServerInfo.add(mirrorFileName);										
 				
 			boolean result = parent.getMSPAApp().addMirrorServer(mirrorServerInfo);
 			if (result)
 			{			
 				availableItems.add(mirrorFileName);
-				availableListModel.addElement(mirrorFileName);				
+				availableListModel.addElement(mirrorFileName);					
 			}
 			else
 			{
 				JOptionPane.showMessageDialog(parent, "Error no response from server.", 
-					"Server Info", JOptionPane.ERROR_MESSAGE);
-			}	
-			
+					"Server Info", JOptionPane.ERROR_MESSAGE);				
+			}				
 			manageIPAddr.setText("");
 			managePublicCode.setText("");
-			mirrorServerPort.setText("");					
+			mirrorServerName.setText("");	
 							
 		}		
 		
@@ -354,7 +373,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	JTextField manageIPAddr;
 	JTextField managePublicCode;
-	JTextField mirrorServerPort;
+	JTextField mirrorServerName;
 	
 	JButton addButton;
 	JButton removeButton;

@@ -121,7 +121,7 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector getInactiveMagicWords(String myAccountId)
 	{	
 		Vector results = new Vector();				
-		Vector magicWords = server.getMagicWordsInfo().getInactiveMagicWords();
+		Vector magicWords = server.getMagicWordsInfo().getInactiveMagicWordsWithNoSign();
 		
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);		
@@ -223,10 +223,10 @@ public class ServerSideHandler implements NetworkInterface
 			if (mirrorInfo.size() > 0)
 			{	
 				String ip = (String) mirrorInfo.get(0);
-				String publicCode = (String) mirrorInfo.get(1);
-				String port = (String) mirrorInfo.get(2);
-				String fileName = (String) mirrorInfo.get(3);
+				String publicCode = (String) mirrorInfo.get(1);				
+				String fileName = (String) mirrorInfo.get(2);
 				
+				String port = String.valueOf(server.getPortToUse());
 				File outputFileName = new File(MSPAServer.getAvailableMirrorServerDirectory(), fileName.trim());
 				
 				RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());
