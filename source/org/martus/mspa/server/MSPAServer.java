@@ -3,7 +3,6 @@ package org.martus.mspa.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.FileChannel;
@@ -42,7 +41,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		serverDirectory = dir;				
 
-		security = loadMartusKeypair(getMartusServerKeyPairFile());
+		security = loadMartusKeypair(getMSPAServerKeyPairFile());
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
 		try
@@ -74,10 +73,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return MartusServerUtilities.loadKeyPair(keyPairFileName, true);		
 	}
 	
-	public String getMartusServerKeyPairFile()
+	public String getMSPAServerKeyPairFile()
 	{
-		return getMartusConfigDirectory()+KEYPAIR_FILE;
+		return getConfigDirectory()+KEYPAIR_FILE;
 	}
+	
+	public File getMartusServerMagicWordFile()
+	{
+		return new File(getMartusConfigDirectory(),MAGICWORDS_FILENAME);
+	}	
 	
 	public File getPacketDirectory()
 	{
@@ -168,11 +172,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public void updateMagicWords(Vector words)
 	{				
 		try
-		{
+		{			
+			File backUpFile = new File(getMagicWordsFile().getPath() + ".bak");
+			copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
 			magicWords.loadMagicWords(getMagicWordsFile());
+			
+			copyFile(getMagicWordsFile(),getMartusServerMagicWordFile());
+		
 		}
-		catch (IOException ieo)
+		catch (Exception ieo)
 		{	
 			logger.log("MagicWord.txt file not found."+ ieo.toString());		
 		}	
