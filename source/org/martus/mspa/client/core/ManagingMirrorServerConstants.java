@@ -35,7 +35,7 @@ public interface ManagingMirrorServerConstants
 
 	public static String SERVERS_WHO_WE_MIRROR_TITLE			="Servers Who We Mirror";
 	public static String SERVERS_WE_AMPLIFY_TITLE				="Servers We Amplify";
-	public static String SERVERS_WHO_AMPIFIES_US_TITLE			="Servers Who Amplies Us";
+	public static String SERVERS_WHO_AMPIFIES_US_TITLE			="Servers Who Amplifies Us";
 	public static String SERVERS_WHO_MIRRORS_US_TITLE			="Servers Who Mirrors Us";
 	
 	public static String SERVERS_WHO_WE_MIRROS_HEADER			="Backup My Data to Other Servers";
