@@ -875,8 +875,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{
 			if (startupFiles[i].isDirectory())
 			{
-				File[] files = startupFiles[i].listFiles();				
-				MartusUtilities.deleteAllFiles(new Vector(Arrays.asList(files)));				
+				File[] files = startupFiles[i].listFiles();	
+				deleteList.addAll(Arrays.asList(files));			
 			}
 		
 			deleteList.add(startupFiles[i]);
