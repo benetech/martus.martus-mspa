@@ -1,6 +1,6 @@
 Notes for getting the MSPA server running on a windows box
 2004-04-08 Kevin B. Smith
-2004-10-05 Kevin, minor updates
+2004-10-06 Kevin: Various corrections and enhancements
 
 These are TEMPORARY instructions, and may become obsolete 
 within a week or two!
@@ -51,7 +51,7 @@ the server jar, the command should be:
 
 They should be run from the top-level directory, such as C:\MartusServer
   
-4. Run org.martus.mspa.network.roothelper.RootHelper (no parameters needed)
+4. Run org.martus.mspa.roothelper.RootHelper (no parameters needed)
 
 5. Run org.martus.mspa.server.MSPAServer (no parameters needed)
 
