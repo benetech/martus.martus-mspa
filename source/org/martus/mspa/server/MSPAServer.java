@@ -87,9 +87,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		clientNotSendToAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
 				
 		hiddenBulletins = new HiddenBulletins(getDatabase(),security, getLogger(), getHiddenPacketsFile());
-//authorizeMSPAClients = MartusUtilities.loadCanUploadFile(getAuthorizedClientsFile());
 		loadAuthorizedClients();
-System.out.println(authorizeMSPAClients.size());
 	}
 
 	private void loadAuthorizedClients() 
@@ -325,10 +323,7 @@ System.out.println(authorizeMSPAClients.size());
 	}
 	
 	public synchronized boolean hideBulletins(String accountId, Vector localIds)
-	{
-		if (!isAuthorizedMSPAClients(accountId))
-			return false;
-		
+	{	
 		hiddenBulletins.hideBulletins(accountId, localIds);
 				
 		try
@@ -457,7 +452,7 @@ System.out.println(authorizeMSPAClients.size());
 	{
 		try
 		{
-			File backUpFile = new File(getDeleteOnStartupBackupDirectory(), file.getPath() + ".bak");			
+			File backUpFile = new File(getDeleteOnStartupBackupDirectory(), file.getName() + ".bak");			
 			FileTransfer.copyFile(file, backUpFile);
 			MartusUtilities.writeListToFile(file, list);
 		}

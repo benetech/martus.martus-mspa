@@ -42,12 +42,12 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	
 	public Status startServer(String accountKey) throws RemoteException
 	{
-		return callScript(START_SERVER);
+		return callScript(SERVER_START);
 	}
 	
 	public Status stopServer(String accountKey) throws RemoteException
 	{	
-		return callScript(STOP_SERVER);
+		return callScript(SERVER_STOP);
 	}
 	
 	public Status getStatus(String accountKey, int statusType) throws RemoteException
@@ -70,8 +70,8 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		Status status = new Status();
 		switch (scriptType)
 		{
-			case START_SERVER:
-			case STOP_SERVER:
+			case SERVER_START:
+			case SERVER_STOP:
 			case READONLY:
 			case READ_WRITE:
 			case STATUS:

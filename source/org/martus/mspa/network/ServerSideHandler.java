@@ -77,11 +77,6 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId)
 	{	
 		Vector results = new Vector();
-		if (!server.isAuthorizedMSPAClients(myAccountId))
-		{
-			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
-			return results;
-		}
 		
 		File contactFile=null;		
 		try
@@ -186,13 +181,7 @@ public class ServerSideHandler implements NetworkInterface
 	{			
 		Vector results = new Vector();
 		try
-		{				
-			if (!server.isAuthorizedMSPAClients(myAccountId))
-			{
-				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
-				return results;
-			}
-									
+		{												
 			boolean result = server.hideBulletins(myAccountId, localIds);
 			if (result)	
 				results.add(NetworkInterfaceConstants.OK);
