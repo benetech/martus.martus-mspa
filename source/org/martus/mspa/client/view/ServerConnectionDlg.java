@@ -35,7 +35,6 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -44,6 +43,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import org.martus.mspa.main.UiMainWindow;
+import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
 
@@ -56,7 +56,7 @@ public class ServerConnectionDlg extends JDialog
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		mainPanel.add(new JLabel("Select a server: "), BorderLayout.NORTH);	
+		mainPanel.add(new UiLabel("Select a server: "), BorderLayout.NORTH);	
 		mainPanel.add(createDisplayServerListPane(availableServers), BorderLayout.CENTER);
 		mainPanel.add(buildButtonsPanel(), BorderLayout.SOUTH);						
 		mainPanel.setPreferredSize(new Dimension(300,250));		

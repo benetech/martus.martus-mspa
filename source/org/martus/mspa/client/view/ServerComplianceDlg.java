@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiLabel;
 import org.martus.swing.UiWrappedTextArea;
 import org.martus.swing.Utilities;
 
@@ -69,7 +70,7 @@ public class ServerComplianceDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new ParagraphLayout());
 		
-		JLabel label = new JLabel("Compliance for this Martus Server:");
+		JLabel label = new UiLabel("Compliance for this Martus Server:");
 		
 		complianceEditor = new UiWrappedTextArea(compliants);
 		complianceEditor.setBackground(Color.WHITE);
@@ -79,9 +80,9 @@ public class ServerComplianceDlg extends JDialog
 		sp.getViewport().add(complianceEditor);
 		sp.setPreferredSize(new Dimension(250,180));
 		
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(label); 
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(sp);
 		
 		return panel;

@@ -40,7 +40,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -62,6 +61,7 @@ import javax.swing.table.TableColumn;
 import org.martus.common.MagicWords;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
 
@@ -106,16 +106,16 @@ public class MagicWordsDlg extends JDialog
 		updateMagicWordButton = new JButton("Update");
 		updateMagicWordButton.addActionListener(new MagicWordButtonHandler());						
 				
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel("Magic word:"));		
+		panel.add(new UiLabel(""), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("Magic word:"));		
 		panel.add(addMagicWordsField);
 		
 		panel.add(Box.createHorizontalGlue());
-		panel.add(new JLabel("Assign to which group:"));
+		panel.add(new UiLabel("Assign to which group:"));
 		panel.add(groupComboField);				
 								
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel(""));		
+		panel.add(new UiLabel(""), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel(""));		
 		panel.add(addMagicWordButton);	
 		panel.add(updateMagicWordButton);
 			

@@ -28,15 +28,18 @@ package org.martus.mspa.client.view;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import org.martus.common.VersionBuildDate;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.mspa.main.UiMainWindow;
+import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
 public class AboutDlg extends JDialog implements ActionListener
@@ -62,14 +65,14 @@ public class AboutDlg extends JDialog implements ActionListener
 		ok.addActionListener(this);			
 				
 		Box vBoxVersionInfo = Box.createVerticalBox();
-		vBoxVersionInfo.add(new JLabel(versionInfo));
-		vBoxVersionInfo.add(new JLabel(" "));
-		vBoxVersionInfo.add(new JLabel(" "));
-		vBoxVersionInfo.add(new JLabel(UiConstants.copyright));
-		vBoxVersionInfo.add(new JLabel(UiConstants.website));
-		vBoxVersionInfo.add(new JLabel(" "));
-		vBoxVersionInfo.add(new JLabel(buildDate, JLabel.CENTER));
-		vBoxVersionInfo.add(new JLabel(" "));
+		vBoxVersionInfo.add(new UiLabel(versionInfo));
+		vBoxVersionInfo.add(new UiLabel(" "));
+		vBoxVersionInfo.add(new UiLabel(" "));
+		vBoxVersionInfo.add(new UiLabel(UiConstants.copyright));
+		vBoxVersionInfo.add(new UiLabel(UiConstants.website));
+		vBoxVersionInfo.add(new UiLabel(" "));
+		vBoxVersionInfo.add(new UiLabel(buildDate, JLabel.CENTER));
+		vBoxVersionInfo.add(new UiLabel(" "));
 
 		Box hBoxVersionAndIcon = Box.createHorizontalBox();
 		hBoxVersionAndIcon.add(Box.createHorizontalGlue());

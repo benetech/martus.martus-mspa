@@ -51,6 +51,7 @@ import org.martus.mspa.client.core.MirrorServerLabelFinder;
 import org.martus.mspa.client.core.MirrorServerLabelInfo;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 
 public class ManagingMirrorServersDlg extends JDialog
@@ -85,12 +86,12 @@ public class ManagingMirrorServersDlg extends JDialog
 		manageIPAddr.requestFocus();		
 		managePublicCode = new JTextField(20);					
 		
-		panel.add(new JLabel("IP Address: "), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("IP Address: "), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(manageIPAddr);
-		panel.add(new JLabel("Public Code: "), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("Public Code: "), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(managePublicCode);
 		mirrorServerName = new JTextField(20);
-		panel.add(new JLabel("Server Name: "), ParagraphLayout.NEW_PARAGRAPH);	
+		panel.add(new UiLabel("Server Name: "), ParagraphLayout.NEW_PARAGRAPH);	
 		panel.add(mirrorServerName);			
 				
 		collectMirrorInfo(panel);
@@ -141,7 +142,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		 
 		JScrollPane ps = createScrollPane();			
 		ps.getViewport().add(availableList);
-		JLabel availableLabel = new JLabel(msgLabelInfo.getAvailableLabel());
+		JLabel availableLabel = new UiLabel(msgLabelInfo.getAvailableLabel());
 				
 		panel.add(availableLabel);
 		panel.add(ps);
@@ -160,7 +161,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		    
 		JScrollPane ps = createScrollPane();
 		ps.getViewport().add(allowedList);
-		JLabel allowedLabel = new JLabel( msgLabelInfo.getAllowedLabel());
+		JLabel allowedLabel = new UiLabel( msgLabelInfo.getAllowedLabel());
 				
 		panel.add(allowedLabel);
 		panel.add(ps);

@@ -46,6 +46,7 @@ import javax.swing.border.LineBorder;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiLabel;
 import org.martus.swing.UiWrappedTextArea;
 import org.martus.swing.Utilities;
 
@@ -76,10 +77,10 @@ public class ServerArgumentsConfigDlg extends JDialog
 		panel.setBorder(new LineBorder(Color.gray));
 		panel.setLayout(new ParagraphLayout());
 		
-		JLabel listenerIpLabel = new JLabel("Listener IP :");
-		JLabel amplifierIpLabel = new JLabel("Amplifier IP :");
-		JLabel minutesLabel = new JLabel("Amplifier-Indexing-Minutes :");
-		JLabel passwordLabel = new JLabel("Password: ");
+		JLabel listenerIpLabel = new UiLabel("Listener IP :");
+		JLabel amplifierIpLabel = new UiLabel("Amplifier IP :");
+		JLabel minutesLabel = new UiLabel("Amplifier-Indexing-Minutes :");
+		JLabel passwordLabel = new UiLabel("Password: ");
 		
 		listenerIpTextField = new JTextField(arguments.getListenerIP(), 20);	
 		listenerIpTextField.requestFocus();
@@ -103,28 +104,28 @@ public class ServerArgumentsConfigDlg extends JDialog
 		mirrorListener = new JCheckBox("Mirror-Listener",arguments.getMirrorListenerStatus());		
 		amplifierListener = new JCheckBox("Amplifier-Listener", arguments.getAmplifierListenerStatus());
 		 		
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(listenerIpLabel); 
 		panel.add(listenerIpTextField);
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(amplifierIpLabel); 
 		panel.add(amplifierIpTextField);
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 
 		 
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(passwordLabel); 
 		panel.add(passwordComboField);
 		panel.add(minutesLabel); 
 		panel.add(minutsComboField);
 		
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(amplifier); 
 		panel.add(clientListener);	
 		panel.add(mirrorListener); 
 		panel.add(amplifierListener);			
 		
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(previewPanel());
 		
 		return panel;

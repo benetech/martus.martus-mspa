@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
@@ -66,6 +68,7 @@ import org.martus.mspa.client.view.menuitem.MenuItemMartusServerCompliance;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.mspa.common.ManagingMirrorServerConstants;
 import org.martus.swing.ParagraphLayout;
+import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 import org.martus.util.Base64.InvalidBase64Exception;
 
@@ -222,18 +225,18 @@ public class UiMainWindow extends JFrame
 			publicCodeLabel.setEditable(false);
 			publicCodeLabel.setForeground(Color.BLUE);
 					
-			JLabel title = new JLabel("MSPA Server Infomation: ");			
-			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);			
+			JLabel title = new UiLabel("MSPA Server Infomation: ");			
+			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);			
 			serverInfoPanel.add(title);	
-			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-			serverInfoPanel.add(new JLabel("IP Address: "));			
+			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			serverInfoPanel.add(new UiLabel("IP Address: "));			
 			serverInfoPanel.add(ipLabel);
-			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);	
-			serverInfoPanel.add(new JLabel("Public Code:"));	
+			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);	
+			serverInfoPanel.add(new UiLabel("Public Code:"));	
 			serverInfoPanel.add(publicCodeLabel);
-			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-			JLabel accountListLabel = new JLabel("Martus Client accounts on this server:");			
+			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			JLabel accountListLabel = new UiLabel("Martus Client accounts on this server:");			
 			serverInfoPanel.add(accountListLabel);			
 		}
 		catch (UnknownHostException e)
