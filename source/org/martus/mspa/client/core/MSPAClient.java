@@ -150,13 +150,13 @@ public class MSPAClient
 		return handler.getAccountIds(myAccountId, parameters, signature);
 	}	
 	
-	public Vector displayAccounst()
+	public Vector displayAccounts()
 	{	
 		try
 		{			
 			Vector parameters = new Vector();							
 			String signature = security.createSignatureOfVectorOfStrings(parameters);	
-			Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);
+			Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);			
 			
 			if (results != null && !results.isEmpty())
 			{
@@ -177,9 +177,10 @@ public class MSPAClient
 	{	
 		try
 		{			
-			Vector parameters = new Vector();			
-			String signature = security.createSignatureOfVectorOfStrings(parameters);		
-			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
+			Vector parameters = new Vector();
+			parameters.add(accountId);			
+			String signature = security.createSignatureOfVectorOfStrings(parameters);				
+			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);				
 			
 			if (results != null && !results.isEmpty())
 			{

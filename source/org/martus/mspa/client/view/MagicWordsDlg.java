@@ -103,8 +103,8 @@ public class MagicWordsDlg extends JDialog
 	
 	private MagicWordEntry addNewMagicEntry(String word)
 	{
-		MagicWordEntry entry = new MagicWordEntry(word);
-		magicWordsInfo.add(entry);
+		MagicWordEntry entry = new MagicWordEntry(word);		
+		magicWordsInfo.add(entry);		
 		
 		return entry;
 	}

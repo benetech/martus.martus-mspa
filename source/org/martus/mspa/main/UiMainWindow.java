@@ -90,7 +90,7 @@ public class UiMainWindow extends JFrame
 		setJMenuBar(menuBar);
 	
 		createTabbedPaneRight();
-		Vector accounts = mspaApp.displayAccounst();
+		Vector accounts = mspaApp.displayAccounts();
 		accountTree = new AccountsTree(mspaApp.getCurrentServerPublicCode(), accounts, this);
 								
 		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);

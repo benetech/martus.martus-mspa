@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,8 +67,8 @@ public class ManagingMirrorServersDlg extends JDialog
 		setTitle("Managing Server Mirroring: "+ msgLabelInfo.getTitle());
 		parent = owner;
 		serverManageType = manageType;
-		availableList = allList;
-		assignedList = currentList;	
+		availableItems = allList;
+		assignedItems = currentList;	
 	
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(getTopPanel(), BorderLayout.NORTH);
@@ -93,14 +94,34 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(managePublicCode);
 		mirrorServerPort = new JTextField(20);
 		panel.add(new JLabel("Which Port: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
-		panel.add(mirrorServerPort);	
+		panel.add(mirrorServerPort);			
 		
-		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
-		{		
-			collectMirrorInfo(panel);
-		}
+		if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
+			collectMagicInfo(panel);
+		else
+			collectMirrorInfo(panel);			
 		
 		return panel;				
+	}
+	
+	private void collectMagicInfo(JPanel panel)
+	{	
+		JLabel magicWordLabel = new JLabel("Enter new magic word:");
+		magicWordLabel.setForeground(Color.BLUE);					
+		addMagicWordsField = new JTextField(20);
+		addMagicWordsField.requestFocus();	
+	
+		addNewMagicWord = new JButton("Add");
+		addNewMagicWord.addActionListener(new ButtonHandler());	
+				
+		panel.add(magicWordLabel,ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(addMagicWordsField);
+		panel.add(addNewMagicWord);			
+		
+		removeMagicWord = new JButton("Remove");
+		removeMagicWord.addActionListener(new ButtonHandler());	
+				
+		panel.add(removeMagicWord);		
 	}
 	
 	private void collectMirrorInfo(JPanel panel)
@@ -128,12 +149,12 @@ public class ManagingMirrorServersDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		availableListModel = loadElementsToList(availableList);
-		availableServers = new JList(availableListModel);
-		availableServers.setFixedCellWidth(200);   
+		availableListModel = loadElementsToList(availableItems);
+		availableList = new JList(availableListModel);
+		availableList.setFixedCellWidth(200);   
 		 
 		JScrollPane ps = createScrollPane();			
-		ps.getViewport().add(availableServers);
+		ps.getViewport().add(availableList);
 		JLabel availableLabel = new JLabel(msgLabelInfo.getAvailableLabel());
 				
 		panel.add(availableLabel);
@@ -147,12 +168,12 @@ public class ManagingMirrorServersDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		allowedListModel = loadElementsToList(assignedList);
-		allowedServers = new JList(allowedListModel);
-		allowedServers.setFixedCellWidth(200);
+		allowedListModel = loadElementsToList(assignedItems);
+		allowedList = new JList(allowedListModel);
+		allowedList.setFixedCellWidth(200);
 		    
 		JScrollPane ps = createScrollPane();
-		ps.getViewport().add(allowedServers);
+		ps.getViewport().add(allowedList);
 		JLabel allowedLabel = new JLabel( msgLabelInfo.getAllowedLabel());
 				
 		panel.add(allowedLabel);
@@ -239,6 +260,10 @@ public class ManagingMirrorServersDlg extends JDialog
 				handleRemoveFromAllowedList();
 			else if (ae.getSource().equals(addNewMirrorServer))
 				handleRequestAddNewMirrorServer();
+			else if (ae.getSource().equals(addNewMagicWord))
+				handleAddNewMagicWord();
+			else if (ae.getSource().equals(removeMagicWord))
+				handleRemoveMagicWords();		
 		}
 		
 		private void handleRequestAddNewMirrorServer()
@@ -267,7 +292,7 @@ public class ManagingMirrorServersDlg extends JDialog
 			boolean result = parent.getMSPAApp().addMirrorServer(mirrorServerInfo);
 			if (result)
 			{			
-				availableList.add(mirrorFileName);
+				availableItems.add(mirrorFileName);
 				availableListModel.addElement(mirrorFileName);				
 			}
 			else
@@ -284,10 +309,10 @@ public class ManagingMirrorServersDlg extends JDialog
 		
 		private void handleAddToAllowedList()
 		{
-			int selectItem = availableServers.getSelectedIndex();	
-			if (!availableServers.isSelectionEmpty())
+			int selectItem = availableList.getSelectedIndex();	
+			if (!availableList.isSelectionEmpty())
 			{	
-				String item = (String) availableServers.getSelectedValue();
+				String item = (String) availableList.getSelectedValue();
 				if (!allowedListModel.contains(item))
 				{						
 					allowedListModel.addElement(item);
@@ -326,16 +351,45 @@ public class ManagingMirrorServersDlg extends JDialog
 		
 		private void handleRemoveFromAllowedList()
 		{			
-			int selectItem = allowedServers.getSelectedIndex();	
-			if (!allowedServers.isSelectionEmpty())
+			int selectItem = allowedList.getSelectedIndex();	
+			if (!allowedList.isSelectionEmpty())
 			{	
-				String item = (String) allowedServers.getSelectedValue();				
+				String item = (String) allowedList.getSelectedValue();				
 		
 				allowedListModel.remove(selectItem);
 				if (!availableListModel.contains(item))								
 					availableListModel.addElement(item);
 			}							
-		}					
+		}
+		
+		private void handleAddNewMagicWord()
+		{
+			String newMagicWords = addMagicWordsField.getText();
+			
+			if (newMagicWords.startsWith("#"))
+			{			
+				JOptionPane.showMessageDialog(parent, "'#' denotes an inactive magic words", "Invalid character", JOptionPane.ERROR_MESSAGE);				
+				addMagicWordsField.setText("");					
+				return;
+			}					
+					
+			if (!availableListModel.contains(newMagicWords))
+				availableListModel.addElement(newMagicWords);					
+				
+			addMagicWordsField.setText("");		
+		}
+		
+		private void handleRemoveMagicWords()
+		{							
+			if (availableList.isSelectionEmpty()) 
+			{
+				JOptionPane.showMessageDialog(parent, "No item being selected.", "Warning", JOptionPane.ERROR_MESSAGE);
+				return;	
+			}	
+			 		
+			int selectItem = availableList.getSelectedIndex();				
+			availableListModel.remove(selectItem);															
+		}							
 	}
 	
 	UiMainWindow parent; 	
@@ -343,6 +397,7 @@ public class ManagingMirrorServersDlg extends JDialog
 	JTextField manageIPAddr;
 	JTextField managePublicCode;
 	JTextField mirrorServerPort;
+	JTextField addMagicWordsField;
 	
 	JButton addButton;
 	JButton removeButton;
@@ -350,12 +405,14 @@ public class ManagingMirrorServersDlg extends JDialog
 	JButton updateButton;
 	JButton cancelButton;
 	JButton addNewMirrorServer;
+	JButton addNewMagicWord;
+	JButton removeMagicWord;
 	
-	Vector availableList;
-	Vector assignedList;	
+	Vector availableItems;
+	Vector assignedItems;	
 	
-	JList availableServers;
-	JList allowedServers;	
+	JList availableList;
+	JList allowedList;	
 	DefaultListModel availableListModel;
 	DefaultListModel allowedListModel;
 	
