@@ -306,7 +306,7 @@ public class UiMainWindow extends JFrame
 		}
 		catch (Exception e)
 		{			
-			e.printStackTrace();
+			System.out.println("Error: User name and Passphrase not match.");
 		}
 		return seconds;
 	}		

@@ -143,7 +143,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(authorizedFile, security);
 					String serverPublicKey = (String)publicInfo.get(0);
 					authorizeMSPAClients.add(serverPublicKey);
-					System.out.println("Client "+i+" "+authorizedFile.getName());
+					System.out.println("Client authorized to call us: "+authorizedFile.getName());
 				}
 				catch (IOException e)
 				{

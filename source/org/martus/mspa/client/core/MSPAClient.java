@@ -155,14 +155,7 @@ public class MSPAClient
 	
 	public void signIn(String userName, char[] userPassPhrase) throws Exception
 	{
-		try
-		{				
-			getSecurity().readKeyPair(getKeypairFile(), getCombinedPassPhrase(userName, userPassPhrase));		
-		}
-		catch(Exception e)
-		{
-			throw e;
-		}
+		getSecurity().readKeyPair(getKeypairFile(), getCombinedPassPhrase(userName, userPassPhrase));		
 	}
 	
 	public char[] getCombinedPassPhrase(String userName, char[] userPassPhrase)
