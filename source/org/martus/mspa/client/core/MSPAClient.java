@@ -56,8 +56,7 @@ public class MSPAClient
 		Vector results=null;	
 		try
 		{			
-			Vector parameters = new Vector();	
-			security = MockMartusSecurity.createClient();					
+			Vector parameters = new Vector();							
 			String signature = security.createSignatureOfVectorOfStrings(parameters);	
 			results = getAccountIds(security.getPublicKeyString(), parameters, signature);
 			
@@ -66,6 +65,30 @@ public class MSPAClient
 				Vector accounts = (Vector) results.get(1);
 				if (!accounts.isEmpty())
 					return accounts;
+			}	 
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return results;
+	}
+	
+	public Vector getContactInfo(String accountId)
+	{
+		Vector results=null;	
+		try
+		{			
+			Vector parameters = new Vector();			
+			String signature = security.createSignatureOfVectorOfStrings(parameters);		
+			results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
+			
+			if (results != null && !results.isEmpty())
+			{
+				Vector info = (Vector) results.get(1);
+				if (!info.isEmpty())
+					return info;
 			}	 
 		}		
 		catch (Exception e)

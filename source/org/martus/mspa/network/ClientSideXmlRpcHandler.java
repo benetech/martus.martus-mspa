@@ -35,12 +35,24 @@ public class ClientSideXmlRpcHandler
 	
 	public Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws IOException
 	{
+		
 		Vector params = new Vector();
 		params.add(myAccountId);
 		params.add(parameters);
 		params.add(signature);
 		return (Vector)callServer(cmdGetAccountIds, params);
-	}
+	}	
+	
+	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId) throws IOException
+	{
+		
+		Vector params = new Vector();
+		params.add(myAccountId);
+		params.add(parameters);
+		params.add(signature);
+		params.add(accountId);
+		return (Vector)callServer(cmdGetContactInfo, params);
+	}	
 		
 	public Object callServer(String method, Vector params) throws IOException
 	{		

@@ -31,7 +31,8 @@ public class MSPAMain
 			MSPAClient app = new MSPAClient(DEFAULT_HOST, DEFAULT_PORT);	
 			UiMainWindow window = new UiMainWindow(DEFAULT_HOST, app);
 			if(!window.run())
-				System.exit(0);				
+				System.exit(0);						
+							
 		}
 		catch(Exception e)
 		{

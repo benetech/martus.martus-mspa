@@ -5,16 +5,22 @@ import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.martus.mspa.main.UiMainWindow;
 
 
 public class CreateAccountsTree
 {
-	public CreateAccountsTree(String server, Vector accounts)
+	public CreateAccountsTree(String server, Vector accounts, UiMainWindow mainWin)
 	{	
 		String whichServerToView = server;		
+		parentWindow = mainWin;
 			
 		DefaultTreeModel model = null;
 		JTree tree = null;
@@ -32,6 +38,9 @@ public class CreateAccountsTree
 		model = new DefaultTreeModel(top);
 		tree = new JTree(model);
 
+		tree.addTreeSelectionListener(new AccountNodeSelectionListener());
+		
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION); 	
 		tree.setShowsRootHandles(true); 
 		tree.setEditable(false);
 		TreePath path = new TreePath(nodes);
@@ -40,6 +49,11 @@ public class CreateAccountsTree
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		 
+	}
+	
+	DefaultMutableTreeNode getTreeNode(TreePath path)
+	{
+		return (DefaultMutableTreeNode)(path.getLastPathComponent());
 	}
 	
 	private void loadAccountsToTreeNode(Object[] nodes, Object[] accountArray, DefaultMutableTreeNode parent)
@@ -57,39 +71,21 @@ public class CreateAccountsTree
 		return scrollPane;
 	}
 	
-	JScrollPane scrollPane;
+	class AccountNodeSelectionListener implements TreeSelectionListener 
+	{
+		public void valueChanged(TreeSelectionEvent e)
+		{				
+			DefaultMutableTreeNode node = getTreeNode(e.getPath());
+			if (node != null)
+			{
+				AccountNode selectedAccountNode = (AccountNode) node.getUserObject();
+				parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());		
+			}		
+		}
+	}
+
+	
+	JScrollPane scrollPane;	
+	UiMainWindow parentWindow;
 }
 
-class AccountNode
-{
-	public AccountNode(int id, String name, String status)
-	{
-		nodeId = id;
-		nodeName = name;
-		accountStatus = status;
-	}
-
-	public int getNodeId() 
-	{ 
-		return nodeId;
-	}
-
-	public String getNodeName() 
-	{ 
-		return nodeName;
-	}
-	
-	public String getAccountStatus()
-	{
-		return accountStatus;
-	}
-
-	public String toString() 
-	{ 
-		return nodeName;
-	}
-	
-	protected int    nodeId;
-	protected String nodeName;
-	protected String accountStatus;
-}

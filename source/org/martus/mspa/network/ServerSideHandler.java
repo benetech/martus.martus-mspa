@@ -1,13 +1,14 @@
 
 package org.martus.mspa.network;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.Database;
+import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
-import org.martus.util.Base64.InvalidBase64Exception;
 ;
 
 public class ServerSideHandler implements NetworkInterface
@@ -40,16 +41,8 @@ public class ServerSideHandler implements NetworkInterface
 			}
 	
 			public void visit(String accountString)
-			{		
-				try
-				{			
-					String publicCode = MartusSecurity.getFormattedPublicCode(accountString);								
-					accounts.add(publicCode);
-				}
-				catch (InvalidBase64Exception e)
-				{						
-					e.printStackTrace();					
-				}
+			{																					
+				accounts.add(accountString);
 			}
 	
 			public Vector getAccounts()
@@ -74,7 +67,55 @@ public class ServerSideHandler implements NetworkInterface
 		result.add(visitor.getAccounts());		
 		return result;
 	}
+	
+	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId)
+	{	
+		Vector results = new Vector();
+		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
+		{
+			results.add(NetworkInterfaceConstants.SIG_ERROR);				
+			return results;
+		}
+		
+		File contactFile=null;		
+		try
+		{
+			contactFile = server.getDatabase().getContactInfoFile(accountId);		
+			if(!contactFile.exists())
+			{
 
+				results.add(NetworkInterfaceConstants.NOT_FOUND);
+				return results;
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			results.add(NetworkInterfaceConstants.NOT_FOUND);
+			return results;
+		}
+
+		try
+		{
+			Vector contactInfo = MartusServerUtilities.getContactInfo(contactFile);
+			if(!server.getSecurity().verifySignatureOfVectorOfStrings(contactInfo, accountId))
+			{						
+				results.add(NetworkInterfaceConstants.SIG_ERROR);
+				return results;
+			}
+			results.add(NetworkInterfaceConstants.OK);
+			results.add(contactInfo);		
+
+			return results;
+		}
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}											
+	}	
+	
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
 	{
 		return verifier.verifySignatureOfVectorOfStrings(parameters, myAccountId, signature);

@@ -13,7 +13,6 @@ public class TestClientSideXMLRPCHandler extends TestCaseEnhanced
 	
 	public void testGetAccountIds() throws Exception
 	{				
-
 	}
 
 }

@@ -15,10 +15,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.martus.mspa.client.core.MSPAClient;
+import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.CreateAccountsTree;
 
 public class UiMainWindow extends JFrame
@@ -27,8 +29,9 @@ public class UiMainWindow extends JFrame
 	{		
 		super("Martus Server Policy Administrator (MSPA)");
 		currentActiveFrame = this;
+		mspaApp = app;
 		
-		setSize(800, 500);
+		setSize(800, 550);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));
@@ -36,15 +39,15 @@ public class UiMainWindow extends JFrame
 		JMenuBar menuBar = createMenuBar();
 		setJMenuBar(menuBar);
 	
+		createTabbedPaneRight();
 		Vector accounts = app.displayAccounst();
-		CreateAccountsTree accountTree = new CreateAccountsTree(serverToView, accounts);
-		
-		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(), createTabbedPaneRight());
+		accountTree = new CreateAccountsTree(serverToView, accounts, this);
+								
+		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);
 		m_sp.setContinuousLayout(false);
 		m_sp.setDividerLocation(220);
 		m_sp.setDividerSize(5);		
 		m_sp.setOneTouchExpandable(true);
-
 		
 		mainPanel.add(createServerInfoPanel("", ""),BorderLayout.NORTH );
 		mainPanel.add(m_sp, BorderLayout.CENTER);
@@ -66,31 +69,46 @@ public class UiMainWindow extends JFrame
 	protected JPanel createServerInfoPanel(String ipAddr, String publicCode)
 	{
 		JPanel serverInfoPanel = new JPanel();		
-		serverInfoPanel.setLayout(new GridLayout(1,2));
+		serverInfoPanel.setLayout(new GridLayout(1,4));
 	
-		JLabel ipLabel = new JLabel("Server IP Address: "+ipAddr);	
-		JLabel publicCodeLabel = new JLabel("Public code: "+ publicCode);		
-		
-		serverInfoPanel.add(ipLabel);
-		serverInfoPanel.add(publicCodeLabel);
+		JLabel ipLabel = new JLabel("Server IP Address: "+ipAddr);		
+		JLabel publicCodeLabel = new JLabel("Public code: "+ publicCode);
+				
+		serverInfoPanel.add(ipLabel);	
+		serverInfoPanel.add(publicCodeLabel);		
 		
 		return serverInfoPanel;
 	}
 
-	protected JLabel createStatusInfo()
+	protected JTextField createStatusInfo()
 	{
-		JLabel statusLabel = new JLabel("status");
-		return statusLabel;
+		JTextField statusField = new JTextField("");
+		statusField.setEditable(false);
+		return statusField;
+	}
+	
+	public void setStatusText(String msg)
+	{
+		statusField.setText(msg);
 	}
 	
 	protected JTabbedPane createTabbedPaneRight()
 	{
-		JTabbedPane tabPane = new JTabbedPane();
-		tabPane.add(new JPanel(), "Account Detail");			
-		tabPane.setTabPlacement(JTabbedPane.BOTTOM);
+		tabPane = new JTabbedPane();				
+		tabPane.add( new JPanel(), "Account Detail");			
+		tabPane.setTabPlacement(JTabbedPane.BOTTOM);		
 		
 		return tabPane;
 	}
+	
+	public void loadAccountDetailPanel(String accountId, String publicId)
+	{
+
+		Vector contactInfo = mspaApp.getContactInfo(accountId);
+				
+		tabPane.remove(0);
+		tabPane.add(new AccountDetailPanel(publicId, contactInfo,""), "Account Detail");			
+	}		
 	
 	public boolean run()
 	{
@@ -101,7 +119,7 @@ public class UiMainWindow extends JFrame
 	{
 		int seconds = 0;
 		return seconds;
-	}
+	}	
 
 	protected JMenuBar createMenuBar()
 	{
@@ -129,6 +147,10 @@ public class UiMainWindow extends JFrame
 	}
 	
 	protected JSplitPane m_sp;
-	protected MSPAClient app;
+	protected MSPAClient mspaApp;
 	JFrame currentActiveFrame;	
+	JTabbedPane tabPane;
+	JTextField statusField;
+	CreateAccountsTree accountTree;	
+	
 }
