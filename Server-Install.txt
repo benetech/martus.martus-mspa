@@ -1,4 +1,4 @@
-Notes for getting the MSPA client working on your workstation.
+Notes for getting the MSPA server running on a windows box
 2004-04-08 Kevin B. Smith
 
 These are TEMPORARY instructions, and may become obsolete 
