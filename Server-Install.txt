@@ -44,6 +44,12 @@ the MartusServerData directory. They will NOT be copied back to
 your development server, because that is normally handled by a 
 Scott-script on the production servers.
 
+
+For each of the following commands, if you are running them from 
+the server jar, the command should be:
+  java -cp MartusServer.jar xxxxxxxx
+
+They should be run from the top-level directory, such as C:\MartusServer
   
 4. Run org.martus.mspa.network.roothelper.RootHelper (no parameters needed)
 
