@@ -142,7 +142,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		
 		availableListModel = loadElementsToList(availableItems);
 		availableList = new JList(availableListModel);
-		availableList.setFixedCellWidth(200);   
+		availableList.setFixedCellWidth(270);   
 		 
 		JScrollPane ps = createScrollPane();			
 		ps.getViewport().add(availableList);
@@ -161,7 +161,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		
 		allowedListModel = loadElementsToList(assignedItems);
 		allowedList = new JList(allowedListModel);
-		allowedList.setFixedCellWidth(200);
+		allowedList.setFixedCellWidth(270);
 		    
 		JScrollPane ps = createScrollPane();
 		ps.getViewport().add(allowedList);

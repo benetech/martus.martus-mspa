@@ -24,5 +24,10 @@ public interface NetworkInterface
 	public Vector getListOfAvailableServers(String myAccountId) throws IOException;
 	public Vector getListOfAssignedServers(String myAccountId,int mirrorType) throws IOException;
 	public Vector updateManagingMirrorServers(String myAccountId, Vector mirrorInfo, int mirrorType) throws IOException;
+	
+	public Vector sendCommandToServer(String myAccountId, Integer cmdType) throws IOException;
+	
+	public static final int COMMAND_START_SERVER = 100;
+	public static final int COMMAND_STOP_SERVER = 101;
 
 }

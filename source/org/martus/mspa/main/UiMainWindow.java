@@ -37,6 +37,7 @@ import org.martus.mspa.client.view.AccountsTree;
 import org.martus.mspa.client.view.MenuItemExitApplication;
 import org.martus.mspa.client.view.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
+import org.martus.mspa.client.view.MenuItemServerCommands;
 import org.martus.swing.Utilities;
 
 public class UiMainWindow extends JFrame
@@ -87,7 +88,7 @@ public class UiMainWindow extends JFrame
 			initializationErrorDlg(msg);					
 		}				
 		
-		setSize(800, 550);
+		setSize(800, 650);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));
@@ -149,7 +150,7 @@ public class UiMainWindow extends JFrame
 
 	protected JTextField createStatusInfo()
 	{
-		JTextField statusField = new JTextField("");
+		statusField = new JTextField(" ");
 		statusField.setEditable(false);
 		return statusField;
 	}
@@ -171,7 +172,6 @@ public class UiMainWindow extends JFrame
 	
 	public void loadAccountDetailPanel(String accountId, String publicId)
 	{
-
 		Vector contactInfo = mspaApp.getContactInfo(accountId);
 		Vector packetDir = mspaApp.getPacketDirNames();
 		Vector accountAdmin = mspaApp.getAccountManageInfo(accountId);
@@ -249,7 +249,9 @@ public class UiMainWindow extends JFrame
 		menuBar.add(mEdit);
 		
 		JMenu mTool = new JMenu("Tools");
-		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));				
+		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
+		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
+		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));	
 		JMenu manageServer = new JMenu("Managing Mirror servers");	
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVER_WHO_WE_CALL));
@@ -306,6 +308,9 @@ public class UiMainWindow extends JFrame
 	{
 		System.exit(0);
 	}
+	
+	public static String START_MARTUS_SERVER ="Start Martus Server ...";
+	public static String STOP_MARTUS_SERVER  ="Stop Martus Server ..."; 
 	
 	protected JSplitPane m_sp;
 	protected MSPAClient mspaApp;

@@ -216,6 +216,24 @@ public class MSPAClient
 		return new Vector();
 	}	
 	
+	public String sendCmdToServer(int cmdType)
+	{
+		String msg = "";
+		try
+		{												
+			Vector results = handler.sendCommandToServer(security.getPublicKeyString(), new Integer(cmdType));
+			
+			if (results != null && !results.isEmpty())
+				msg = (String) results.get(1);					
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return msg;
+	}
+	
 	public Vector updateAccountManageInfo(String manageAccountId, Vector manageOptions)
 	{		
 		try

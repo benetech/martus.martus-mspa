@@ -149,6 +149,18 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
+	public Vector sendCommandToServer(String myAccountId, Integer cmdType) throws IOException
+	{
+		Vector results = new Vector();		
+			
+		if (server.sendCmdToStartServer(cmdType.intValue()))
+			results.add(NetworkInterfaceConstants.OK);
+		else
+			results.add(NetworkInterfaceConstants.REJECTED);
+				
+		return results;	
+	}
+	
 	public Vector getNumOfHiddenBulletins(String myAccountId) 
 	{
 		Vector results = new Vector();				

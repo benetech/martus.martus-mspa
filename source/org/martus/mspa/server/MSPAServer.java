@@ -23,6 +23,7 @@ import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
+import org.martus.mspa.network.NetworkInterface;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
@@ -52,13 +53,32 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		getAmplifyWhoCallUsDirectory().mkdirs();
 		getAvailableMirrorServerDirectory().mkdirs();
 		getConfigDirectory().mkdirs();
+		
+		initAccountConfigFiles(new File(getConfigDirectory(), MAGICWORDS_FILENAME));
+		initAccountConfigFiles(new File(getConfigDirectory(), UPLOADSOK_FILENAME));		
+		initAccountConfigFiles(new File(getConfigDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME));
+		initAccountConfigFiles(new File(getConfigDirectory(), UPLOADSOK_FILENAME));
+		initAccountConfigFiles(new File(getConfigDirectory(), BANNEDCLIENTS_FILENAME));
+	}
+	
+	private void initAccountConfigFiles(File targetFile)
+	{
+		try
+		{
+			targetFile.createNewFile();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.out.println(targetFile.getPath()+" error when created.");
+		}		
 	}
 	
 	private void loadConfigurationFiles()
-	{				
+	{						
 		clientsBanned = MartusUtilities.loadBannedClients(getBannedFile());
-		clientsCanUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
-		clientNotAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
+		clientsAllowedUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
+		clientNotSendToAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
 	}
 	
 	private void initalizeFileDatabase(File dir)
@@ -112,13 +132,33 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getClientsNotToAmplifiyFile()
 	{
-		return new File(getConfigDirectory(), CLIENTS_NOTTO_AMPLIFY_FILENAME);
+		return new File(getConfigDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
+	}
+	
+	public File getMagicWordsFile()
+	{
+		return new File(getConfigDirectory(), MAGICWORDS_FILENAME);		
 	}
 	
 	public File getMartusServerMagicWordFile()
 	{
 		return new File(getMartusConfigDirectory(),MAGICWORDS_FILENAME);
 	}	
+	
+	public File getMartusServerBannedFile()
+	{
+		return new File(getMartusConfigDirectory(), BANNEDCLIENTS_FILENAME);
+	}
+	
+	public File getMartusServerAllowUploadFile()
+	{
+		return new File(getMartusConfigDirectory(), UPLOADSOK_FILENAME);
+	}
+	
+	public File getMartusServerClientsNotToAmplifiyFile()
+	{
+		return new File(getMartusConfigDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
+	}
 	
 	public File getPacketDirectory()
 	{
@@ -160,22 +200,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getServerDirectory(),ADMIN_MARTUS_CONFIG_DIRECTORY);
 	}
 	
-	public File getMagicWordsFile()
-	{
-		File magicFile = new File(getConfigDirectory(), MAGICWORDS_FILENAME);
-		
-		try
-		{
-			magicFile.createNewFile();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return magicFile; 
-	}
-	
 	public MagicWords getMagicWordsInfo()
 	{
 		return magicWords;
@@ -199,12 +223,50 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{
 			e.printStackTrace();
 		}	
+	}
+	
+	public boolean sendCmdToStartServer(int cmdType)
+	{
+		boolean result = true;
+		if (cmdType == NetworkInterface.COMMAND_START_SERVER)
+		{
+			result = copyAllManageFilesToMartusDeleteOnStart();
+			//send cmd over ...
+		}	
+		
+		return result;
 	}		
 	
 	void deleteAllFilesFromMirrorDirectory(File[] files)
 	{
 		for (int i=0;i<files.length;i++)
 			files[i].delete();
+	}
+	
+	boolean copyAllManageFilesToMartusDeleteOnStart()
+	{
+		File file = getMagicWordsFile();
+		try
+		{	
+			copyFile(file, getMartusServerMagicWordFile());
+			
+			file = getBannedFile();
+			copyFile(file, getMartusServerBannedFile());
+			
+			file = getClientsNotToAmplifiyFile();
+			copyFile(file, getMartusServerClientsNotToAmplifiyFile());
+			
+			file = getAllowUploadFile();
+			copyFile(file, getMartusServerAllowUploadFile());
+		}
+		catch (Exception ieo)
+		{	
+			logger.log(file.getPath()+" not found."+ ieo.toString());
+			return false;		
+		}
+		
+		return true;
+		
 	}
 	
 	void copyFile(File in, File out) throws Exception 
@@ -224,10 +286,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			File backUpFile = new File(getMagicWordsFile().getPath() + ".bak");			
 			copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
-			magicWords.loadMagicWords(getMagicWordsFile());
-			
-			copyFile(getMagicWordsFile(),getMartusServerMagicWordFile());
-		
+			magicWords.loadMagicWords(getMagicWordsFile());							
 		}
 		catch (Exception ieo)
 		{	
@@ -243,46 +302,46 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public Vector getAccountAdminInfo(String manageAccountId)
 	{		
 		AccountAdminOptions options = new AccountAdminOptions();
-		options.setCanSendOption(isAccountIdNotAmplifier(manageAccountId));
-		options.setBannedOption(isAccountIdBanned(manageAccountId));
-		options.setCanUploadOption(canAccountIdUpload(manageAccountId));
-			
+		options.setCanSendOption(!isAccountNotSendToAmplifier(manageAccountId));
+		options.setBannedOption(isAccountBanned(manageAccountId));
+		options.setCanUploadOption(isAccountAllowedUpload(manageAccountId));
+		
 		return options.getOptions();
 	}
 	
 	public void updateAccountInfo(String manageAccountId, Vector accountInfo)
 	{		
-		try
-		{		
-			AccountAdminOptions options = new AccountAdminOptions();
-			options.setOptions(accountInfo);
+	
+		AccountAdminOptions options = new AccountAdminOptions();
+		options.setOptions(accountInfo);
 
-			if (options.isBannedSelected())
-				clientsBanned.add(manageAccountId);
-			else
-				clientsBanned.remove(manageAccountId);				
-			
-			if (options.canSendToAmplifySelected())
-				clientNotAmplifier.remove(manageAccountId);
-			else
-				clientNotAmplifier.add(manageAccountId);
-			
-			if (options.canSendToAmplifySelected())
-				clientNotAmplifier.add(manageAccountId);
-			else
-				clientNotAmplifier.remove(manageAccountId);
-				
-			if (options.canUploadSelected())	
-				clientsCanUpload.add(manageAccountId);
-			else
-				clientsCanUpload.remove(manageAccountId);							
-		
+		updateBannedAccount(options.isBannedSelected(), manageAccountId);
+		updateAccountAllowedUpload(options.canUploadSelected(), manageAccountId);
+		updateAccountSendToAmplifier(options.canSendToAmplifySelected(), manageAccountId);
+	
+		updateAccountConfigFiles();								
+	}	
+	
+	private void updateAccountConfigFiles()
+	{
+		writeToFile(getBannedFile(), clientsBanned);
+		writeToFile(getAllowUploadFile(), clientsAllowedUpload);
+		writeToFile(getClientsNotToAmplifiyFile(), clientNotSendToAmplifier);
+	}
+	
+	private void writeToFile(File file, Vector list)
+	{
+		try
+		{
+			File backUpFile = new File(file.getPath() + ".bak");			
+			copyFile(file, backUpFile);
+			MartusUtilities.writeListToFile(file, list);
 		}
 		catch (Exception ieo)
 		{	
-			logger.log("MagicWord.txt file not found."+ ieo.toString());		
-		}	
-	}	
+			logger.log(file.getPath()+" file not found."+ ieo.toString());		
+		}
+	}
 	
 	public String getNumOfHiddenBulletins(String accountId)
 	{	
@@ -290,23 +349,66 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return numOfHiddenBulletins;
 	}
 	
-	public boolean isAccountIdBanned(String clientId)
+	private void updateBannedAccount(boolean isSelected, String accountId)
+	{
+		if (isSelected)						
+			addBannedAccount(accountId);
+		else			
+			clientsBanned.remove(accountId);
+	}
+	
+	private void updateAccountAllowedUpload(boolean isSelected, String accountId)
+	{
+		if (isSelected)						
+			addAccountAllowedUpload(accountId);
+		else
+			clientsAllowedUpload.remove(accountId);
+	}
+	
+	private void updateAccountSendToAmplifier(boolean isSelected, String accountId)
+	{
+		if (isSelected)		
+			clientNotSendToAmplifier.remove(accountId);	
+		else			
+			addAccountNotSendToAmplifier(accountId);
+	}
+	
+	private void addBannedAccount(String clientId)
+	{
+		if (!isAccountBanned(clientId))
+			clientsBanned.add(clientId);			
+	}
+	
+	private void addAccountAllowedUpload(String clientId)
+	{
+		if (!isAccountAllowedUpload(clientId))
+			clientsAllowedUpload.add(clientId);
+	}
+	
+	private void addAccountNotSendToAmplifier(String clientId)
+	{
+		if (!isAccountNotSendToAmplifier(clientId))
+			clientNotSendToAmplifier.add(clientId);
+	}
+	
+	public boolean isAccountBanned(String clientId)
 	{
 		return clientsBanned.contains(clientId);
 	}	
 	
-	public boolean canAccountIdUpload(String clientId)
+	public boolean isAccountAllowedUpload(String clientId)
 	{
-		return clientsCanUpload.contains(clientId);
+		return clientsAllowedUpload.contains(clientId);
 	}
 	
-	public boolean isAccountIdNotAmplifier(String clientId)
+	public boolean isAccountNotSendToAmplifier(String clientId)
 	{
-		return clientNotAmplifier.contains(clientId);
+		return clientNotSendToAmplifier.contains(clientId);
 	}
 	
 	public Vector getPacketDirectoryNames()
 	{
+		
 		return new Vector();
 	}
 	
@@ -471,8 +573,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	LoggerInterface logger;
 	MagicWords magicWords;
 	Vector clientsBanned;
-	Vector clientsCanUpload;
-	Vector clientNotAmplifier;
+	Vector clientsAllowedUpload;
+	Vector clientNotSendToAmplifier;
 		
 	private File serverDirectory;
 		
@@ -481,7 +583,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
 	private static final String BANNEDCLIENTS_FILENAME = "banned.txt";
 	private static final String UPLOADSOK_FILENAME = "uploadsok.txt";
-	private static final String CLIENTS_NOTTO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
+	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
 
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private final static String WINDOW_MARTUS_ENVIRONMENT = "C:/MartusServer/";

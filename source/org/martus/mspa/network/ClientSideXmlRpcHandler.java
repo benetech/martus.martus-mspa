@@ -58,6 +58,14 @@ public class ClientSideXmlRpcHandler
 		params.add(manageAccountId);
 		params.add(accountInfo);
 		return (Vector)callServer(cmdUpdateAccountManageInfo, params);
+	}
+	
+	public Vector sendCommandToServer(String myAccountId, Integer cmdType) throws IOException
+	{
+		Vector params = new Vector();
+		params.add(myAccountId);		
+		params.add(cmdType);
+		return (Vector)callServer(cmdSendCommandToServer, params);
 	}	
 	
 	public Vector getNumOfHiddenBulletins(String myAccountId) throws IOException

@@ -24,5 +24,7 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdGetListOfAssignedServers = "getListOfAssignedServers";
 	public static final String cmdAddAvailableMirrorServer = "addAvailableMirrorServer";
 	public static final String cmdUpdateManagingMirrorServers = "updateManagingMirrorServers";
+	
+	public static final String cmdSendCommandToServer = "sendCommandToServer";
 		
 }

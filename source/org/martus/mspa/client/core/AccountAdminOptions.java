@@ -48,12 +48,13 @@ public class AccountAdminOptions
 		Boolean canUpload = (Boolean) options.get(CAN_UPLOAD);
 		Boolean banned = (Boolean) options.get(BANNED);
 		Boolean canSendToAmp = (Boolean) options.get(CAN_SEND);
-		Boolean amplifier = (Boolean) options.get(AMPLIFIER);
-		
+		Boolean amplifier = (Boolean) options.get(AMPLIFIER);	
+							
 		setBannedOption(banned.booleanValue());
 		setAmplifierOption(amplifier.booleanValue());
 		setCanSendOption(canSendToAmp.booleanValue());
 		setCanUploadOption(canUpload.booleanValue());
+		
 	}
 
 	public AccountAdminOptions(){}

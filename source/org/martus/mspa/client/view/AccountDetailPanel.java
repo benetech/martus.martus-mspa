@@ -3,20 +3,23 @@ package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -37,39 +40,41 @@ public class AccountDetailPanel extends JPanel
 		setLayout(new BorderLayout());
 
 		loadAccountAdminInfo(manageAccount);		
-		
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new FlowLayout());
-		centerPanel.add(buildContactInfoPanel(contactInfo));		
-		centerPanel.add(buildCheckboxes());	
 	
-		add(buildTopPanel(dirNames), BorderLayout.NORTH);
-		add(centerPanel, BorderLayout.CENTER);
-		add(buildButtonsPanel(), BorderLayout.SOUTH);
+		add(buildTopPanel(contactInfo),BorderLayout.NORTH);
+		add(getDisplayBulletinPanel(dirNames), BorderLayout.CENTER);
+		add(buildButtonsPanel(), BorderLayout.SOUTH);		
 	}
 
 	private void loadAccountAdminInfo(Vector accountManagement)
 	{
 		admOptions = new AccountAdminOptions();
-		admOptions.setOptions(accountManagement);		
+		admOptions.setOptions(accountManagement);							
 	} 
 
-	private JPanel buildTopPanel(Vector packetDirNames)
+	private JPanel buildContactPanel(Vector contactInfo)
+	{
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new FlowLayout());
+		centerPanel.add(buildContactInfoPanel(contactInfo));		
+		centerPanel.add(buildCheckboxes());	
+		return centerPanel;
+	}
+
+	private JPanel buildTopPanel(Vector contactInfo)
 	{
 		JPanel panel = new JPanel();
-		panel.setBorder(new EtchedBorder (EtchedBorder.LOWERED));
+		panel.setBorder(new EmptyBorder(5,5,5,5));
 		panel.setLayout(new ParagraphLayout());
-		JLabel numOfDelBulletinLabel = new JLabel("Number of Delete Bulletins: ");
+		JLabel numOfDelBulletinLabel = new JLabel("Number of Deleted Bulletins: ");
 		JTextField numOfDelBulletineField = new JTextField(numOfHiddenBulletins,5);
-		numOfDelBulletineField.setEditable(false);
-		JLabel dirNameLabel = new JLabel("Directory Name: ");
-		dirNameField = new GroupComboBox(packetDirNames);
-		dirNameField.setEditable(false);
+		numOfDelBulletineField.setEditable(false);		
 
-		panel.add(numOfDelBulletinLabel , ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(numOfDelBulletineField);
-		panel.add(dirNameLabel);
-		panel.add(dirNameField);
+		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(numOfDelBulletinLabel);
+		panel.add(numOfDelBulletineField);		
+		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(buildContactPanel(contactInfo));
 		
 		return panel;	
 	}
@@ -78,6 +83,7 @@ public class AccountDetailPanel extends JPanel
 	{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setBorder(new EmptyBorder(5,5,5,5));
 
 		canUpload = new JCheckBox("Can Upload", admOptions.canUploadSelected());	
 		canUpload.addActionListener(new CheckBoxHandler());	
@@ -133,7 +139,7 @@ public class AccountDetailPanel extends JPanel
 			phone.setEditable(false);
 			panel.add(phone);		
 			panel.add(new JLabel("Mailing Address: "),ParagraphLayout.NEW_PARAGRAPH);
-			UiTextArea address = new UiTextArea(5, 35);
+			UiTextArea address = new UiTextArea(4, 35);
 			address.setText((String)contactInfo.get(index++));
 			address.setEditable(false);
 			JScrollPane addressScrollPane = new JScrollPane(address, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -164,42 +170,80 @@ public class AccountDetailPanel extends JPanel
 
 		return panel;
 	}	
+
+	private DefaultListModel loadElementsToList(Vector items)
+	{
+		DefaultListModel listModel = new DefaultListModel();
+		
+		for (int i=0; i<items.size();++i)
+			listModel.add(i, items.get(i));
+			
+		return listModel;
+	}
+
+	private void configureTabList()
+	{
+		TabListCellRenderer renderer = new TabListCellRenderer();
+		renderer.setTabs(new int[] {130, 200, 300});
+		bulletinList.setCellRenderer(renderer);
+		
+		TabListCellRenderer renderer2 = new TabListCellRenderer();
+		renderer2.setTabs(new int[] {130, 200, 300});
+		bulletinList.setCellRenderer(renderer);
+	}	
+
+	private JPanel getDisplayBulletinPanel(Vector packetDirNames)
+	{
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder (new LineBorder (Color.gray, 1)," List Of Bulletins "));		
+		panel.setLayout(new BorderLayout());
+		
+		JPanel topPanel = new JPanel();
+		topPanel.setBorder(new EmptyBorder(5,5,5,5));
+		topPanel.setLayout(new ParagraphLayout());
+
+		JLabel dirNameLabel = new JLabel("Select Directory for view: ");
+		dirNameField = new GroupComboBox(packetDirNames);
+		dirNameField.setPreferredSize(new Dimension(180, 20));
+		dirNameField.setEditable(false);
+		
+		topPanel.add(dirNameLabel,ParagraphLayout.NEW_PARAGRAPH);		
+		topPanel.add(dirNameField);
+
+		bulletinListModel = loadElementsToList(new Vector());
+		bulletinList = new JList(bulletinListModel);
+		bulletinList.setFixedCellWidth(200);
+		configureTabList();   
+
+		JScrollPane ps = createScrollPane();
+		ps.setPreferredSize(new Dimension(250, 80));
+		ps.setMinimumSize(new Dimension(250, 80));
+		ps.setAlignmentX(LEFT_ALIGNMENT);			
+		ps.getViewport().add(bulletinList);	
+
+		panel.add(topPanel,BorderLayout.NORTH);
+		panel.add(ps, BorderLayout.CENTER);
+
+		return panel;
+	}	
+
+	JScrollPane createScrollPane()
+	{
+		JScrollPane ps = new JScrollPane();		
+		ps.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		ps.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		return ps;
+	}
 	
 	class CheckBoxHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
-		{
-			if(canUpload.isSelected())
-			{
-				canUpload.setSelected(true);
-				admOptions.setCanUploadOption(true);
-			}
-			else
-				admOptions.setCanUploadOption(false);
-			
-			if(banned.isSelected())
-			{
-				banned.setSelected(true);
-				admOptions.setBannedOption(true);
-			}
-			else
-				admOptions.setBannedOption(false);
-				
-			if(canSendToAmp.isSelected())
-			{
-				canSendToAmp.setSelected(true);
-				admOptions.setCanSendOption(true);
-			}
-			else
-				admOptions.setCanSendOption(false);
-				
-			if(amp.isSelected())
-			{
-				amp.setSelected(true);
-				admOptions.setAmplifierOption(true);
-			}				
-			else
-				admOptions.setAmplifierOption(false);
+		{		
+			admOptions = new AccountAdminOptions();											
+			admOptions.setCanUploadOption(canUpload.isSelected());
+			admOptions.setBannedOption(banned.isSelected());	
+			admOptions.setCanSendOption(canSendToAmp.isSelected());	
+			admOptions.setAmplifierOption(amp.isSelected());
 			
 		}
 	}
@@ -214,7 +258,7 @@ public class AccountDetailPanel extends JPanel
 		}
 
 		private void handleConfigurationAccountInfo()
-		{				
+		{								
 			mspaApp.updateAccountManageInfo(accountId, admOptions.getOptions());			
 		}
 	}
@@ -233,6 +277,9 @@ public class AccountDetailPanel extends JPanel
 	JButton viewBulletins;
 	JButton viewActivity;
 	JButton viewStatistics;
+
+	JList bulletinList;	
+	DefaultListModel bulletinListModel;
 
 	MSPAClient mspaApp;
 }
