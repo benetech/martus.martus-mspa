@@ -268,7 +268,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public static File getMirrorServerWhoWeCallDirectory()
 	{
-		return new File(getMartusServerDataDirectory(),"mirrorsWhoWeUs");
+		return new File(getMartusServerDataDirectory(),"mirrorsWhoWeCall");
 	}
 	
 	public static File getAmpsWhoCallUsDirectory()
@@ -351,8 +351,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			e.printStackTrace();
 			log(" Error when try to update a compliance file."+e.toString());
 		}	
-	}
-	
+	}	
+	 
 	private void writeHiddenBulletinToFile()
 	{
 		try
@@ -877,6 +877,74 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public boolean isSecureMode()
 	{
 		return secureMode;
+	}	
+	
+	private Vector getStartupFiles()
+	{
+		Vector files = new Vector();
+		
+		files.add(getMSPAServerKeyPairFile());		
+		files.add(getBannedFile());
+		files.add(getAllowUploadFile());
+		files.add(getClientsNotToAmplifiyFile());
+		files.add(getMagicWordsFile());
+		files.add(getHiddenPacketsFile());
+		files.add(getMartusServerDataComplianceFile());
+		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));					
+		
+		return files;		
+	}
+	
+	private Vector getStartupFolders()
+	{
+		Vector folders = new Vector();		
+						
+		folders.add(getAuthorizedClientsDir());	
+		folders.add(getServerWhoWeCallDirectory());
+		folders.add(getMirrorServerWhoCallUsDirectory());
+		folders.add(getMirrorServerWhoWeCallDirectory());
+		folders.add(getAmpsWhoCallUsDirectory());
+		folders.add(getAvailableMirrorServerDirectory());
+		folders.add(getMartusServerDataBackupDirectory());
+		
+		return folders;
+	}
+	
+	private Vector getCurrentFilesAndFolders()
+	{
+		Vector currentList = new Vector();
+				
+		File[] deleteOnStartUp = getMSPADeleteOnStartup().listFiles();
+		for (int i=0; i< deleteOnStartUp.length;++i)
+			currentList.add(deleteOnStartUp[i]);
+			
+		File[] martusServerData = getMartusServerDataDirectory().listFiles();
+		for (int j=0; j< martusServerData.length;++j)
+			currentList.add(martusServerData[j]);
+			
+		return currentList;
+	}
+	
+	private boolean anyUnexpectedFilesOrFoldersInStartupDirectory()
+	{
+		Vector startupFilesWeExpect = getStartupFiles();
+		Vector startupFoldersWeExpect = getStartupFolders();
+		Vector allFilesAndFoldersInStartupDirectory = getCurrentFilesAndFolders();
+		for(int i = 0; i<allFilesAndFoldersInStartupDirectory.size(); ++i)
+		{
+			File file = (File) allFilesAndFoldersInStartupDirectory.get(i);
+			if(file.isFile()&&!startupFilesWeExpect.contains(file))
+			{	
+				log("Startup File not expected =" + file.getAbsolutePath());
+				return true;
+			}
+			if(file.isDirectory()&&!startupFoldersWeExpect.contains(file))
+			{	
+				log("Startup Folder not expected =" + file.getAbsolutePath());
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void processCommandLine(String[] args) 
@@ -956,6 +1024,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			System.out.println("Setting up socket connection for listener ...");
 			
 			MSPAServer server = new MSPAServer(MSPAServer.getMartusDefaultDataDirectory());
+			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
+				System.exit(4);
+			
 			server.processCommandLine(args);
 			server.setMagicWords();			
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	

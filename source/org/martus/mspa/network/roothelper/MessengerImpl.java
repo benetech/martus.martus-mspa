@@ -85,8 +85,8 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 				return runExec("remountmartusdata ro");
 			case READ_WRITE:
 				return runExec("remountmartusdata rw");
-			case SERVER_STATUS:
-				return runExec("martus -p status");
+			case SERVER_STATE:
+				return runExec("martus -p serverstate");
 			default:
 			{
 				Status status = new Status(Status.FAILED);
