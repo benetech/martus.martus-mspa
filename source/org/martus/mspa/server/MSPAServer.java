@@ -57,9 +57,108 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	}
 	
 	public void initConfig()
-	{							
+	{			
 		initializedEnvironmentDirectory();	
-		loadConfigurationFiles();	
+		loadConfigurationFiles();
+		verifyAssignedMirrorServersInfo();
+	}	
+	
+	private void verifyAssignedMirrorServersInfo()
+	{
+		loadAvailabeMirrorServerPublicKeys();
+		Vector assignedServer = loadAssignedMirrorServerInfo();	
+		File destDirectory = MSPAServer.getAvailableServerDirectory();		
+		
+		try
+		{
+			System.out.println("\nVerify mirror/backup server(s) environments ...");
+			for (int i=0; i< assignedServer.size();i++)
+			{
+				File file = (File) assignedServer.get(i);			
+				String assignedPublicKey = retrievePublickey(file);
+				if (!isPublicKeyMatched(assignedPublicKey))
+				{
+					getMessenger().setReadWrite(security.getPublicKeyString());
+					FileTransfer.copyFile(file, new File(destDirectory, file.getName()));
+					logAction("Warning: FileTransfer()", "The file ("+file.getPath()+") is not existing in AvailableServers/.");
+					getMessenger().setReadOnly(security.getPublicKeyString());												
+				}
+			}		
+			System.out.println("Completed mirror/backup server(s) checking ...\n");
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
+	}	
+	
+	private boolean isPublicKeyMatched(String key)
+	{		
+		for (int i=0; i< availabelMirrorServerPublicKeys.size();i++)
+		{
+			String avaialbeKey = (String) availabelMirrorServerPublicKeys.get(i);
+			if (key.equals(avaialbeKey))
+				return true;			
+		}			
+		return false;
+	}			
+	
+	private Vector loadAssignedMirrorServerInfo()
+	{
+		Vector assignedServerFiles = new Vector();
+		addAssignedBackupServers (assignedServerFiles, getServerWhoWeCallDirectory().listFiles());
+		addAssignedBackupServers (assignedServerFiles, getMirrorServerWhoCallUsDirectory().listFiles());
+		addAssignedBackupServers (assignedServerFiles, getMirrorServerWhoWeCallDirectory().listFiles());
+		addAssignedBackupServers (assignedServerFiles, getAmpsWhoCallUsDirectory().listFiles());
+			
+		return assignedServerFiles;	
+	}	
+	
+	private void addAssignedBackupServers(Vector assignedServer, File[] files)
+	{	
+		if (files.length > 0)
+			assignedServer.addAll(Arrays.asList(files));	
+	}
+	
+	private void loadAvailabeMirrorServerPublicKeys()
+	{
+		availabelMirrorServerPublicKeys = new Vector();
+		File availableServerDir = MSPAServer.getAvailableServerDirectory();
+		File[] keyFiles = availableServerDir.listFiles();
+
+		for (int i=0;i< keyFiles.length;i++)
+		{	
+			String serverPublicKey = retrievePublickey(keyFiles[i]);
+			if (serverPublicKey != "")
+				availabelMirrorServerPublicKeys.add(serverPublicKey);
+		}	
+	}
+	
+	private String retrievePublickey(File publicKey)
+	{				
+		String serverPublicKey ="";						
+		try
+		{
+			Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(publicKey, security);		
+			serverPublicKey = (String)publicInfo.get(0);				
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (InvalidPublicKeyFileException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (PublicInformationInvalidException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return serverPublicKey;
 	}
 	
 	private void setMagicWords() throws Exception
@@ -1149,7 +1248,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector clientsAllowedUpload;
 	Vector clientNotSendToAmplifier;
 	HiddenBulletins hiddenBulletins;
-	RootHelperConnector rootConnector;	
+	RootHelperConnector rootConnector;
+	Vector availabelMirrorServerPublicKeys;	
 		
 	private File serverDirectory;
 	private boolean secureMode;
