@@ -49,23 +49,6 @@ public class MSPAClient
 	private Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws Exception 
 	{		
 		return handler.getAccountIds(myAccountId, parameters, signature);
-	}
-	
-	private void ping() 
-	{
-		try
-		{
-			Vector result = handler.ping();
-			System.out.println(result.get(0));
-			Vector msg = (Vector) result.get(1);
-			System.out.println(msg.get(0));
-					
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
 	}	
 	
 	public Vector displayAccounst()
@@ -91,28 +74,7 @@ public class MSPAClient
 			e.printStackTrace();
 		}			
 		return results;
-	}
-	
-	public static void main (String [] args) 
-	{								
-		try
-		{	
-			System.out.println("Start MSPA Client side .xmk RPC Handler ...");	
-			MSPAClient client = new MSPAClient(DEFAULT_HOST, DEFAULT_PORT);		
-			client.ping();
-			Vector list = client.displayAccounst();
-			for (int i=0; i<list.size();++i)
-			{					
-				String publicCode = (String)list.get(i);	
-				System.out.println(publicCode);				 	
-			}	
-		}
-		catch(Exception e) 
-		{
-			System.out.println("UnknownHost Exception" + e);
-			System.exit(1);			
-		}	
-	}
+	}	
 	
 	ClientSideXmlRpcHandler handler;
 	String ipToUse;
