@@ -24,16 +24,14 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public MSPAServer(File dir) throws Exception
 	{	
 		mspaHandler = new ServerSideHandler(this);								
-		initalizeFileDatabase(dir);		
-		
+		initalizeFileDatabase(dir);				
 	}	
 	
 	private void initalizeFileDatabase(File dir)
 	{
 		serverDirectory = dir;				
-		String keyPairFile = getConfigDirectory()+KEYPAIR_FILE;
 
-		security = loadMartusKeypair(keyPairFile);
+		security = loadMartusKeypair(getMartusServerKeyPairFile());
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
 		try
@@ -63,6 +61,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public MartusCrypto loadMartusKeypair(String keyPairFileName)
 	{
 		return MartusServerUtilities.loadKeyPair(keyPairFileName, true);		
+	}
+	
+	public String getMartusServerKeyPairFile()
+	{
+		return getConfigDirectory()+KEYPAIR_FILE;
 	}
 	
 	public File getPacketDirectory()
@@ -136,6 +139,16 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return dataDirectory;
 	}
 	
+	public static File getAppDirectoryPath()
+	{
+		String appDirectory = null;
+		if(Version.isRunningUnderWindows())
+			appDirectory = "C:/MSPAServer/";
+		else
+			appDirectory = System.getProperty("user.home")+"/.MSPAServer/";
+		return new File(appDirectory);
+	}	
+	
 	public void setPortToUse(int port)
 	{
 		portToUse = port;
@@ -146,28 +159,49 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
 	}
 
-	public void setIPAddress(String ipAddr)
+	public void setListenersIpAddress(String ipAddr)
 	{
 		ipAddress = ipAddr;
-	}
-
-	public String getIpAddress()
+	}	
+	
+	
+	public void processCommandLine(String[] args)
 	{	
-		return (ipAddress == null)? DEFAULT_HOST:ipAddress;
+		String listenersIpTag = "--listener-ip=";	
+		String portToListenTag = "--port=";
+		
+		System.out.println("");
+		for(int arg = 0; arg < args.length; ++arg)
+		{
+			String argument = args[arg];
+			
+			if(argument.startsWith(listenersIpTag))
+			{	
+				String ip = argument.substring(listenersIpTag.length());
+				setListenersIpAddress(ip);
+				System.out.println("Listener IP to use: "+ ip);
+			}
+				
+			if(argument.startsWith(portToListenTag))
+			{	
+				String portToUse = argument.substring(portToListenTag.length());
+				setPortToUse(Integer.parseInt(portToUse));	
+				System.out.println("Port to use for clients: "+ getPortToUse());
+			}
+		}
+		System.out.println("");
 	}
 	
 	public static void main(String[] args)
 	{
-		System.out.println("MSPAServer");
+		System.out.println("MSPA Server");
 		try
 		{					
 			System.out.println("Setting up socket connection for listener ...");
 			
 			MSPAServer server = new MSPAServer(MSPAServer.getDefaultDataDirectory());
-			server.setIPAddress("10.10.220.41");
-			server.setPortToUse(443);
-			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());			
-																				
+			server.processCommandLine(args);			
+			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());																				
 			System.out.println("Waiting for connection...");
 		
 		}
@@ -193,7 +227,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private final static String WINDOW_ENVIRONMENT = "C:/MartusServer/";
 	private final static String UNIX_ENVIRONMENT = "/var/MartusServer/";
 	
-	private final static int DEFAULT_PORT = 443;
-	private final static String DEFAULT_HOST = "localHost";
+	private final static int DEFAULT_PORT = 443;	
 	
 }
