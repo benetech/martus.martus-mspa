@@ -314,9 +314,7 @@ public class AccountDetailPanel extends JPanel
 		}
 
 		private void handleDeleteBulletin()
-		{								
-			int selectItem = bulletinList.getSelectedIndex();	
-
+		{									
 			if (!bulletinList.isSelectionEmpty())
 			{	
 				Object[] items = bulletinList.getSelectedValues();
@@ -324,12 +322,12 @@ public class AccountDetailPanel extends JPanel
 				for (int i=0;i< items.length;++i)
 				{
 					String item = (String) items[i];
-					String localId = item.substring(0,item.indexOf("\t"));
-					hiddenList.add(localId);
-					app.removeBulletin(accountId, hiddenList);
+					hiddenList.add(item);
+					bulletinListModel.removeElement(item);			
 				}
-							
-				bulletinListModel.remove(selectItem);
+				
+				app.removeBulletin(accountId, hiddenList);
+						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
 				if (hiddenBulletins != null)
 				{

@@ -16,21 +16,16 @@ import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.database.Database;
-import org.martus.common.database.DatabaseKey;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
-import org.martus.common.packet.BulletinHeaderPacket;
-import org.martus.common.packet.UniversalId;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
-import org.martus.util.InputStreamWithSeek;
 import org.martus.util.UnicodeWriter;
 
 
@@ -40,7 +35,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public MSPAServer(File dir) throws Exception
 	{				
 		serverDirectory = dir;	
-		authorizedClients = new Vector();
+		authorizedMartusAccounts = new Vector();
+		authorizeMSPAClients = new Vector();
 		mspaHandler = new ServerSideHandler(this);								
 		initalizeFileDatabase(dir);
 		initializedEnvironmentDirectory();
@@ -85,8 +81,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		clientsBanned = MartusUtilities.loadBannedClients(getBannedFile());
 		clientsAllowedUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
 		clientNotSendToAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
-		
-		hiddenUids = MartusServerUtilities.loadHiddenPacketsFile(getHiddenPacketsFile(), getDatabase(), getLogger());
+				
+		hiddenBulletins = new HiddenBulletins(getDatabase(),security, getLogger(), getHiddenPacketsFile());
 	}
 	
 	private void initalizeFileDatabase(File dir)
@@ -218,6 +214,36 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return magicWords;
 	}
 	
+	public boolean hideBulletins(String accountId, Vector localIds)
+	{
+		hiddenBulletins.hideBulletins(accountId, localIds);
+				
+		try
+		{	
+			File backUpFile = new File(getHiddenPacketsFile() + ".bak");			
+			MSPAServer.copyFile(getHiddenPacketsFile(), backUpFile);
+						
+			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());							
+			for (int aId = 0; aId < authorizedMartusAccounts.size();++aId)
+			{	
+				String currentAccountId = (String) authorizedMartusAccounts.get(aId);
+				writer.writeln(currentAccountId);	 	
+				hiddenBulletins.writeLineOfHiddenBulletinsToFile(currentAccountId, writer);
+			}
+			writer.close();	
+		}
+		catch (Exception ieo)
+		{	
+			logger.log("Unable to read/write isHidden.txt."+ ieo.toString());		
+		}			
+		return true;
+	}
+	
+	public Vector getListOfHiddenBulletins(String accountId)
+	{
+		return hiddenBulletins.getListOfHiddenBulletins(accountId);
+	}
+	
 	public void updateManagingMirrorServerInfo(Vector mirrorInfo, int mirrorType)
 	{
 		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
@@ -286,7 +312,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 	}
 	
-	void copyFile(File in, File out) throws Exception 
+	public static void copyFile(File in, File out) throws Exception 
 	{
 		 FileChannel sourceChannel = new FileInputStream(in).getChannel();
 		 FileChannel destinationChannel = new FileOutputStream(out).getChannel();
@@ -351,7 +377,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{
 			File backUpFile = new File(file.getPath() + ".bak");			
-			copyFile(file, backUpFile);
+			MSPAServer.copyFile(file, backUpFile);
 			MartusUtilities.writeListToFile(file, list);
 		}
 		catch (Exception ieo)
@@ -415,126 +441,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public boolean isAccountNotSendToAmplifier(String clientId)
 	{
 		return clientNotSendToAmplifier.contains(clientId);
-	}
-
-	public void writeHiddenPacketsToFile()
-	{
-		class BulletinVisitor implements Database.PacketVisitor
-		{
-			public void visit(DatabaseKey key)
-			{
-				if(!BulletinHeaderPacket.isValidLocalId(key.getLocalId()))
-					return;
-				if(key.isDraft())
-					return;
-					
-				try
-				{
-					processBulletin(key);
-				}
-				catch (Exception e)
-				{
-					logger.log("Failed when process the bulletin("+key.getLocalId()+"): "+e.toString());
-				}
-			}
-		
-			private void processBulletin(DatabaseKey key)
-				throws Exception
-			{
-				BulletinHeaderPacket bhp = new BulletinHeaderPacket(key.getUniversalId());
-				InputStreamWithSeek in = getDatabase().openInputStream(key, security);
-				bhp.loadFromXml(in, security);
-				setLineOfDetailsBulletin(bhp);
-				in.close();
-			}
-		
-			private void setLineOfDetailsBulletin(BulletinHeaderPacket bhp) throws Exception
-			{
-				String bulletinLocalId = bhp.getLocalId();
-				String dataLocalId = bhp.getFieldDataPacketId();
-				String privateLocalId = bhp.getPrivateFieldDataPacketId();
-				bulletinDetailLine = bulletinLocalId+ "  "+ dataLocalId+ "  "+ privateLocalId;				
-			}
-			
-			public String bulletinDetailLine;
-			Exception thrownException;
-		}			
-						
-		try
-		{
-			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());			
-			for (int i=0;i<hiddenUids.size();++i)
-			{
-				UniversalId uId = (UniversalId) hiddenUids.get(i);
-				writer.writeln(uId.getAccountId());
-				
-				BulletinVisitor visitor = new BulletinVisitor();
-				getDatabase().visitAllRecordsForAccount(visitor, uId.getAccountId());
-				writer.writeln("  "+ visitor.bulletinDetailLine);		
-			}
-			writer.close();
-		}
-		catch (IOException e1)
-		{			
-			logger.log("Unable to write hidden bulletins to file: "+e1.toString());							
-		}			
-	}
-	
-	public Vector getListOfHiddenBulletins(String accountId)
-	{
-		Vector hiddenBulletins = new Vector();	
-		if (hiddenUids == null) 
-			return hiddenBulletins;
-			
-		for (int i=0;i<hiddenUids.size();++i)
-		{
-			UniversalId uid = (UniversalId) hiddenUids.get(i);
-			String localId = uid.getLocalId();
-			if (uid.getAccountId().equals(accountId) && localId.startsWith("B"))			
-				hiddenBulletins.add(localId);
-		}	
-				
-		return hiddenBulletins;
-	}
-	
-	public boolean hideBulletins(String accountId, Vector localIds)
-	{
-		boolean result=true;				
-		if (localIds == null || localIds.size() <=0)
-			return false;
-			
-		for (int i=0;i<localIds.size();++i)
-		{	
-			UniversalId uid = UniversalId.createFromAccountAndLocalId(accountId, (String) localIds.get(i));				
-			getDatabase().hide(uid);
-			if (!containHiddenUids(uid))
-				hiddenUids.add(uid);
-		}
-
-		try
-		{	
-			File backUpFile = new File(getHiddenPacketsFile().getPath() + ".bak");			
-			copyFile(getHiddenPacketsFile(), backUpFile);
-			writeHiddenPacketsToFile();
-		}
-		catch (Exception ieo)
-		{	
-			logger.log("Unable to backup isHidden.txt."+ ieo.toString());		
-		}	
-		return result;		
-	}
-
-	private boolean containHiddenUids(UniversalId uid)
-	{
-		for (int i=0;i<hiddenUids.size();++i)
-		{
-			UniversalId id = (UniversalId) hiddenUids.get(i);
-			if (uid.getAccountId().equals(id.getAccountId()) &&
-				uid.getLocalId().equals(id.getLocalId()))
-				return true;
-		}
-		return false;
-	}
+	}	
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception
 	{				
@@ -569,7 +476,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	boolean isAuthorizedMSPAClient(String myAccountId)
 	{
-		return authorizedClients.contains(myAccountId);
+		return authorizedMartusAccounts.contains(myAccountId);
 	}
 	
 	public String ping()
@@ -613,15 +520,31 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
 	}
 
-	public void addAuthorizedClients(String authorizedClientId)
+	public void addAuthorizedMartusAccounts(String authorizedClientId)
 	{
-		if (!isAuthorizedClients(authorizedClientId))
-			authorizedClients.add(authorizedClientId);
+		if (!isAuthorizedMartusAccounts(authorizedClientId))
+			authorizedMartusAccounts.add(authorizedClientId);
+	}
+	
+	public void addAuthorizedMSPAClients(String authorizedClientId)
+	{
+		if (!isAuthorizedMSPAClients(authorizedClientId))
+			authorizeMSPAClients.add(authorizedClientId);
+	}
+	
+	public boolean isAuthorizedMSPAClients(String authorizedClientId)
+	{
+		return authorizeMSPAClients.contains(authorizedClientId);
 	}
 
-	public boolean isAuthorizedClients(String authorizedClientId)
+	public boolean isAuthorizedMartusAccounts(String authorizedClientId)
 	{
-		return authorizedClients.contains(authorizedClientId);
+		return authorizedMartusAccounts.contains(authorizedClientId);
+	}
+	
+	public Vector getAuthorizedMartusAccounts()
+	{
+		return authorizedMartusAccounts;
 	}
 
 	public void setListenersIpAddress(String ipAddr)
@@ -691,7 +614,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	ServerSideHandler mspaHandler;
 	String ipAddress;
 	int portToUse;
-	Vector authorizedClients;
+	Vector authorizedMartusAccounts;
+	Vector authorizeMSPAClients;
 	ServerFileDatabase martusDatabaseToUse;	
 	MartusCrypto security;
 	LoggerInterface logger;
@@ -699,7 +623,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector clientsBanned;
 	Vector clientsAllowedUpload;
 	Vector clientNotSendToAmplifier;
-	Vector hiddenUids;
+	HiddenBulletins hiddenBulletins;
 		
 	private File serverDirectory;
 		

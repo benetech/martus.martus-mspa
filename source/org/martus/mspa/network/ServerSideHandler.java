@@ -12,6 +12,7 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
+import org.martus.common.packet.BulletinHeaderPacket;
 import org.martus.mspa.server.MSPAServer;
 
 public class ServerSideHandler implements NetworkInterface
@@ -46,6 +47,7 @@ public class ServerSideHandler implements NetworkInterface
 			public void visit(String accountString)
 			{																					
 				accounts.add(accountString);
+				server.addAuthorizedMartusAccounts(accountString);	
 			}
 	
 			public Vector getAccounts()
@@ -63,13 +65,13 @@ public class ServerSideHandler implements NetworkInterface
 			return result;
 		}
 		else
-			server.addAuthorizedClients(myAccountId);
+			server.addAuthorizedMSPAClients(myAccountId);
 					
 		AccountVisitor visitor = new AccountVisitor();
 		server.getDatabase().visitAllAccounts(visitor);
 		result.add(NetworkInterfaceConstants.OK);
 	
-		result.add(visitor.getAccounts());		
+		result.add(visitor.getAccounts());	
 		return result;
 	}
 	
@@ -202,11 +204,11 @@ public class ServerSideHandler implements NetworkInterface
 			{
 				try
 				{					
-					Vector info = new Vector();	
+					Vector info = new Vector();						
 					String localId = key.getLocalId().trim();	
-					if (localId.startsWith("B"))
+					if (BulletinHeaderPacket.isValidLocalId(localId))
 					{	
-						info.add(key.getLocalId().trim());			
+						info.add(key.getLocalId().trim());							
 						if (key.isDraft())
 							info.add("Draft");
 						else if (key.isSealed())
