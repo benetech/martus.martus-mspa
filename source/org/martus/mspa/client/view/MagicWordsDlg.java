@@ -2,6 +2,7 @@
 package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,6 +96,7 @@ public class MagicWordsDlg extends JDialog
 	private JPanel viewMagicPanel(Vector items)
 	{
 		JPanel panel = new JPanel();
+		
 		panel.setBorder(new EtchedBorder (EtchedBorder.RAISED));
 		panel.setLayout(new ParagraphLayout());	
 		
@@ -133,13 +135,12 @@ public class MagicWordsDlg extends JDialog
 		header.setUpdateTableInRealTime(false);
 
 		JScrollPane ps = new JScrollPane();
-//		ps.setSize(500, 150);
+		ps.setSize(500, 150);
 		ps.getViewport().add(fTable);
 					
 		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(new JLabel("View manage words and group assigned:"));	
-		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-	
+		panel.add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);	
 		panel.add(ps);
 
 		return panel;
@@ -195,6 +196,24 @@ public class MagicWordsDlg extends JDialog
 		return true;
 	}		
 	
+	
+	public static int displayOptionsDialog(Component parent, String message, String title, Object[] options)
+	{
+		JOptionPane pane = new JOptionPane(message, JOptionPane.WARNING_MESSAGE, 
+					JOptionPane.DEFAULT_OPTION, null, options);	
+		JDialog dialog = pane.createDialog(parent, title);
+		dialog.show();
+		Object obj = pane.getValue();
+		int result = -1;
+		for (int k = 0; k < options.length; k++)
+		{	
+			if (options[k].equals(obj))
+				result = k;
+		}
+		
+		return result;    
+	}
+	
 	class MagicWordButtonHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
@@ -217,9 +236,6 @@ public class MagicWordsDlg extends JDialog
 			if (!verifyMagicWord(word))
 				return;
 
-			if (assignedGroup == null && assignedGroup.length()<=1)
-				assignedGroup = word;
-	
 			fData.update(row, word, assignedGroup);
 			fTable.tableChanged(new TableModelEvent(
 			  fData, row, row, TableModelEvent.ALL_COLUMNS,TableModelEvent.UPDATE)); 
@@ -257,6 +273,15 @@ public class MagicWordsDlg extends JDialog
 		private void handleRemoveMagicWords()
 		{			
 			int row = fTable.getSelectedRow();
+			
+			if (row < 0) return;
+				
+			Object[] options = new String[] {"Yes", "No"};
+			String msg = "You are about to delete a magic word. \nAre you sure?";
+			String title = "Remove Magicword";
+			
+			if (displayOptionsDialog((Component) parent, msg, title, options) !=0) 
+				return;
 						
 			if (fData.delete(row)) 
 			{

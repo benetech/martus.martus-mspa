@@ -3,6 +3,7 @@ package org.martus.mspa.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.FileChannel;
@@ -125,7 +126,18 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMagicWordsFile()
 	{
-		return new File(getConfigDirectory(), MAGICWORDS_FILENAME);
+		File magicFile = new File(getConfigDirectory(), MAGICWORDS_FILENAME);
+		
+		try
+		{
+			magicFile.createNewFile();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return magicFile; 
 	}
 	
 	public MagicWords getMagicWordsInfo()
@@ -173,7 +185,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{				
 		try
 		{			
-			File backUpFile = new File(getMagicWordsFile().getPath() + ".bak");
+			File backUpFile = new File(getMagicWordsFile().getPath() + ".bak");			
 			copyFile(getMagicWordsFile(), backUpFile);
 			magicWords.writeMagicWords(getMagicWordsFile(), words);
 			magicWords.loadMagicWords(getMagicWordsFile());

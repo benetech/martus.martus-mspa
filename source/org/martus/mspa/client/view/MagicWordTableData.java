@@ -25,6 +25,9 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.client.view;
 
+import java.awt.Component;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -51,13 +54,14 @@ public class MagicWordTableData extends AbstractTableModel
 	
 	  for (int i=0; i<items.size();++i)
 	  {			
-		  String word = (String) items.get(i);
-		  MagicWordEntry entry = magicWordsInfo.add(word);					
-		  fRowDataList.addElement(new MagicWordData(" ", entry.isActive(), entry.getMagicWord(),entry.getGroupName()));
-		  
-		  String groupName = getGroupName(word);
+		  String lineOfEntry = (String) items.get(i);
+		  MagicWordEntry entry = magicWordsInfo.add(lineOfEntry);
+		  String groupName = entry.getGroupName();		
+		
+		  fRowDataList.addElement(new MagicWordData(entry.getCreationDate(), entry.isActive(), entry.getMagicWord(),groupName));
+		  		  
 		  if (groupName != null && !isValidGroupName(groupName))			
-		  	groupList.add(getGroupName(word));				
+		  	groupList.add(groupName);				
 	  }		
 	}
 
@@ -78,12 +82,12 @@ public class MagicWordTableData extends AbstractTableModel
 		MagicWords magicWordsInfo = new MagicWords(new LoggerToConsole());
 		for (int row=0; row < getRowCount(); row++)
 		{					
-			magicWordsInfo.add(dataMaping(row));
+			magicWordsInfo.add(dataMapping(row));
 		}
 		return magicWordsInfo.getAllMagicWords();				
 	}
 
-	private MagicWordEntry dataMaping(int row)
+	private MagicWordEntry dataMapping(int row)
 	{
 		MagicWordData data = (MagicWordData)fRowDataList.elementAt(row);
 
@@ -94,11 +98,6 @@ public class MagicWordTableData extends AbstractTableModel
 		return entry;
 	}
 	
-	private String getGroupName(String lineOfMagicWord)
-	{
-		return MagicWords.getGroupNameFromLineEntry(lineOfMagicWord);
-	}	
-	
 	private boolean isValidGroupName(String groupName)
 	{
 		return groupList.contains(groupName);
@@ -107,7 +106,29 @@ public class MagicWordTableData extends AbstractTableModel
 	public Vector getGroupList()
 	{
 		return groupList;
-	} 
+	}
+
+	public static DateFormat getStoredDateFormat()
+	{
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		df.setLenient(false);
+		return df;
+	}
+
+	public static String getToday()
+	{
+		DateFormat df = getStoredDateFormat();
+		return df.format(new Date());
+	}
+	
+	private int statusConfirmation()
+	{
+		Object[] options = new String[] {"Yes", "No"};
+		String msg = "You are about to inactive the magicword. \nAre you sure?";
+		String title = "Inactive Magicword";
+			
+		return MagicWordsDlg.displayOptionsDialog((Component) null, msg, title, options); 		
+	}
 
 	public int getRowCount() 
 	{
@@ -159,10 +180,15 @@ public class MagicWordTableData extends AbstractTableModel
 		switch (nCol) 
 		{
 		  case MagicWordColumnInfo.COL_DATE: 
-			row.fDate = ""; 
+			row.fDate = svalue; 
 			break;
-		  case MagicWordColumnInfo.COL_STATUS:		
-			row.fActived = new Boolean(svalue);			
+		  case MagicWordColumnInfo.COL_STATUS:			
+			if (row.fActived.booleanValue())
+			{
+				if (statusConfirmation()!=0) 
+					break;
+			}		  		  			  	  					
+			row.fActived = new Boolean(svalue);
 			break;
 		  case MagicWordColumnInfo.COL_WORD:
 			row.fWord = svalue;
@@ -187,7 +213,7 @@ public class MagicWordTableData extends AbstractTableModel
 		if (isValidGroupName(group))
 			groupList.add(group);
 
-		fRowDataList.insertElementAt(new MagicWordData("", false,word, group), row);
+		fRowDataList.insertElementAt(new MagicWordData(getToday(), false,word, group), row);
 	}
 	  
 	public void update(int row, String word, String group)
@@ -202,9 +228,11 @@ public class MagicWordTableData extends AbstractTableModel
 			return;	
 	
 		MagicWordData selectedData = (MagicWordData) fRowDataList.get(row);
-		if (word == null && word.length()<=1)
+		if (word != null && word.length()>=1)
 			selectedData.fWord = word;
-		selectedData.fGroup = group;
+
+		if (group != null && group.length()>=1)
+			selectedData.fGroup = group;
 		
 		fRowDataList.setElementAt(selectedData, row);
 

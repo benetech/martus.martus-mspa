@@ -50,13 +50,13 @@ public class CheckCellRenderer extends JCheckBox implements TableCellRenderer
 	public Component getTableCellRendererComponent(JTable table,
 		  Object value, boolean isSelected, boolean hasFocus, 
 		  int row, int column) 
-	{
+	{	 
 	  if (value instanceof Boolean) 
 	  {
 		Boolean b = (Boolean)value;
 		setSelected(b.booleanValue());
 	  }
-		
+			
 	  setBackground(isSelected && !hasFocus ? table.getSelectionBackground() : table.getBackground());
 	  setForeground(isSelected && !hasFocus ? table.getSelectionForeground() : table.getForeground());
 		        
@@ -64,6 +64,6 @@ public class CheckCellRenderer extends JCheckBox implements TableCellRenderer
 	  setBorder(hasFocus ? UIManager.getBorder("Table.focusCellHighlightBorder") : noFocusBorder);
 		
 	  return this;
-	}
+	}	
 
 }
