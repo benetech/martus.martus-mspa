@@ -133,7 +133,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
 		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);	
-		deleteAllFiles(destDirectory.listFiles());
+		deleteAllFilesFromMirrorDirectory(destDirectory.listFiles());
 		
 		try 
 		{			 
@@ -149,7 +149,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}	
 	}		
 	
-	void deleteAllFiles(File[] files)
+	void deleteAllFilesFromMirrorDirectory(File[] files)
 	{
 		for (int i=0;i<files.length;i++)
 			files[i].delete();
