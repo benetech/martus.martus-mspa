@@ -52,7 +52,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		authorizeMSPAClients = new Vector();
 		logger = new LoggerToConsole();	
 		mspaHandler = new ServerSideHandler(this);										
-		initalizeFileDatabase();
 	}
 	
 	public void initConfig()
@@ -164,12 +163,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}			
 	}	
 	
-	private void initalizeFileDatabase()
-	{					
-		File waitingFile = new File(getTriggerDirectory(), "waiting");		
-		ServerSideUtilities.writeSyncFile(waitingFile, "MSPAServer.main");				
-		
-		security = loadMSPAKeypair(getMSAPKeypairFileName());
+	public void initalizeFileDatabase()
+	{									
 		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
 		try
@@ -196,9 +191,23 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}		
 	}	
 	
-	public MartusCrypto loadMSPAKeypair(String keyPairFileName)
-	{
-		return MartusServerUtilities.loadKeyPair(keyPairFileName, true);		
+	public void loadMSPAKeypair(char[] passphrase) 
+	{		
+		try
+		{
+			security = MartusServerUtilities.loadCurrentMartusSecurity(getMSPAServerKeyPairFile(), passphrase);
+			System.out.println("Passphrase correct.");		
+		}
+		catch (MartusCrypto.AuthorizationFailedException e)
+		{
+			System.err.println("Error probably bad passphrase: " + e + "\n");
+			System.exit(1);
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error loading keypair: " + e + "\n");
+			System.exit(3);
+		}
 	}	
 	
 	public static File getMSPADeleteOnStartup()
@@ -206,7 +215,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP);
 	}
 	
-	public static File getTriggerDirectory()
+	public File getTriggerDirectory()
 	{
 		return new File(getAppDirectoryPath(), ADMINTRIGGERDIRECTORY);
 	}
@@ -1038,8 +1047,20 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.deleteRunningFile();				
 						
 			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
-				System.exit(4);											
-			
+				System.exit(4);
+				
+			if (!server.getMSPAServerKeyPairFile().exists())
+			{	
+				System.out.println("***** Key pair file not found *****");
+				System.exit(2);
+			}												
+
+			char[] passphrase = server.insecurePassword;
+			if(passphrase == null)
+				passphrase = ServerSideUtilities.getPassphraseFromConsole(server.getTriggerDirectory(),"MSPAServer.main");
+				
+			server.loadMSPAKeypair(passphrase);
+			server.initalizeFileDatabase();			
 			server.processCommandLine(args);
 			server.setMagicWords();			
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
@@ -1078,6 +1099,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private File serverDirectory;
 	private boolean secureMode;
 	private int rootHelperPortToUse;	
+	public char[] insecurePassword;
 		
 	private final static String DELETE_ON_STARTUP = "deleteOnStartup";	
 	private static final String ADMINTRIGGERDIRECTORY = "adminTriggers";
