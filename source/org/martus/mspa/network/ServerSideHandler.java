@@ -63,7 +63,7 @@ public class ServerSideHandler implements NetworkInterface
 		if (!server.isAuthorizedMSPAClients(myAccountId))
 		{
 			result.add(NetworkInterfaceConstants.NOT_AUTHORIZED);
-			server.log("Client : "+NetworkInterfaceConstants.NOT_AUTHORIZED+"id: "+ myAccountId);				
+			server.log("Client : "+NetworkInterfaceConstants.NOT_AUTHORIZED+" \npublic code: "+ myAccountId);				
 			return result;
 		}
 					
