@@ -447,7 +447,7 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}
 				
-		File availableDir = MSPAServer.getAvailableMirrorServerDirectory();	
+		File availableDir = MSPAServer.getAvailableServerDirectory();	
 		List list = Arrays.asList(availableDir.list());		
 					
 		results.add(NetworkInterfaceConstants.OK);

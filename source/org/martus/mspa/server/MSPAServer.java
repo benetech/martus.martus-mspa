@@ -79,7 +79,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			getMirrorServerWhoCallUsDirectory().mkdirs();
 			getMirrorServerWhoWeCallDirectory().mkdirs();
 			getAmpsWhoCallUsDirectory().mkdirs();
-			getAvailableMirrorServerDirectory().mkdirs();
+			getAvailableServerDirectory().mkdirs();
 			getMartusServerDataDirectory().mkdirs();
 				
 			initAccountConfigFiles(new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME));
@@ -293,9 +293,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getMartusServerDataDirectory(),"ampsWhoCallUs");
 	}
 	
-	public static File getAvailableMirrorServerDirectory()
+	public static File getAvailableServerDirectory()
 	{
-		return new File(getMartusServerDataDirectory(),"AvailableMirrorServers");
+		return new File(getMartusServerDataDirectory(),"AvailableServers");
 	}		
 	
 	public File getMartusServerDataComplianceFile()
@@ -438,7 +438,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			logActions("Add New Server<dir>"+ fileName, mirrorInfo);					 
 			getMessenger().setReadWrite(security.getPublicKeyString());					
 			
-			File outputFileName = new File(getAvailableMirrorServerDirectory(), fileName.trim());
+			File outputFileName = new File(getAvailableServerDirectory(), fileName.trim());
 			RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());				 
 			getMessenger().setReadOnly(security.getPublicKeyString());
 			
@@ -461,7 +461,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public synchronized void updateAssignedServerInfo(Vector mirrorInfo, int mirrorType)
 	{
-		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
+		File sourceDirectory = MSPAServer.getAvailableServerDirectory();
 		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);		
 		
 		try 
@@ -929,7 +929,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		folders.add(getMirrorServerWhoCallUsDirectory());
 		folders.add(getMirrorServerWhoWeCallDirectory());
 		folders.add(getAmpsWhoCallUsDirectory());
-		folders.add(getAvailableMirrorServerDirectory());
+		folders.add(getAvailableServerDirectory());
 		folders.add(getMartusServerDataBackupDirectory());
 		
 		return folders;
