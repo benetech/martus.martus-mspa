@@ -5,11 +5,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -76,7 +76,7 @@ public class AccountDetailPanel extends JPanel
 
 	private JPanel buildContactPanel(Vector contactInfo)
 	{
-		JPanel centerPanel = new JPanel();
+		JPanel centerPanel = new JPanel();		
 		centerPanel.setLayout(new FlowLayout());
 		centerPanel.add(buildContactInfoPanel(contactInfo));		
 		centerPanel.add(buildCheckboxes());	
@@ -98,8 +98,8 @@ public class AccountDetailPanel extends JPanel
 		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(buildContactPanel(contactInfo));
 
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(buildButtonsPanel());
+//		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+//		panel.add(buildButtonsPanel());
 		
 		return panel;	
 	}
@@ -107,19 +107,25 @@ public class AccountDetailPanel extends JPanel
 	private JPanel buildCheckboxes()
 	{
 		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setLayout(new GridLayout(0,1));
 		panel.setBorder(new EmptyBorder(5,5,5,5));
 
 		canUpload = new JCheckBox("Can Upload", admOptions.canUploadSelected());	
 		canUpload.addActionListener(new CheckBoxHandler());	
 		banned = new JCheckBox("Banned", admOptions.isBannedSelected());
 		banned.addActionListener(new CheckBoxHandler());	
-		canSendToAmp = new JCheckBox("Can Send to Amplify", admOptions.canSendToAmplifySelected());
+		canSendToAmp = new JCheckBox("Amplified", admOptions.canSendToAmplifySelected());
 		canSendToAmp.addActionListener(new CheckBoxHandler());	
+		
+		saveButton = new JButton("Save");
+		saveButton.addActionListener(new CommitButtonHandler());
 		
 		panel.add(canUpload);
 		panel.add(banned);
-		panel.add(canSendToAmp);		
+		panel.add(canSendToAmp);
+		panel.add(new JLabel(""));
+		panel.add(new JLabel(""));		
+		panel.add(saveButton);
 		
 		return panel;
 
@@ -189,24 +195,23 @@ public class AccountDetailPanel extends JPanel
 		return panel;
 	}
 	
-	private JPanel buildButtonsPanel()
-	{
-		JPanel panel = new JPanel();		
-		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-							
-		viewActivity = new JButton("View Activity");
-		viewActivity.addActionListener(new CommitButtonHandler());	
-		panel.add(viewActivity);					
-		
-		viewStatistics = new JButton("View Statistics");
-		viewStatistics.addActionListener(new CommitButtonHandler());
-		panel.add(viewStatistics);
-		saveButton = new JButton("Save");
-		saveButton.addActionListener(new CommitButtonHandler());
-		panel.add(saveButton);		
-
-		return panel;
-	}	
+//	private JPanel buildButtonsPanel()
+//	{
+//		JPanel panel = new JPanel();	
+//		FlowLayout layout = new FlowLayout();
+//		layout.setAlignment(FlowLayout.CENTER);
+//		panel.setLayout(layout);
+//		
+//		viewStatistics = new JButton("View Statistics");
+//		viewStatistics.addActionListener(new CommitButtonHandler());									
+//		viewActivity = new JButton("View Activity");
+//		viewActivity.addActionListener(new CommitButtonHandler());						
+//		
+//		panel.add(viewStatistics);
+//		panel.add(viewActivity);		
+//
+//		return panel;
+//	}	
 
 	private DefaultListModel loadElementsToList(Vector items)
 	{
@@ -239,17 +244,17 @@ public class AccountDetailPanel extends JPanel
 		bulletinList = createBulletinList(bulletinListModel);
 		bulletinList.setName("bulletin");
 		
-		viewBulletinButton = new JButton("View");
+		viewBulletinButton = new JButton("View Bulletin");
 		bulletinTabPane.add(getDisplayBulletinPanel(bulletinList, viewBulletinButton), 0);
-		bulletinTabPane.setTitleAt(0, "List Of Bulletins");
+		bulletinTabPane.setTitleAt(0, "Active Bulletins");
 
 		hiddenListModel = loadElementsToList(hiddenBulletinIds);
 		hiddenList = createBulletinList(hiddenListModel);
 		hiddenList.setName("hidden");
 		hiddenList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		viewHiddenButton = new JButton("View");
+		viewHiddenButton = new JButton("View Deleted Bulletin");
 		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
-		bulletinTabPane.setTitleAt(1, "List Of Delete Bulletins");			
+		bulletinTabPane.setTitleAt(1, "Deleted Bulletins");			
 
 		return bulletinTabPane;
 	}
@@ -265,17 +270,13 @@ public class AccountDetailPanel extends JPanel
 
 	private JPanel getDisplayBulletinPanel(JList list, JButton view)
 	{
-		JPanel panel = new JPanel();
-		panel.setBorder(new EmptyBorder(5,5,5,5));		
-		panel.setLayout(new BorderLayout());		
-
 		JPanel buttonPanel = new JPanel();
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.RIGHT);
 		buttonPanel.setLayout(layout);
 		
 		view.addActionListener(new CommitButtonHandler());	
-		buttonPanel.add(view);
+//		buttonPanel.add(view);
 
 		if (list.getName().equals("bulletin"))
 		{
@@ -285,7 +286,7 @@ public class AccountDetailPanel extends JPanel
 		}	
 		else
 		{
-			recoverHiddenButton = new JButton("Recover Hidden Bulletin");
+			recoverHiddenButton = new JButton("Recover Deleted Bulletin");
 			recoverHiddenButton.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(recoverHiddenButton);
 		}		
@@ -295,6 +296,10 @@ public class AccountDetailPanel extends JPanel
 		ps.setMinimumSize(new Dimension(220, 150));
 		ps.setAlignmentX(LEFT_ALIGNMENT);			
 		ps.getViewport().add(list);	
+
+		JPanel panel = new JPanel();
+		panel.setBorder(new EmptyBorder(5,5,5,5));		
+		panel.setLayout(new BorderLayout());		
 
 		panel.add(ps, BorderLayout.CENTER);
 		panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -358,10 +363,10 @@ public class AccountDetailPanel extends JPanel
 				}
 				
 				app.recoverHiddenBulletin(accountId, recoverList);
-				postStatus("Recover Hidden Bulletin :");
+				postStatus("Recover Delete Bulletin :");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
-				postStatus("List of Hidden Bulletins :");
+				postStatus("List of Deleted Bulletins :");
 				if (hiddenBulletins != null)
 					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));
 					
@@ -403,7 +408,7 @@ public class AccountDetailPanel extends JPanel
 				postStatus("Remove Bulletins: ");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
-				postStatus("Get a list of Hidden Bulletings :");
+				postStatus("Get a list of Deleted Bulletings :");
 				if (hiddenBulletins != null)
 				{
 					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));

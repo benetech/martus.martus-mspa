@@ -119,7 +119,7 @@ public class UiMainWindow extends JFrame
 		JPanel leftPanel = createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode());								
 		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,tabPane);
 		m_sp.setContinuousLayout(false);
-		m_sp.setDividerLocation(250);
+		m_sp.setDividerLocation(260);
 		m_sp.setDividerSize(5);		
 		m_sp.setOneTouchExpandable(true);
 		
@@ -189,31 +189,30 @@ public class UiMainWindow extends JFrame
 	
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
-		JPanel leftPanel = new JPanel();
-		leftPanel.setLayout(new BorderLayout());
-
 		JPanel serverInfoPanel = new JPanel();		
 		serverInfoPanel.setLayout(new ParagraphLayout());
 		try
 		{		
-			JTextField ipLabel = new JTextField(InetAddress.getByName(ipAddr).getHostAddress());
+			JTextField ipLabel = new JTextField(InetAddress.getByName(ipAddr).getHostAddress(),20);
 			ipLabel.setEditable(false);
+			ipLabel.setForeground(Color.BLUE);
 				
-			JTextField publicCodeLabel = new JTextField(mspaApp.getCurrentServerPublicCode());
+			JTextField publicCodeLabel = new JTextField(mspaApp.getCurrentServerPublicCode(),20);
 			publicCodeLabel.setEditable(false);
+			publicCodeLabel.setForeground(Color.BLUE);
 					
-			JLabel title = new JLabel("MSPA Server Info: ");			
+			JLabel title = new JLabel("MSPA Server Infomation: ");			
 			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);			
 			serverInfoPanel.add(title);	
 			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-			serverInfoPanel.add(new JLabel("IP Address:"));			
+			serverInfoPanel.add(new JLabel("IP Address: "));			
 			serverInfoPanel.add(ipLabel);
 			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);	
 			serverInfoPanel.add(new JLabel("Public Code:"));	
 			serverInfoPanel.add(publicCodeLabel);
 			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-			JLabel accountListLabel = new JLabel("Martus Client accounts on this server:");
-			accountListLabel.setForeground(Color.BLUE);
+			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			JLabel accountListLabel = new JLabel("Martus Client accounts on this server:");			
 			serverInfoPanel.add(accountListLabel);			
 		}
 		catch (UnknownHostException e)
@@ -221,10 +220,12 @@ public class UiMainWindow extends JFrame
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
-		leftPanel.add(serverInfoPanel, BorderLayout.NORTH);
-		leftPanel.add(accountTree.getScrollPane(), BorderLayout.CENTER); 	
-		return leftPanel;
+	
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());			
+		mainPanel.add(serverInfoPanel, BorderLayout.NORTH);
+		mainPanel.add(accountTree.getScrollPane(), BorderLayout.CENTER); 	
+		return mainPanel;
 	}
 
 	protected JTextField createStatusInfo()
