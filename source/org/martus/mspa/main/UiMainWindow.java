@@ -185,7 +185,7 @@ public class UiMainWindow extends JFrame
 	public void loadAccountDetailPanel(String accountId, String publicId)
 	{
 		Vector contactInfo = mspaApp.getContactInfo(accountId);
-		Vector packetDir = mspaApp.getPacketDirNames();
+		Vector packetDir = mspaApp.getPacketDirNames(accountId);
 		Vector accountAdmin = mspaApp.getAccountManageInfo(accountId);
 		Vector hiddenBulletins = mspaApp.getListOfHiddenBulletins(accountId);
 

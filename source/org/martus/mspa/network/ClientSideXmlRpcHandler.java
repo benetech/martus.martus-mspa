@@ -75,11 +75,11 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetListOfHiddenBulletinIds, params);
 	}
 	
-	public Vector removeHiddenBulletins(String myAccountId, String localId) throws IOException
+	public Vector removeHiddenBulletins(String myAccountId, Vector localIds) throws IOException
 	{
 		Vector params = new Vector();
 		params.add(myAccountId);	
-		params.add(localId);	
+		params.add(localIds);	
 		return (Vector)callServer(cmdRemoveHiddenBulletins, params);
 	}	
 	

@@ -162,13 +162,12 @@ public class ServerSideHandler implements NetworkInterface
 		return results;	
 	}
 	
-	public Vector removeHiddenBulletins(String myAccountId, String localId)
+	public Vector removeHiddenBulletins(String myAccountId, Vector localIds)
 	{			
 		Vector results = new Vector();
 		try
-		{							
-			results.add(NetworkInterfaceConstants.OK);
-			boolean result = server.hideBulletin(myAccountId, localId);
+		{										
+			boolean result = server.hideBulletins(myAccountId, localIds);
 			if (result)	
 				results.add(NetworkInterfaceConstants.OK);
 			else
@@ -186,8 +185,7 @@ public class ServerSideHandler implements NetworkInterface
 	}	
 	
 	public Vector getListOfHiddenBulletinIds(String myAccountId) 
-	{
-		
+	{		
 		Vector results = new Vector();											
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(server.getListOfHiddenBulletins(myAccountId));		
@@ -204,14 +202,18 @@ public class ServerSideHandler implements NetworkInterface
 			{
 				try
 				{					
-					Vector info = new Vector();				
-					info.add(key.getLocalId().trim());				
-					if (key.isDraft())
-						info.add("Draft");
-					else if (key.isSealed())
-						info.add("Sealed");				
+					Vector info = new Vector();	
+					String localId = key.getLocalId().trim();	
+					if (localId.startsWith("B"))
+					{	
+						info.add(key.getLocalId().trim());			
+						if (key.isDraft())
+							info.add("Draft");
+						else if (key.isSealed())
+							info.add("Sealed");				
 	
-					infos.add(info);
+						infos.add(info);
+					}
 				}
 				catch (Exception e)
 				{		

@@ -234,7 +234,7 @@ public class MSPAClient
 		return msg;
 	}
 	
-	public Vector updateAccountManageInfo(String manageAccountId, Vector manageOptions)
+	public void updateAccountManageInfo(String manageAccountId, Vector manageOptions)
 	{		
 		try
 		{									
@@ -246,7 +246,6 @@ public class MSPAClient
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		return new Vector();
 	}		
 	
 	public Vector getListOfHiddenBulletins(String accountId)
@@ -265,15 +264,14 @@ public class MSPAClient
 		return new Vector();
 	}	
 	
-	public String removeBulletin(String accountId, String localId)
+	public String removeBulletin(String accountId, Vector localIds)
 	{
 		String msg = "";
 		try
 		{												
-			Vector results = handler.removeHiddenBulletins(localId, localId);
-			
+			Vector results = handler.removeHiddenBulletins(accountId, localIds);			
 			if (results != null && !results.isEmpty())
-				msg = (String) results.get(0);					
+				msg = (String) results.get(0);
 		}		
 		catch (Exception e)
 		{
@@ -283,11 +281,11 @@ public class MSPAClient
 		return msg;
 	}
 	
-	public Vector getPacketDirNames()
+	public Vector getPacketDirNames(String accountId)
 	{	
 		try
 		{						
-			Vector results = handler.getListOfBulletinIds(security.getPublicKeyString());		
+			Vector results = handler.getListOfBulletinIds(accountId);		
 			
 			if (results != null && !results.isEmpty())
 				return (Vector) results.get(1);

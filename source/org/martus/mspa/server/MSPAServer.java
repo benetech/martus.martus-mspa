@@ -16,10 +16,13 @@ import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.database.Database;
+import org.martus.common.database.DatabaseKey;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
+import org.martus.common.packet.BulletinHeaderPacket;
 import org.martus.common.packet.UniversalId;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
@@ -27,6 +30,8 @@ import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.network.ServerSideHandler;
+import org.martus.util.InputStreamWithSeek;
+import org.martus.util.UnicodeWriter;
 
 
 public class MSPAServer implements NetworkInterfaceXmlRpcConstants
@@ -81,8 +86,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		clientsAllowedUpload = MartusUtilities.loadCanUploadFile(getAllowUploadFile());		
 		clientNotSendToAmplifier = MartusUtilities.loadClientsNotAmplified(getClientsNotToAmplifiyFile());
 		
-		ServerFileDatabase tmpDatabase = new ServerFileDatabase(getPacketDirectory(), security);		
-		hiddenUids = MartusServerUtilities.loadHiddenPacketsFile(getHiddenPacketsFile(), tmpDatabase, getLogger());
+		hiddenUids = MartusServerUtilities.loadHiddenPacketsFile(getHiddenPacketsFile(), getDatabase(), getLogger());
 	}
 	
 	private void initalizeFileDatabase(File dir)
@@ -412,6 +416,69 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return clientNotSendToAmplifier.contains(clientId);
 	}
+
+	public void writeHiddenPacketsToFile()
+	{
+		class BulletinVisitor implements Database.PacketVisitor
+		{
+			public void visit(DatabaseKey key)
+			{
+				if(!BulletinHeaderPacket.isValidLocalId(key.getLocalId()))
+					return;
+				if(key.isDraft())
+					return;
+					
+				try
+				{
+					processBulletin(key);
+				}
+				catch (Exception e)
+				{
+					logger.log("Failed when process the bulletin("+key.getLocalId()+"): "+e.toString());
+				}
+			}
+		
+			private void processBulletin(DatabaseKey key)
+				throws Exception
+			{
+				BulletinHeaderPacket bhp = new BulletinHeaderPacket(key.getUniversalId());
+				InputStreamWithSeek in = getDatabase().openInputStream(key, security);
+				bhp.loadFromXml(in, security);
+				setLineOfDetailsBulletin(bhp);
+				in.close();
+			}
+		
+			private void setLineOfDetailsBulletin(BulletinHeaderPacket bhp) throws Exception
+			{
+				String bulletinLocalId = bhp.getLocalId();
+				String dataLocalId = bhp.getFieldDataPacketId();
+				String privateLocalId = bhp.getPrivateFieldDataPacketId();
+				bulletinDetailLine = bulletinLocalId+ "  "+ dataLocalId+ "  "+ privateLocalId;				
+			}
+			
+			public String bulletinDetailLine;
+			Exception thrownException;
+		}			
+						
+		try
+		{
+			UnicodeWriter writer = new UnicodeWriter(getHiddenPacketsFile());			
+			for (int i=0;i<hiddenUids.size();++i)
+			{
+				UniversalId uId = (UniversalId) hiddenUids.get(i);
+				writer.writeln(uId.getAccountId());
+				
+				BulletinVisitor visitor = new BulletinVisitor();
+				getDatabase().visitAllRecordsForAccount(visitor, uId.getAccountId());
+				writer.writeln("  "+ visitor.bulletinDetailLine);		
+			}
+			writer.close();
+		}
+		catch (IOException e1)
+		{			
+			logger.log("Unable to write hidden bulletins to file: "+e1.toString());							
+		}			
+	}
 	
 	public Vector getListOfHiddenBulletins(String accountId)
 	{
@@ -421,20 +488,52 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			
 		for (int i=0;i<hiddenUids.size();++i)
 		{
-			UniversalId uid = (UniversalId) hiddenUids.get(i);			
-			if (uid.getAccountId().equals(accountId))			
-				hiddenBulletins.add(uid.getLocalId());
+			UniversalId uid = (UniversalId) hiddenUids.get(i);
+			String localId = uid.getLocalId();
+			if (uid.getAccountId().equals(accountId) && localId.startsWith("B"))			
+				hiddenBulletins.add(localId);
 		}	
 				
 		return hiddenBulletins;
 	}
 	
-	public boolean hideBulletin(String accountId, String localId)
+	public boolean hideBulletins(String accountId, Vector localIds)
 	{
-		UniversalId uid = UniversalId.createFromAccountAndLocalId(accountId, localId);
-		getDatabase().hide(uid);
-		
-		return hiddenUids.add(uid);		
+		boolean result=true;				
+		if (localIds == null || localIds.size() <=0)
+			return false;
+			
+		for (int i=0;i<localIds.size();++i)
+		{	
+			UniversalId uid = UniversalId.createFromAccountAndLocalId(accountId, (String) localIds.get(i));				
+			getDatabase().hide(uid);
+			if (!containHiddenUids(uid))
+				hiddenUids.add(uid);
+		}
+
+		try
+		{	
+			File backUpFile = new File(getHiddenPacketsFile().getPath() + ".bak");			
+			copyFile(getHiddenPacketsFile(), backUpFile);
+			writeHiddenPacketsToFile();
+		}
+		catch (Exception ieo)
+		{	
+			logger.log("Unable to backup isHidden.txt."+ ieo.toString());		
+		}	
+		return result;		
+	}
+
+	private boolean containHiddenUids(UniversalId uid)
+	{
+		for (int i=0;i<hiddenUids.size();++i)
+		{
+			UniversalId id = (UniversalId) hiddenUids.get(i);
+			if (uid.getAccountId().equals(id.getAccountId()) &&
+				uid.getLocalId().equals(id.getLocalId()))
+				return true;
+		}
+		return false;
 	}
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception

@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -31,11 +32,11 @@ import org.martus.swing.UiTextArea;
 
 public class AccountDetailPanel extends JPanel
 {
-	public AccountDetailPanel(MSPAClient app, String id, Vector contactInfo, Vector hiddenBulletins, 
+	public AccountDetailPanel(MSPAClient appToUse, String id, Vector contactInfo, Vector hiddenBulletins, 
 			Vector bulletinIds, Vector manageAccount)
 	{
 		accountId = id;	
-		mspaApp = app;		
+		app = appToUse;		
 		hiddenBulletinIds =	hiddenBulletins;
 		originalBulletinIds = bulletinIds;
 		
@@ -44,9 +45,8 @@ public class AccountDetailPanel extends JPanel
 
 		loadAccountAdminInfo(manageAccount);		
 	
-		add(buildTopPanel(contactInfo),BorderLayout.NORTH);
-		add(loadBulletinDisplayPane(), BorderLayout.CENTER);
-		add(buildButtonsPanel(), BorderLayout.SOUTH);		
+		add(buildTopPanel(contactInfo),BorderLayout.NORTH);		
+		add(loadBulletinDisplayPane(), BorderLayout.CENTER);			
 	}
 
 	private Vector loadBulletinIds(Vector bulletins)
@@ -86,7 +86,7 @@ public class AccountDetailPanel extends JPanel
 		panel.setBorder(new EmptyBorder(5,5,5,5));
 		panel.setLayout(new ParagraphLayout());
 		JLabel numOfDelBulletinLabel = new JLabel("Number of Deleted Bulletins: ");
-		JTextField numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
+		numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
 		numOfDelBulletineField.setEditable(false);		
 
 		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
@@ -94,6 +94,9 @@ public class AccountDetailPanel extends JPanel
 		panel.add(numOfDelBulletineField);		
 		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(buildContactPanel(contactInfo));
+
+		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(buildButtonsPanel());
 		
 		return panel;	
 	}
@@ -227,6 +230,7 @@ public class AccountDetailPanel extends JPanel
 		hiddenListModel = loadElementsToList(hiddenBulletinIds);
 		hiddenList = createBulletinList(hiddenListModel);
 		hiddenList.setName("hidden");
+		hiddenList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		viewHiddenButton = new JButton("View");
 		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
 		bulletinTabPane.setTitleAt(1, "List Of Delete Bulletins");
@@ -311,7 +315,7 @@ public class AccountDetailPanel extends JPanel
 
 		private void handleConfigurationAccountInfo()
 		{								
-			mspaApp.updateAccountManageInfo(accountId, admOptions.getOptions());			
+			app.updateAccountManageInfo(accountId, admOptions.getOptions());			
 		}
 
 		private void handleDeleteBulletin()
@@ -320,12 +324,25 @@ public class AccountDetailPanel extends JPanel
 
 			if (!bulletinList.isSelectionEmpty())
 			{	
-				String item = (String) bulletinList.getSelectedValue();
-				String localId = item.substring(0,item.indexOf("\t"));
-				mspaApp.removeBulletin(accountId,localId);	
-				
-				bulletinList.remove(selectItem);
-			
+				Object[] items = bulletinList.getSelectedValues();
+				Vector hiddenList = new Vector();
+				for (int i=0;i< items.length;++i)
+				{
+					String item = (String) items[i];
+					String localId = item.substring(0,item.indexOf("\t"));
+					hiddenList.add(localId);
+					app.removeBulletin(accountId, hiddenList);
+				}
+							
+				bulletinListModel.remove(selectItem);
+				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
+				if (hiddenBulletins != null)
+				{
+					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));
+					hiddenListModel.removeAllElements();
+					for (int i=0; i<hiddenBulletins.size();++i)
+						hiddenListModel.add(i, hiddenBulletins.get(i));
+				}		
 			}			
 		}
 	}
@@ -350,8 +367,9 @@ public class AccountDetailPanel extends JPanel
 	JList hiddenList;
 	DefaultListModel hiddenListModel;
 
-	MSPAClient mspaApp;
+	MSPAClient app;
 	Vector originalBulletinIds;
 	Vector hiddenBulletinIds;	
 	JTabbedPane bulletinTabPane;
+	JTextField numOfDelBulletineField;
 }
