@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -26,14 +27,18 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.martus.common.Version;
+import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
+import org.martus.common.MartusUtilities.PublicInformationInvalidException;
 import org.martus.common.clientside.CurrentUiState;
 import org.martus.common.clientside.Localization;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.clientside.UiBasicSigninDlg;
+import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
+import org.martus.mspa.client.view.ServerConnectionDlg;
 import org.martus.mspa.client.view.menuitem.MenuItemAboutHelp;
 import org.martus.mspa.client.view.menuitem.MenuItemExitApplication;
 import org.martus.mspa.client.view.menuitem.MenuItemManageMagicWords;
@@ -41,6 +46,7 @@ import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
 import org.martus.mspa.client.view.menuitem.MenuItemMartusServerArgumentsConfig;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.swing.Utilities;
+import org.martus.util.Base64.InvalidBase64Exception;
 
 public class UiMainWindow extends JFrame
 {
@@ -100,7 +106,13 @@ public class UiMainWindow extends JFrame
 			}
 			result = signIn(UiBasicSigninDlg.INITIAL);
 			++loginTimes; 
-		}				
+		}
+		
+		if (!whichServerToCall())
+		{
+			JOptionPane.showMessageDialog(this, "MSPA Client would not be able to continue due to missing connect server ip and public code.", "MSAP error message", JOptionPane.ERROR_MESSAGE);	
+			return false;
+		}	
 		
 		setSize(800, 680);
 		JPanel mainPanel = new JPanel();
@@ -139,16 +151,60 @@ public class UiMainWindow extends JFrame
 						
 		return true;
 	}
-
+	
+	private boolean whichServerToCall()
+	{
+		try
+		{
+			if (!mspaApp.loadServerToCall())				
+				return true;
+		
+			Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
+			ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
+			dlg.show();
+			
+			if (mspaApp.getCurrentServerPublicCode().length() <=0)
+				return false;
+			
+			mspaApp.setXMLRpcEnviornments();				
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (InvalidPublicKeyFileException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (PublicInformationInvalidException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (SSLSocketSetupException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (InvalidBase64Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
 		JPanel serverInfoPanel = new JPanel();		
 		serverInfoPanel.setLayout(new GridLayout(1,4));
 		try
 		{		
-			JLabel ipLabel = new JLabel("Martus Server IP Address: "+InetAddress.getByName(ipAddr).getHostAddress());
+			JLabel ipLabel = new JLabel("MSPA Server IP Address: "+InetAddress.getByName(ipAddr).getHostAddress());
 			ipLabel.setForeground(Color.BLUE);					
-			JLabel publicCodeLabel = new JLabel("Martus Server Public code: "+ mspaApp.getCurrentServerPublicCode());
+			JLabel publicCodeLabel = new JLabel("MSPA Server Public code: "+ mspaApp.getCurrentServerPublicCode());
 			publicCodeLabel.setForeground(Color.BLUE);
 			serverInfoPanel.add(ipLabel);	
 			serverInfoPanel.add(publicCodeLabel);	

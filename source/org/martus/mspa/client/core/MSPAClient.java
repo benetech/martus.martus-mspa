@@ -25,14 +25,16 @@ public class MSPAClient
 	public MSPAClient(UiBasicLocalization local) throws Exception
 	{		
 		security = new MartusSecurity();	
-		loadServerToCall();	
+	}
+	
+	public void setXMLRpcEnviornments()
+	{
 		handler = createXmlRpcNetworkInterfaceHandler();					
 		setServerPublicCode(serverPublicCode);	
-
 	}
 	
 	public ClientSideXmlRpcHandler getClientSideXmlRpcHandler()
-	{
+	{	
 		return handler;
 	}
 	
@@ -81,33 +83,68 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
-	private void loadServerToCall() throws
+	public boolean loadServerToCall() throws
 			IOException, 
 			MartusUtilities.InvalidPublicKeyFileException, 
 			MartusUtilities.PublicInformationInvalidException, 
 			SSLSocketSetupException, InvalidBase64Exception
 	{
+		boolean prompUserToSelectServer=false;
+		
 		portToUse = DEFAULT_PORT;					
-		File[] toCallFiles = getServerToCallDirectory().listFiles();
-		if(toCallFiles != null)
+		toCallFiles = getServerToCallDirectory().listFiles();
+
+		if (toCallFiles.length >1)
+			prompUserToSelectServer = true;
+		
+		
+		if(toCallFiles != null && !prompUserToSelectServer)
 		{
-			for (int i = 0; i < toCallFiles.length; i++)
+			File toCallFile = toCallFiles[0];		
+			if(!toCallFile.isDirectory())
 			{
-				File toCallFile = toCallFiles[i];		
-				if(!toCallFile.isDirectory())
-				{
-					ipToUse = MartusUtilities.extractIpFromFileName(toCallFile.getName());				
-					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
-					String serverPublicKey = (String)publicInfo.get(0);	
-					if (serverPublicKey != null)
-					{				
-						String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
-						serverPublicCode = MartusCrypto.formatPublicCode(nonFormatPublicCode);	
-					}
+				ipToUse = MartusUtilities.extractIpFromFileName(toCallFile.getName());				
+				Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
+				String serverPublicKey = (String)publicInfo.get(0);	
+				if (serverPublicKey != null)
+				{				
+					String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
+					serverPublicCode = MartusCrypto.formatPublicCode(nonFormatPublicCode);	
+				}
+			}			
+			setXMLRpcEnviornments();
+		}	
+		
+		return prompUserToSelectServer;
+	}
+	
+	public Vector getLineOfServerIpAndPublicCode() throws
+			IOException, 
+			MartusUtilities.InvalidPublicKeyFileException, 
+			MartusUtilities.PublicInformationInvalidException, 
+			SSLSocketSetupException, InvalidBase64Exception
+	{
+		Vector listOfServers = new Vector();	
+
+		for (int i=0; i<toCallFiles.length;i++)
+		{	
+			File toCallFile = toCallFiles[i];
+			if(!toCallFile.isDirectory())
+			{
+				String ipToCall = MartusUtilities.extractIpFromFileName(toCallFile.getName());				
+				Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
+				String serverPublicKey = (String)publicInfo.get(0);	
+				if (serverPublicKey != null)
+				{				
+					String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
+					String serverPublicCall = MartusCrypto.formatPublicCode(nonFormatPublicCode);
+					listOfServers.add(ipToCall+"\t"+serverPublicCall);		
 				}
 			}
-		}	
-	}
+		}
+		
+		return listOfServers;
+	}	
 	
 	private File getServerToCallDirectory()
 	{
@@ -147,11 +184,21 @@ public class MSPAClient
 		return ipToUse;
 	}
 	
+	public void setCurrentServerPublicCode(String publicCode)
+	{
+		serverPublicCode = publicCode;
+	}
+	
+	public void setCurrentServerIp(String ip)
+	{
+		ipToUse = ip;
+	}
+	
 	
 			
 	
-	private Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws Exception 
-	{		
+	private Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws IOException 
+	{	
 		return handler.getAccountIds(myAccountId, parameters, signature);
 	}	
 	
@@ -174,7 +221,7 @@ public class MSPAClient
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}			
+		}		
 		return new Vector();
 	}
 	
@@ -537,12 +584,13 @@ public class MSPAClient
 				
 	
 	ClientSideXmlRpcHandler handler;
-	String ipToUse;
+	String ipToUse="";
 	int portToUse;
-	String serverPublicCode;
+	String serverPublicCode="";
 	UiBasicLocalization localization;
 	MartusCrypto security;
 	File keyPairFile;	
+	File[] toCallFiles;
 	
 	final static int DEFAULT_PORT = 443;
 	final static String DEFAULT_HOST = "localHost";	
