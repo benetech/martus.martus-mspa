@@ -25,10 +25,10 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.network.roothelper;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 
 public class RootHelperConnector
@@ -36,21 +36,27 @@ public class RootHelperConnector
 	public RootHelperConnector(int portToUse) 
 	{			
 		try
-		{						
-			Registry local = LocateRegistry.getRegistry(portToUse);
-			messenger = (Messenger)local.lookup("RootHelper");
+		{								
+			String hostToBind = "//"+DEFAULT_HOSTNAME_TO_BIND+":"+portToUse+"/RootHelper";
+			System.out.println("Lookup RootHelper connector from registry: "+ hostToBind);			
+			messenger = (Messenger)Naming.lookup(hostToBind);
+			System.out.println("\n");
 		}
 		catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		{	
+			System.out.println("Lookup status: failled ...");		
+			e.printStackTrace();			
 		}
 		catch (NotBoundException e)
 		{
-			// TODO Auto-generated catch block
+			System.out.println("Lookup status: failled ...");	
 			e.printStackTrace();
 		}
-		System.out.println("RootHelper port connect to : "+ portToUse);
+		catch (MalformedURLException e)
+		{			
+			System.out.println("Lookup status: failled ...");	
+			e.printStackTrace();			
+		}				
 	}	
 	
 	public Messenger getMessenger()
@@ -59,4 +65,5 @@ public class RootHelperConnector
 	}		
 		
 	Messenger messenger;
+	private final static String DEFAULT_HOSTNAME_TO_BIND = "127.0.0.1";
 }

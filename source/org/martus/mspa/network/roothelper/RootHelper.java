@@ -26,6 +26,9 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.network.roothelper;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -38,20 +41,31 @@ public class RootHelper
 {
 	public RootHelper(String[] args)
 	{	
-		processCommandLine(args);
+		processCommandLine(args);		
 		try 
-		{
-			Registry registry = getRegistry(portToUse);	
-			MessengerImpl localObject = new MessengerImpl();			
-			registry.rebind("RootHelper", localObject);			
+		{		
+			getRegistry(portToUse);				
+			MessengerImpl localObject = new MessengerImpl();
+			String hostname = "//"+hostToBind+":"+portToUse+"/RootHelper";
+			Naming.bind(hostname, localObject);			
 			System.out.println("Port to use for clients: "+ portToUse);							  
 			System.out.println("MessengerImpl object has been bound in the registry");
 		} 
 		catch(RemoteException re) 
 		{
 		   	logger.log("RemoteExecption: "+re.getMessage());
+		}
+		catch (AlreadyBoundException e)
+		{
+			e.printStackTrace();
+			logger.log("Port already bound: "+ e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{			
+			e.printStackTrace();
+			logger.log("URL Exception: "+ e.getMessage());
 		} 
-	}
+}
 
 	public static Registry getRegistry( int port ) throws RemoteException 
 	{
@@ -83,16 +97,16 @@ public class RootHelper
 	private void setPortToUse(int port)
 	{
 		portToUse = port;
-	}	
+	}		
 	
 	private void processCommandLine(String[] args) 
 	{			
-		String portToListenTag = "--port=";
+		String portToListenTag = "--port=";	
 		
 		System.out.println("");
 		for(int arg = 0; arg < args.length; ++arg)
-		{
-			String argument = args[arg];	
+		{					
+			String argument = args[arg];				
 								
 			if(argument.startsWith(portToListenTag))
 			{	
@@ -109,10 +123,12 @@ public class RootHelper
 		new RootHelper(args);
 	}	
 		
-	private int portToUse = DEFAULT_PORT;
+	private int portToUse = DEFAULT_PORT;	
+	private String hostToBind=DEFAULT_HOSTNAME_TO_BIND;
 	private LoggerInterface logger;
 	
 	private final static int DEFAULT_PORT = 983;
+	private final static String DEFAULT_HOSTNAME_TO_BIND = "127.0.0.1";
 	private final static String UNIX_ENVIRONMENT = "/var/MSPARootHelper/";
 	private final static String WINDOW_ENVIRONMENT = "C:/MSPARootHelper/";
 	private final static String AUTHORIZED_CLIENTS_FILE = "authorizedClient.txt";
