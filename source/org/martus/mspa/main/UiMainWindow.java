@@ -35,6 +35,7 @@ import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.tools.MSPASwingUtils;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
+import org.martus.mspa.client.view.MenuItemExitApplication;
 import org.martus.mspa.client.view.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
 
@@ -224,9 +225,8 @@ public class UiMainWindow extends JFrame
 		mFile.setMnemonic('f');
 		JMenuItem item = new JMenuItem("Open");				
 		mFile.add(item);
-		mFile.addSeparator();	
-		item = new JMenuItem("Exit");		
-		mFile.add(item);
+		mFile.addSeparator();			
+		mFile.add(new MenuItemExitApplication(this));
 		menuBar.add(mFile);
 		
 		JMenu mEdit = new JMenu("Edit");
@@ -287,6 +287,11 @@ public class UiMainWindow extends JFrame
 	public MSPAClient getMSPAApp()
 	{
 		return mspaApp;
+	}
+	
+	public void exitNormally()
+	{
+		System.exit(0);
 	}
 	
 	protected JSplitPane m_sp;

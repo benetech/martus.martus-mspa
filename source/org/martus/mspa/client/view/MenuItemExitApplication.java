@@ -29,25 +29,22 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.martus.mspa.client.core.MirrorServerMessageConverter;
 import org.martus.mspa.main.UiMainWindow;
 
-public class MenuItemManagingMirrorServers extends AbstractAction
+
+public class MenuItemExitApplication extends AbstractAction
 {
-	public MenuItemManagingMirrorServers(UiMainWindow mainWindow, int manageType)
+	public MenuItemExitApplication(UiMainWindow mainWindow)
 	{
-		super(MirrorServerMessageConverter.getTitle(manageType));
-		serverManageType = manageType;
-		parent = mainWindow;
+		super("Exit");
+		parent = mainWindow;		
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
-	{						
-		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, serverManageType,
-					"", "");
-		serverManagementDlg.show();
+	{
+		parent.exitNormally();
 	}
+	
+	UiMainWindow parent;		
 
-	UiMainWindow parent;	
-	int serverManageType;
 }

@@ -202,7 +202,7 @@ public class ManagingMirrorServersDlg extends JDialog
 			else if (ae.getSource().equals(addButton))
 				handleAddToAllowedList();
 			else if (ae.getSource().equals(updateButton))
-				handleUpdateMagicWords();
+				handleUpdateMirrorServerInfo();
 			else if (ae.getSource().equals(removeButton))
 				handleRemoveFromAllowedList();
 		}
@@ -221,9 +221,8 @@ public class ManagingMirrorServersDlg extends JDialog
 			}
 		}
 		
-		private void handleUpdateMagicWords()
-		{			
-			dispose();			
+		private void handleUpdateMirrorServerInfo()
+		{						
 		}
 		
 		private void handleRemoveFromAllowedList()
