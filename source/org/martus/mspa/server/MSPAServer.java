@@ -200,6 +200,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP);
 	}
+	
+	public static File getTriggerDirectory()
+	{
+		return new File(getAppDirectoryPath(), ADMINTRIGGERDIRECTORY);
+	}
 
 	public static File getAuthorizedClientsDir()
 	{
@@ -722,7 +727,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		if(Version.isRunningUnderWindows())
 			dataDirectory = WINDOW_MARTUS_ENVIRONMENT;
 		else
-			dataDirectory = System.getProperty("user.home")+UNIX_MARTUS_ENVIRONMENT;
+			dataDirectory = UNIX_MARTUS_ENVIRONMENT;
 		return dataDirectory;
 	}
 	
@@ -989,6 +994,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private int rootHelperPortToUse;	
 		
 	private final static String DELETE_ON_STARTUP = "deleteOnStartup";	
+	private static final String ADMINTRIGGERDIRECTORY = "adminTriggers";
 	private final static String MARTUSSERVER_BACKUP_DIRECTORY = "Backups";
 	private final static String MARTUS_SERVER_DATA = "MartusServerData";	
 	private final static String MAGICWORDS_FILENAME = "magicwords.txt";
