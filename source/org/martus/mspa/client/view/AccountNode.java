@@ -1,6 +1,6 @@
 package org.martus.mspa.client.view;
 
-import org.martus.common.crypto.MartusSecurity;
+import org.martus.common.crypto.MartusCrypto;
 import org.martus.util.Base64.InvalidBase64Exception;
 
 
@@ -11,7 +11,7 @@ public class AccountNode
 		accountId = accountString;
 		try
 		{																		
-			publicCode = MartusSecurity.getFormattedPublicCode(accountString);
+			publicCode = MartusCrypto.getFormattedPublicCode(accountString);
 		}
 		catch (InvalidBase64Exception e)
 		{						

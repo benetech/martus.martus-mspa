@@ -571,7 +571,7 @@ public class MSPAClient
 		String publicCode = null;
 		try
 		{																		
-			publicCode = MartusSecurity.getFormattedPublicCode(accountId);
+			publicCode = MartusCrypto.getFormattedPublicCode(accountId);
 		}
 		catch (InvalidBase64Exception e)
 		{						
