@@ -15,9 +15,10 @@ within a week or two!
    (Later, this will be part of the ANT build script, so it will be automated
 
 2. Create c:\MSPAServer with:
+   adminTriggers\
    deleteOnStartup\
        keypair.dat
-       authorizedClients\
+       clientWhoCallUs\
    MartusServerData\
 
 ---- END ONE-TIME SETUP ----
