@@ -57,10 +57,12 @@ public class MenuItemServerCommands extends AbstractAction
 		
 		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
 		{	
-			int answer = JOptionPane.showConfirmDialog(parent, "Are you sure?","Stop Server", JOptionPane.YES_NO_OPTION);
+			int answer = JOptionPane.showConfirmDialog(parent, 
+				"This command will stop the server, preventing any users from accessing it until it is started again.\n\n Are you sure you want to do this?",
+				"Stop Server", JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) 
 			{
-				parent.setStatusText("Send stop command to MSPA server ...");
+				parent.setStatusText("Starting Server ...");
 				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
 				handleResults(results, "Stop");						
 			} 	

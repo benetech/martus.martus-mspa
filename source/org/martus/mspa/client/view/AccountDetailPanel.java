@@ -280,7 +280,7 @@ public class AccountDetailPanel extends JPanel
 
 		if (list.getName().equals("bulletin"))
 		{
-			delBulletins = new JButton("Delete");
+			delBulletins = new JButton("Delete Bulletin");
 			delBulletins.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(delBulletins);
 		}	

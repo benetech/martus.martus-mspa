@@ -86,7 +86,7 @@ public class ManagingMirrorServersDlg extends JDialog
 		manageIPAddr.requestFocus();		
 		managePublicCode = new JTextField(20);					
 		
-		panel.add(new JLabel("Manage IP Address: "), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new JLabel("IP Address: "), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(manageIPAddr);
 		panel.add(new JLabel("Public Code: "), ParagraphLayout.NEW_PARAGRAPH);
 		panel.add(managePublicCode);

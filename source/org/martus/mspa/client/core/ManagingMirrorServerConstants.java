@@ -28,24 +28,24 @@ package org.martus.mspa.client.core;
 
 public interface ManagingMirrorServerConstants
 {
-	public static int SERVERS_WHO_WE_MIRROR		=100;
-	public static int SERVERS_WE_AMPLIFY		=101;
-	public static int SERVERS_WHO_AMPLIFY_US	=102;
-	public static int SERVERS_WHO_MIRROR_US	=103;
+	public static int SERVERS_WHOSE_DATA_WE_BACKUP	=100;
+	public static int SERVERS_WHOSE_DATA_WE_AMPLIFY	=101;
+	public static int SERVERS_WHO_AMPLIFY_OUR_DATA	=102;
+	public static int SERVERS_WHO_BACKUP_OUR_DATA	=103;
 
-	public static String SERVERS_WHO_WE_MIRROR_TITLE			="Servers Who We Mirror";
-	public static String SERVERS_WE_AMPLIFY_TITLE				="Servers We Amplify";
-	public static String SERVERS_WHO_AMPLIFY_US_TITLE			="Servers Who Amplify Us";
-	public static String SERVERS_WHO_MIRROR_US_TITLE			="Servers Who Mirror Us";
+	public static String SERVERS_WHOES_DATA_WE_BACKUP_TITLE		="Servers Whose Data We Backup";
+	public static String SERVERS_WHOSE_DATA_WE_AMPLIFY_TITLE	="Servers Whose Data We Amplify";
+	public static String SERVERS_WHO_AMPLIFY_OUR_DATA_TITLE		="Servers Who Amplify Our Data";
+	public static String SERVERS_WHO_BACKUP_OUR_DATA_TITLE		="Servers Who Backup Our Data";
 	
-	public static String SERVERS_WHO_WE_MIRROR_HEADER			="Backup My Data to Other Servers";
-	public static String SERVERS_WHO_WE_MIRROR_ALLOWED_LABEL	="Can Backup My Data:";
-	public static String SERVERS_WE_AMPLIFY_HEADER				="All My Data to Amplify";
-	public static String SERVERS_WE_AMPLIFY_ALLOWED_LABEL		="Can Amplify to My Data:";
-	public static String SERVERS_WHO_AMPLIFY_US_HEADER			="Be an Amplifier";
-	public static String SERVERS_WHO_AMPLIFY_US_ALLOWED_LABEL	="Amplier Data:";
-	public static String SERVERS_WHO_MIRROR_US_HEADER			="Act as A Backup For Other Servers";
-	public static String SERVERS_WHO_MIRROR_US_ALLOWED_LABEL	="Can Upload Data";	
+	public static String SERVERS_WHOES_DATA_WE_BACKUP_HEADER	="Servers whose data we backup";
+	public static String DATA_WE_BACKUP_LABEL					="Data We Backup:";
+	public static String SERVERS_WHOSE_DATA_WE_AMPLIFY_HEADER	="Servers whose data we amplify";
+	public static String DATA_WE_AMPLIFY_LABEL					="Servers Whose Data We Amplify:";
+	public static String SERVERS_WHO_AMPLIFY_OUR_DATA_HEADER	="Servers who amplify our data";
+	public static String CAN_AMPLIFY_OUR_DATA_LABEL				="Can Amplier My Data:";
+	public static String SERVERS_WHO_BACKUP_OUR_DATA_HEADER		="Server who backup our data";
+	public static String CAN_UPLOAD_OUR_DATA_LABEL				="Can Upload Our Data";	
 	
 	public static String AVAILABLE_SERVER_LABEL				="Available Servers:";
 	public static String AVAILABLE_MAGIC_LABEL				="Available Magic Words:";	

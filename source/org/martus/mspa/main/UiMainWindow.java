@@ -331,7 +331,7 @@ public class UiMainWindow extends JFrame
 		menuBar.add(mEdit);		
 		
 		JMenu mTool = new JMenu("Tools");
-		mTool.add(new MenuItemMartusServerCompliance(this,"Martus Server Compliance"));
+		mTool.add(new MenuItemMartusServerCompliance(this,"View Server Compliance"));
 		mTool.addSeparator();
 		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
@@ -340,13 +340,13 @@ public class UiMainWindow extends JFrame
 		mTool.addSeparator();
 		JMenu manageServer = new JMenu("Other Servers");	
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_WE_MIRROR));
+				ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WE_AMPLIFY));
+				ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_US));
+				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_MIRROR_US));		
+				ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA));		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		

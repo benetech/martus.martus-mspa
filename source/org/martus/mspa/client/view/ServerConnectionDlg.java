@@ -51,12 +51,12 @@ public class ServerConnectionDlg extends JDialog
 {
 	public ServerConnectionDlg(UiMainWindow owner, Vector availableServers) 
 	{				
-		super(owner, "Server to Connect: ", true);
+		super(owner, "Connect to Server: ", true);
 		parent = owner;		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		mainPanel.add(new JLabel("Select a server to connect: "), BorderLayout.NORTH);	
+		mainPanel.add(new JLabel("Select a server: "), BorderLayout.NORTH);	
 		mainPanel.add(createDisplayServerListPane(availableServers), BorderLayout.CENTER);
 		mainPanel.add(buildButtonsPanel(), BorderLayout.SOUTH);						
 		mainPanel.setPreferredSize(new Dimension(300,250));		

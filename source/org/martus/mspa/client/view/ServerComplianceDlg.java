@@ -51,7 +51,7 @@ public class ServerComplianceDlg extends JDialog
 {
 	public ServerComplianceDlg(UiMainWindow owner, String compliants)
 	{
-		super((JFrame)owner, "Martus Server Compliance-", true);	
+		super((JFrame)owner, "View Server Compliance", true);	
 		parent = owner;				
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
@@ -70,7 +70,7 @@ public class ServerComplianceDlg extends JDialog
 		JPanel panel = new JPanel();
 		panel.setLayout(new ParagraphLayout());
 		
-		JLabel label = new JLabel("Edit Martus Server Compliance:");
+		JLabel label = new JLabel("Compliance for this Martus Server:");
 		
 		complianceEditor = new UiWrappedTextArea(compliants);
 		complianceEditor.setBackground(Color.WHITE);

@@ -139,8 +139,7 @@ public class MagicWordsDlg extends JDialog
 		JScrollPane ps = new JScrollPane();
 		ps.setSize(500, 150);
 		ps.getViewport().add(fTable);
-					
-		panel.add(new JLabel("View manage words and group assigned:"), BorderLayout.NORTH);		
+							
 		panel.add(ps, BorderLayout.CENTER);
 
 		return panel;

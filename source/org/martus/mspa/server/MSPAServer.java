@@ -804,11 +804,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public static File getMirrorDirectory(int type)
 	{		
-		if (type == ManagingMirrorServerConstants.SERVERS_WHO_WE_MIRROR)
+		if (type == ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP)
 			return getServerWhoWeCallDirectory();
-		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_MIRROR_US)
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA)
 			return getMirrorServerWhoCallUsDirectory();
-		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_US)
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA)
 			return getAmpsWhoCallUsDirectory();	
 
 		return getMirrorServerWhoWeCallDirectory();		

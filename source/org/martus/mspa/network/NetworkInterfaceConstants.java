@@ -5,7 +5,7 @@ package org.martus.mspa.network;
 public class NetworkInterfaceConstants
 {
 	public static final String VERSION = "MSPAServer v0.10";
-	public static final String OK = "server ok";
+	public static final String OK = "Server ready";
 	public static final String NO_SERVER = "no server";
 	public static final String SERVER_DOWN = "server is down";
 	public static final String SERVER_ERROR = "server error";
