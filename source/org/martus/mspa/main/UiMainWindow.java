@@ -41,6 +41,7 @@ import org.martus.mspa.client.view.AccountsTree;
 import org.martus.mspa.client.view.ServerConnectionDlg;
 import org.martus.mspa.client.view.menuitem.MenuItemAboutHelp;
 import org.martus.mspa.client.view.menuitem.MenuItemExitApplication;
+import org.martus.mspa.client.view.menuitem.MenuItemExportPublicKey;
 import org.martus.mspa.client.view.menuitem.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
 import org.martus.mspa.client.view.menuitem.MenuItemMartusServerArgumentsConfig;
@@ -316,6 +317,10 @@ public class UiMainWindow extends JFrame
 		JMenu mEdit = new JMenu("Edit");
 		mFile.setMnemonic('d');
 		menuBar.add(mEdit);
+		
+		JMenu mOptions = new JMenu("Options");
+		mOptions.add(new MenuItemExportPublicKey(this, "Export Public Key", getDefaultDirectoryPath()));
+		menuBar.add(mOptions);
 		
 		JMenu mTool = new JMenu("Tools");
 		mTool.add(new MenuItemMartusServerArgumentsConfig(this,"Martus Server Arguments Configuration"));

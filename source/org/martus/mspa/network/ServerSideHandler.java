@@ -9,7 +9,6 @@ import java.util.Vector;
 
 import org.martus.common.ContactInfo;
 import org.martus.common.bulletin.BulletinConstants;
-import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
@@ -59,15 +58,13 @@ public class ServerSideHandler implements NetworkInterface
 			
 			Vector accounts;
 		}
-		
-		Vector result = new Vector();
-		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
+				
+		Vector result = new Vector();				
+		if (!server.isAuthorizedMSPAClients(myAccountId))
 		{
-			result.add(NetworkInterfaceConstants.SIG_ERROR);				
+			result.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return result;
 		}
-		else
-			server.addAuthorizedMSPAClients(myAccountId);
 					
 		AccountVisitor visitor = new AccountVisitor();
 		server.getDatabase().visitAllAccounts(visitor);
@@ -80,9 +77,9 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId)
 	{	
 		Vector results = new Vector();
-		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
+		if (!server.isAuthorizedMSPAClients(myAccountId))
 		{
-			results.add(NetworkInterfaceConstants.SIG_ERROR);				
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return results;
 		}
 		
@@ -107,11 +104,12 @@ public class ServerSideHandler implements NetworkInterface
 		try
 		{
 			Vector contactInfo = ContactInfo.loadFromFile(contactFile);
-			if(!server.getSecurity().verifySignatureOfVectorOfStrings(contactInfo, accountId))
-			{						
-				results.add(NetworkInterfaceConstants.SIG_ERROR);
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 				return results;
 			}
+
 			results.add(NetworkInterfaceConstants.OK);
 			results.add(contactInfo);		
 
@@ -127,7 +125,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getAccountManageInfo(String myAccountId, String manageAccountId)
 	{	
-		Vector results = new Vector();				
+		Vector results = new Vector();	
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+					
 		Vector acccountAdminInfo = server.getAccountAdminInfo(manageAccountId);
 		
 		results.add(NetworkInterfaceConstants.OK);
@@ -141,6 +145,12 @@ public class ServerSideHandler implements NetworkInterface
 		Vector results = new Vector();
 		try
 		{
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+			
 			server.updateAccountInfo(manageAccountId, accountInfo);								
 			results.add(NetworkInterfaceConstants.OK);		
 			return results;
@@ -157,7 +167,13 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector sendCommandToServer(String myAccountId, String cmdType, String cmd) throws IOException
 	{
 		Vector results = new Vector();		
-			
+		
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+						
 		if (server.sendCmdToStartServer(cmdType, cmd))
 			results.add(NetworkInterfaceConstants.OK);
 		else
@@ -170,7 +186,13 @@ public class ServerSideHandler implements NetworkInterface
 	{			
 		Vector results = new Vector();
 		try
-		{										
+		{				
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+									
 			boolean result = server.hideBulletins(myAccountId, localIds);
 			if (result)	
 				results.add(NetworkInterfaceConstants.OK);
@@ -190,7 +212,8 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getListOfHiddenBulletinIds(String myAccountId) 
 	{		
-		Vector results = new Vector();											
+		Vector results = new Vector();			
+											
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(server.getListOfHiddenBulletins(myAccountId));		
 
@@ -227,11 +250,12 @@ public class ServerSideHandler implements NetworkInterface
 			
 			Vector infos = new Vector();
 		}
+		
+		Vector results = new Vector();	
 
 		Collector collector = new Collector();		
 		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);		
-		
-		Vector results = new Vector();										
+												
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(collector.infos);		
 
@@ -240,7 +264,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getServerCompliance(String myAccountId)
 	{
-		Vector results = new Vector();				
+		Vector results = new Vector();	
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+					
 		Vector compliances = server.getComplianceFile(myAccountId);
 		
 		results.add(NetworkInterfaceConstants.OK);
@@ -251,7 +281,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector updateServerCompliance(String myAccountId, String compliantsMsg)
 	{		
-		Vector results = new Vector();		
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+				
 		server.updateComplianceFile(myAccountId, compliantsMsg);
 		results.add(NetworkInterfaceConstants.OK);
 		
@@ -260,7 +296,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getInactiveMagicWords(String myAccountId)
 	{	
-		Vector results = new Vector();				
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+						
 		Vector magicWords = server.getMagicWordsInfo().getInactiveMagicWordsWithNoSign();
 		
 		results.add(NetworkInterfaceConstants.OK);
@@ -271,7 +313,13 @@ public class ServerSideHandler implements NetworkInterface
 
 	public Vector getActiveMagicWords(String myAccountId)
 	{	
-		Vector results = new Vector();				
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+						
 		Vector magicWords = server.getMagicWordsInfo().getActiveMagicWords();
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);
@@ -281,7 +329,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getAllMagicWords(String myAccountId)
 	{			
-		Vector results = new Vector();		
+		Vector results = new Vector();
+		
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}		
 
 		Vector magicWords = server.getMagicWordsInfo().getAllMagicWords();			
 		results.add(NetworkInterfaceConstants.OK);
@@ -291,7 +345,14 @@ public class ServerSideHandler implements NetworkInterface
 	}								
 	
 	public Vector updateMagicWords(String myAccountId, Vector magicWords)
-	{			
+	{	
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			Vector results = new Vector();
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+				
 		return writeMagicWords(magicWords);						
 	}								
 	
@@ -315,7 +376,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getListOfAvailableServers(String myAccountId)
 	{			
-		Vector results = new Vector();		
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+				
 		File availableDir = MSPAServer.getAvailableMirrorServerDirectory();	
 		List list = Arrays.asList(availableDir.list());		
 					
@@ -327,7 +394,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getListOfAssignedServers(String myAccountId, int mirrorType)
 	{			
-		Vector results = new Vector();		
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+				
 		File mirrorDir = MSPAServer.getMirrorDirectory(mirrorType);	
 		List list = Arrays.asList(mirrorDir.list());		
 					
@@ -339,9 +412,15 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector updateManagingMirrorServers(String myAccountId, Vector mirrorInfo, int mirrorType)
 	{
-		Vector results = new Vector();
+		Vector results = new Vector();		
 		try
 		{
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+			
 			server.updateManagingMirrorServerInfo(mirrorInfo, mirrorType);								
 			results.add(NetworkInterfaceConstants.OK);		
 			return results;
@@ -360,6 +439,12 @@ public class ServerSideHandler implements NetworkInterface
 		Vector results = new Vector();
 		try
 		{						
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+			
 			if (mirrorInfo.size() > 0)
 			{	
 				String ip = (String) mirrorInfo.get(0);
@@ -393,7 +478,13 @@ public class ServerSideHandler implements NetworkInterface
 	
 	public Vector getMartusServerArguments(String myAccountId)
 	{			
-		Vector results = new Vector();		
+		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+				
 		LoadMartusServerArguments arguments = MSPAServer.getMartusServerArguments();	
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(arguments.convertToVector());		
@@ -403,6 +494,12 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector updateMartusServerArguments(String myAccountId, Vector args)
 	{
 		Vector results = new Vector();
+		if (!server.isAuthorizedMSPAClients(myAccountId))
+		{
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+			return results;
+		}
+		
 		try
 		{
 			server.updateMartusServerArguments(args);					
@@ -416,13 +513,7 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.SERVER_ERROR);
 			return results;
 		}		
-	}
-	
-	
-	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
-	{
-		return verifier.verifySignatureOfVectorOfStrings(parameters, myAccountId, signature);
-	}		
+	}	
 			
 	MSPAServer server;
 }

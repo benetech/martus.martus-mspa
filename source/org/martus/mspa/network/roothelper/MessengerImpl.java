@@ -30,9 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Vector;
-
-import org.martus.common.Version;
 
 
 public class MessengerImpl extends UnicastRemoteObject implements Messenger, MessageType 
@@ -43,88 +40,52 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		
 	}
 	
-	public Status sendCommand(String accountKey, int msgType, String cmd) throws RemoteException 
+	public Status startServer(String accountKey) throws RemoteException
 	{
-		try
-		{
-			switch (msgType)
-			{
-				case START_SERVER:
-					return executeCommand(cmd);
-				case STOP_SERVER:
-					return stopMartusServer(cmd);
-				case HIDE_BULLETIN:
-					break;	
-			}		
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		return new Status(Status.FAILED);
+		return callScript(START_SERVER);
 	}
 	
-	public Status copyFilesTo(String accountKey, Vector transfers) throws RemoteException 
-	{
-		Status status = new Status();
-		String from=null;		
-		try
-		{		
-			for (int i=0;i<transfers.size();++i)
-			{
-				FileTransfer fileTransfer = (FileTransfer) transfers.get(i);
-				from = fileTransfer.getFromFileName();
-				String to = fileTransfer.getToFileName();			
-				FileTransfer.copyFile(new File(from), new File(to));
-				status.setStatus(Status.SUCCESS);								
-			}
-		}
-		catch(FileNotFoundException nothingToWorryAbout)
-		{
-			status.setStatus(Status.FAILED);			
-			status.setErrorMsg(from+" not found: "+nothingToWorryAbout.getMessage());							
-		}
-		catch (IOException e)
-		{
-			status.setStatus(Status.FAILED);			
-			status.setErrorMsg("Error loading ("+ from+ ")file.\n"+e.toString());				
-			e.printStackTrace();		
-		}		
-	
-		return status;		
+	public Status stopServer(String accountKey) throws RemoteException
+	{	
+		return callScript(STOP_SERVER);
 	}
 	
-	public Status copyFilesFrom(String accountKey, Vector transfers) throws RemoteException 
+	public Status getStatus(String accountKey, int statusType) throws RemoteException
+	{		
+		return callScript(statusType);
+	}
+	
+	public Status setReadOnly(String accountKey) throws RemoteException
+	{	
+		return callScript(READONLY);
+	}
+	
+	public Status setReadWrite(String accountKey) throws RemoteException
+	{			
+		return callScript(READ_WRITE);
+	}
+	
+	private Status callScript(int scriptType)
 	{
-		String from=null;
 		Status status = new Status();
-		
-		try
-		{		
-			for (int i=0;i<transfers.size();++i)
-			{
-				FileTransfer fileTransfer = (FileTransfer) transfers.get(i);			
-				from = fileTransfer.getFromFileName();
-				String to = fileTransfer.getToFileName();			
-				FileTransfer.copyFile(new File(from), new File(to));
-				status.setStatus(Status.SUCCESS);
-			}									
-		}
-		catch(FileNotFoundException nothingToWorryAbout)
+		switch (scriptType)
 		{
-			status.setStatus(Status.FAILED);			
-			status.setErrorMsg(from+" not found: "+ nothingToWorryAbout.toString());			
+			case START_SERVER:
+			case STOP_SERVER:
+			case READONLY:
+			case READ_WRITE:
+			case STATUS:
+				break;	
 		}		
-		catch (IOException e)
-		{
-			status.setStatus(Status.FAILED);			
-			status.setErrorMsg("Error loading ("+ from+ ")file.\n"+e.toString());				
-			e.printStackTrace();		
-		}	
 		
 		return status;
 	}
+	
+	public String getInitMsg() throws RemoteException 
+	{
+	  return(CONNET_MSG);
+	}
+		
 
 	public Status getAdminFile(String key, String fileFrom, String fileTo) throws RemoteException 
 	{
@@ -149,49 +110,6 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 				
 		return status;
 	}	
-	
-	private Status stopMartusServer(String command) throws IOException
-	{
-		//Need to get process id
-		return executeCommand(command);
-	}
-	
-		
-	private Status executeCommand (String externCommand) throws IOException 
-	{ 
-		Status status = new Status();		
-		String command = externCommand;	
-		if(Version.isRunningUnderWindows())
-			command = "cmd.exe /C "+externCommand;
-		
-		Process proc = Runtime.getRuntime().exec(command);  
-		try 
-		{
-			int exitVal = proc.waitFor();
-			if (exitVal !=0)
-			{
-				status.setStatus(Status.FAILED);			
-				status.setErrorMsg("Process return code: "+ exitVal);		
-			}	 
-			else
-				status.setStatus(Status.SUCCESS);
-		} 
-		catch (InterruptedException e) 
-		{ 
-			status.setStatus(Status.FAILED);
-			String errorMsg = "InterruptedException raised: "+e.getMessage();			
-			status.setErrorMsg(errorMsg);		
-			System.out.println(errorMsg);			
-		} 
-		
-		return status;
-	} 	
-
-
-	public String getInitMsg() throws RemoteException 
-	{
-	  return(CONNET_MSG);
-	}
 	
 	public static final String CONNET_MSG = "Connected: Start remote message ...";
 }

@@ -27,17 +27,18 @@ package org.martus.mspa.network.roothelper;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Vector;
 
 
 public interface Messenger extends Remote 
 {
-	public Status sendCommand(String accountKey, int msgType, String cmd) throws RemoteException;
+	public Status startServer(String accountKey) throws RemoteException;
+	public Status stopServer(String accountKey) throws RemoteException;
+	public Status getStatus(String accountKey, int statusType) throws RemoteException;
+	public Status setReadOnly(String accountKey) throws RemoteException;
+	public Status setReadWrite(String accountKey) throws RemoteException;
+		
 	public Status getAdminFile(String accountKey, String fileFrom, String fileTo) throws RemoteException;
 	
-	public Status copyFilesTo(String accountKey, Vector transfers) throws RemoteException;	
-	public Status copyFilesFrom(String accountKey, Vector transfers) throws RemoteException; 
-		
 	public String getInitMsg() throws RemoteException;
 
 }

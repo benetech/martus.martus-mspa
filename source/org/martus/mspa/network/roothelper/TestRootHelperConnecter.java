@@ -34,7 +34,6 @@ import java.util.Vector;
 
 import org.martus.common.test.TestCaseEnhanced;
 import org.martus.mspa.server.MSPAServer;
-import org.martus.util.UnicodeWriter;
 
 
 public class TestRootHelperConnecter extends TestCaseEnhanced
@@ -78,8 +77,7 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error when get init. message from RMI object "+e.getMessage());
 		}
 	}
 	
@@ -100,43 +98,9 @@ public class TestRootHelperConnecter extends TestCaseEnhanced
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error when get adminitration file "+e.getMessage());
 		}
 		
-	}
-
-	public void testCopyFilesTo()
-	{
-		try
-		{
-			File toFile = createTempFileFromName("$$$MartusCopyToFile");
-			tempFile = createTempFileFromName("$$$MartusTestAdminFile");
-
-			UnicodeWriter writer = new UnicodeWriter(tempFile);
-			writer.writeln("Test 1");
-			writer.writeln("Test 2");	
-			writer.close();		
-			messenger = register.getMessenger();
-			FileTransfer transfer = new FileTransfer(tempFile.getPath(), toFile.getPath());
-			Vector transfers = new Vector();
-			transfers.add(transfer);
-
-			Status status = messenger.copyFilesTo("", transfers);
-			assertEquals("Status should be success.", Status.SUCCESS, status.getStatus());
-			
-			Vector entries = FileTransfer.readDataFromFile(toFile);
-			assertTrue("entries size should be 2", entries.size()==2);
-			assertEquals("Test 1", (String) entries.get(0));
-
-			toFile.delete();
-			tempFile.delete(); 
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
 	}
 	
 	public void tearDown() throws Exception

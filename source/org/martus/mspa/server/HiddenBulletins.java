@@ -27,10 +27,6 @@ package org.martus.mspa.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -55,7 +51,7 @@ public class HiddenBulletins
 			MartusCrypto securityToUse, LoggerInterface loggerToUse, File hiddenFileLocation)
 	{
 		database = databaseToUse;	
-		hiddenUids = Collections.synchronizedSet(new HashSet());
+		hiddenUids = new Vector();
 		security = securityToUse;
 		logger = loggerToUse;
 		hiddenFile = hiddenFileLocation;
@@ -84,9 +80,9 @@ public class HiddenBulletins
 		if (hiddenUids == null) 
 			return bulletins;
 					
-		for (Iterator itr = hiddenUids.iterator(); itr.hasNext();)
+		for (int i=0; i < hiddenUids.size(); ++i)
 		{
-			HiddenBulletinInfo uid = (HiddenBulletinInfo) itr.next();
+			HiddenBulletinInfo uid = (HiddenBulletinInfo) hiddenUids.get(i);
 			String localId = uid.getLocalId();
 				
 			if (uid.isSameAccountId(accountId) && uid.isBulletinHeaderPacket())			
@@ -100,9 +96,9 @@ public class HiddenBulletins
 		if (hiddenUids.size() <=0)
 			return;
 		
-		for (Iterator itr = hiddenUids.iterator(); itr.hasNext();)
+		for (int i=0; i < hiddenUids.size(); ++i)
 		{
-			HiddenBulletinInfo bulletinInfo = (HiddenBulletinInfo) itr.next();
+			HiddenBulletinInfo bulletinInfo = (HiddenBulletinInfo) hiddenUids.get(i);
 			String targetId = bulletinInfo.getAccountId();
 			if (targetId.equals(accountId))
 				writer.writeln("    "+bulletinInfo.getLineOfHiddenBulletins());	
@@ -195,9 +191,9 @@ public class HiddenBulletins
 	
 	private boolean containHiddenUids(UniversalId uid)
 	{
-		for (Iterator itr = hiddenUids.iterator(); itr.hasNext();)
+		for (int i=0; i < hiddenUids.size(); ++i)
 		{
-			HiddenBulletinInfo id = (HiddenBulletinInfo) itr.next();
+			HiddenBulletinInfo id = (HiddenBulletinInfo) hiddenUids.get(i);
 			if (id.isSameUid(uid))
 				return true;
 		}				
@@ -298,7 +294,7 @@ public class HiddenBulletins
 	}
 		
 	Database database;
-	Set hiddenUids;
+	Vector hiddenUids;
 	LoggerInterface logger;
 	MartusCrypto security;
 	File hiddenFile;
