@@ -1035,12 +1035,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return runningFile;
 	}
 	
-	private File getShutdownFile()
+	public File getShutdownFile()
 	{
 		return new File(getTriggerDirectory(), SHUTDOWN_FILENAME);
 	}
 	
-	private boolean isShutdownRequested()
+	public boolean isShutdownRequested()
 	{
 		boolean exitFile = getShutdownFile().exists();
 		if(exitFile && !loggedShutdownRequested)
