@@ -9,4 +9,6 @@ public interface NetworkInterface
 {
 	public Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws IOException;
 	public Vector getContactInfo(String myAccountId, Vector parameters, String signature, String accountId) throws IOException;
+	public Vector getMagicWords(String myAccountId, Vector parameters, String signature) throws IOException;
+	public Vector updateMagicWords(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException;
 }

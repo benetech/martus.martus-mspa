@@ -31,13 +31,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void initalizeFileDatabase(File dir)
 	{
-		martusDatabaseToUse = new ServerFileDatabase(dir, mspaSecurity);	
-		File packetsDirectory = new File(dir, "packets");	
-		File keyPairDirectory = new File(dir, "deleteOnStartup");
-		String keyPairFile = keyPairDirectory+KEYPAIR_FILE;
+		serverDirectory = dir;
+		martusDatabaseToUse = new ServerFileDatabase(dir, mspaSecurity);				
+		String keyPairFile = getConfigDirectory()+KEYPAIR_FILE;
 
 		MartusCrypto security = loadMartusKeypair(keyPairFile);
-		martusDatabaseToUse = new ServerFileDatabase(packetsDirectory, security);
+		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);
 
 		try
 		{
@@ -69,6 +68,26 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		setMartusSecurity(signer);
 		return signer;
 	}
+	
+	public File getPacketDirectory()
+	{
+		return new File(getServerDirectory(), "packets");;
+	}
+	
+	public File getServerDirectory()
+	{
+		return serverDirectory;
+	}		
+	
+	public File getConfigDirectory()
+	{
+		return new File(getServerDirectory(),ADMINSTARTUPCONFIGDIRECTORY);
+	}
+	
+	public File getMagicWordsFile()
+	{
+		return new File(getConfigDirectory(), MAGICWORDSFILENAME);
+	}	
 	
 	public void setMartusSecurity(MartusCrypto signer)
 	{
@@ -181,11 +200,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector authorizedClients;
 	ServerFileDatabase martusDatabaseToUse;	
 	MartusCrypto mspaSecurity;
-	MartusCrypto martusSecurityToUse;
+	MartusCrypto martusSecurityToUse;	
+	private File serverDirectory;	
+	private final static String ADMINSTARTUPCONFIGDIRECTORY = "deleteOnStartup";
+	private final static String MAGICWORDSFILENAME = "magicwords.txt";
 
-	final static String KEYPAIR_FILE ="\\keypair.dat"; 
-	final static String WINDOW_ENVIRONMENT = "C:/MartusServer/";
-	final static String UNIX_ENVIRONMENT = "/var/MartusServer/";
-	final static int DEFAULT_PORT = 443;
-	final static String DEFAULT_HOST = "localHost";
+	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
+	private final static String WINDOW_ENVIRONMENT = "C:/MartusServer/";
+	private final static String UNIX_ENVIRONMENT = "/var/MartusServer/";
+	private final static int DEFAULT_PORT = 443;
+	private final static String DEFAULT_HOST = "localHost";
+	
 }

@@ -97,6 +97,45 @@ public class MSPAClient
 			e.printStackTrace();
 		}			
 		return results;
+	}
+	
+	public Vector getMagicWords()
+	{
+		Vector results=null;	
+		try
+		{			
+			Vector parameters = new Vector();			
+			String signature = security.createSignatureOfVectorOfStrings(parameters);		
+			results = handler.getMagicWords(security.getPublicKeyString(), parameters, signature);
+			
+			if (results != null && !results.isEmpty())
+			{
+				Vector info = (Vector) results.get(1);
+				if (!info.isEmpty())
+					return info;
+			}	 
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return results;
+	}	
+	
+	public void updateMagicWords(Vector magicWords)
+	{	
+		try
+		{			
+			Vector parameters = new Vector();			
+			String signature = security.createSignatureOfVectorOfStrings(parameters);		
+			handler.updateMagicWords(security.getPublicKeyString(), parameters, signature, magicWords);			
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
 	}	
 	
 	ClientSideXmlRpcHandler handler;

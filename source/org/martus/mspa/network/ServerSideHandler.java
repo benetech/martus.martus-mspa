@@ -9,6 +9,8 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.Database;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
+import org.martus.util.UnicodeReader;
+import org.martus.util.UnicodeWriter;
 ;
 
 public class ServerSideHandler implements NetworkInterface
@@ -114,7 +116,83 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.SERVER_ERROR);
 			return results;
 		}											
-	}	
+	}
+	
+	public Vector getMagicWords(String myAccountId, Vector parameters, String signature)
+	{	
+		Vector results = new Vector();
+		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
+		{
+			results.add(NetworkInterfaceConstants.SIG_ERROR);				
+			return results;
+		}
+		
+		File magicFile=null;		
+		magicFile = server.getMagicWordsFile();
+		if(!magicFile.exists())
+		{
+			results.add(NetworkInterfaceConstants.NOT_FOUND);
+			return results;
+		}
+
+		try
+		{
+			Vector magicWords = new Vector();		
+			UnicodeReader reader = new UnicodeReader(magicFile);		
+			String line = null;
+			while( (line = reader.readLine()) != null)
+			{
+				if(line.trim().length() != 0)
+				{						
+					String newMagicWord = line.toLowerCase().trim().replaceAll("\\s", "");
+					if( !magicWords.contains(newMagicWord) )
+							magicWords.add(newMagicWord);
+				}
+			}
+			reader.close();
+			
+			results.add(NetworkInterfaceConstants.OK);
+			results.add(magicWords);		
+
+			return results;
+		}
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}											
+	}					
+	
+	public Vector updateMagicWords(String myAccountId, Vector parameters, String signature, Vector magicWords)
+	{	
+		Vector results = new Vector();
+		if(!isSignatureOk(myAccountId, parameters, signature, server.getSecurity()))
+		{
+			results.add(NetworkInterfaceConstants.SIG_ERROR);				
+			return results;
+		}
+		
+		File magicFile=null;		
+		magicFile = server.getMagicWordsFile();		
+			
+		try
+		{
+			UnicodeWriter writer = new UnicodeWriter(magicFile);
+			for (int i=0;i<magicWords.size();++i)
+				writer.writeln((String) magicWords.get(i));								
+			results.add(NetworkInterfaceConstants.OK);		
+			writer.close();
+			return results;
+		}
+
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}									
+	}					
 	
 	private boolean isSignatureOk(String myAccountId, Vector parameters, String signature, MartusCrypto verifier)
 	{

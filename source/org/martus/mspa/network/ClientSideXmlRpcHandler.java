@@ -25,9 +25,7 @@ public class ClientSideXmlRpcHandler
 	{
 		return MockMartusSecurity.createClient().getPublicKeyString();
 	}	
-	 
-	 
-	 
+	 	 	
 	public Vector ping() throws Exception
 	{
 		return (Vector)callServer(cmdPing, new Vector());
@@ -52,6 +50,27 @@ public class ClientSideXmlRpcHandler
 		params.add(signature);
 		params.add(accountId);
 		return (Vector)callServer(cmdGetContactInfo, params);
+	}	
+	
+	public Vector getMagicWords(String myAccountId, Vector parameters, String signature) throws IOException
+	{
+		
+		Vector params = new Vector();
+		params.add(myAccountId);
+		params.add(parameters);
+		params.add(signature);
+		return (Vector)callServer(cmdGetMagicWords, params);
+	}	
+	
+	public Vector updateMagicWords(String myAccountId, Vector parameters, String signature, Vector magicWords) throws IOException
+	{
+		
+		Vector params = new Vector();
+		params.add(myAccountId);
+		params.add(parameters);
+		params.add(signature);
+		params.add(magicWords);
+		return (Vector)callServer(cmdUpdateMagicWords, params);
 	}	
 		
 	public Object callServer(String method, Vector params) throws IOException

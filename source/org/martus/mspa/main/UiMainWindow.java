@@ -22,6 +22,7 @@ import javax.swing.border.TitledBorder;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
+import org.martus.mspa.client.view.MenuItemManageMagicWords;
 
 public class UiMainWindow extends JFrame
 {
@@ -147,13 +148,21 @@ public class UiMainWindow extends JFrame
 		JMenu mEdit = new JMenu("Edit");
 		mFile.setMnemonic('d');
 		menuBar.add(mEdit);
+		
+		JMenu mTool = new JMenu("Tools");		
+		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));			
+		menuBar.add(mTool);
 						
 		JMenu mHelp = new JMenu("Help");
 		mHelp.setMnemonic('h');
 		menuBar.add(mHelp);
 		
-
 		return menuBar;
+	}
+	
+	public MSPAClient getMSPAApp()
+	{
+		return mspaApp;
 	}
 	
 	protected JSplitPane m_sp;

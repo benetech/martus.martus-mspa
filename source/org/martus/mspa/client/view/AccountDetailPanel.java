@@ -64,7 +64,7 @@ public class AccountDetailPanel extends JPanel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		JCheckBox canUpload = new JCheckBox("Can Upload");
+		JCheckBox canUpload = new JCheckBox("Can Upload");		
 		JCheckBox banned = new JCheckBox("Banned");
 		JCheckBox canSendToAmp = new JCheckBox("Can Send to Amplify");
 		JCheckBox amp = new JCheckBox("Amplifier");		
@@ -139,9 +139,9 @@ public class AccountDetailPanel extends JPanel
 		panel.add(saveButton);
 
 		return panel;
-	}
+	}	
 	
 	
 	String accountPublicCode;
-	JButton saveButton;	
+	JButton saveButton;		
 }

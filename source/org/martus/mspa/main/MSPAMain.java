@@ -12,7 +12,7 @@ import org.martus.mspa.client.core.MSPAClient;
 public class MSPAMain
 {
 	public static void main(String[] args)
-	{		
+	{					
 		final String javaVersion = System.getProperty("java.version");
 		final String minimumJavaVersion = "1.4.1";
 		if(javaVersion.compareTo(minimumJavaVersion) < 0)
@@ -31,7 +31,7 @@ public class MSPAMain
 			MSPAClient app = new MSPAClient(DEFAULT_HOST, DEFAULT_PORT);	
 			UiMainWindow window = new UiMainWindow(DEFAULT_HOST, app);
 			if(!window.run())
-				System.exit(0);						
+				System.exit(0);													
 							
 		}
 		catch(Exception e)
