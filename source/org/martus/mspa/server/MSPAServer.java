@@ -1119,7 +1119,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String BANNEDCLIENTS_FILENAME = "banned.txt";
 	private static final String UPLOADSOK_FILENAME = "uploadsok.txt";
 	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
-	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "clientsNotToAmplify.txt";
+	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "accountsNotAmplify.txt";
 	private static final String COMPLIANCE_FILE =  "compliance.txt";
 	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "serverarguments.props";
 	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "clientsWhoCallUs"; 
