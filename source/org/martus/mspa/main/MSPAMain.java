@@ -23,13 +23,9 @@ public class MSPAMain
 		}
 
 		try
-		{
-			int defaultPort = 443;
-			String defaultHost = "localHost";	
-			String serverPublicCode = "2343.8324.4616.1545.5585";
-			
+		{		
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());										
-			UiMainWindow window = new UiMainWindow(defaultHost, defaultPort, serverPublicCode);
+			UiMainWindow window = new UiMainWindow();
 			if(!window.run())
 				System.exit(0);													
 							
@@ -38,9 +34,7 @@ public class MSPAMain
 		{
 			System.out.println(e);
 			//e.printStatckTrace(System.out);
-		}
-		
-		
+		}				
 	}	
 	
 

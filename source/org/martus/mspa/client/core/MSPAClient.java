@@ -2,8 +2,10 @@
 package org.martus.mspa.client.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
+import org.martus.common.MartusUtilities;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
@@ -14,16 +16,13 @@ import org.martus.util.Base64.InvalidBase64Exception;
 
 public class MSPAClient 
 {				
-	public MSPAClient(UiBasicLocalization local, String ipAddr, int port, String serverToConnect) throws Exception
-	{
-		ipToUse = ipAddr;
-		portToUse = port;
-		serverPublicCode = serverToConnect;
-		
-		security = new MartusSecurity();		
-		handler = createXmlRpcNetworkInterfaceHandler();	
-		setServerPublicCode(serverPublicCode);
-			
+	public MSPAClient(UiBasicLocalization local) throws Exception
+	{		
+		security = new MartusSecurity();	
+		loadServerToCall();	
+		handler = createXmlRpcNetworkInterfaceHandler();					
+		setServerPublicCode(serverPublicCode);	
+
 	}
 	
 	public ClientSideXmlRpcHandler getClientSideXmlRpcHandler()
@@ -47,8 +46,7 @@ public class MSPAClient
 	{		
 		try 
 		{					
-			ClientSideXmlRpcHandler handler =  new ClientSideXmlRpcHandler(ipToUse, portToUse);
-			return handler;			
+			return handler =  new ClientSideXmlRpcHandler(ipToUse, portToUse);			
 		} 
 		catch (SSLSocketSetupException e) 
 		{
@@ -77,6 +75,40 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
+	private void loadServerToCall() throws
+			IOException, 
+			MartusUtilities.InvalidPublicKeyFileException, 
+			MartusUtilities.PublicInformationInvalidException, 
+			SSLSocketSetupException, InvalidBase64Exception
+	{
+		portToUse = 443;					
+		File[] toCallFiles = getServerToCallDirectory().listFiles();
+		if(toCallFiles != null)
+		{
+			for (int i = 0; i < toCallFiles.length; i++)
+			{
+				File toCallFile = toCallFiles[i];		
+				if(!toCallFile.isDirectory())
+				{
+					ipToUse = MartusUtilities.extractIpFromFileName(toCallFile.getName());				
+					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
+					String serverPublicKey = (String)publicInfo.get(0);	
+					if (serverPublicKey != null)
+					{				
+						String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
+						serverPublicCode = MartusCrypto.formatPublicCode(nonFormatPublicCode);	
+					}
+				}
+			}
+		}	
+	}
+	
+	private File getServerToCallDirectory()
+	{
+		return new File(UiMainWindow.getDefaultDirectoryPath(), SERVER_WHO_WE_CALL_DIRIRECTORY);
+	}
+	
+	
 	public void signIn(String userName, char[] userPassPhrase) throws Exception
 	{
 		try
@@ -102,6 +134,11 @@ public class MSPAClient
 	public String getCurrentServerPublicCode()
 	{
 		return serverPublicCode;
+	}
+	
+	public String getCurrentServerIp()
+	{
+		return ipToUse;
 	}
 	
 	
@@ -226,4 +263,5 @@ public class MSPAClient
 	final static String DEFAULT_HOST = "localHost";	
 	
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
+	private static final String SERVER_WHO_WE_CALL_DIRIRECTORY = "serverToCall";
 }

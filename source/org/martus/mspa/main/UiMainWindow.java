@@ -37,16 +37,15 @@ import org.martus.mspa.client.view.MenuItemManageMagicWords;
 
 public class UiMainWindow extends JFrame
 {
-	public UiMainWindow(String serverIP, int port, String serverToConnect)
+	public UiMainWindow()
 	{		
-		super("Martus Server Policy Administrator (MSPA)");
-		serverName = serverIP;
+		super("Martus Server Policy Administrator (MSPA)");		
 		
 		try
 		{			
 			localization = new UiBasicLocalization(getDefaultDirectoryPath());	
 			setLocalizationTranslation();			
-			mspaApp = new MSPAClient(localization, serverName, port, serverToConnect);		
+			mspaApp = new MSPAClient(localization);		
 			initalizeUiState();
 		}
 		catch(Exception e)
@@ -83,7 +82,7 @@ public class UiMainWindow extends JFrame
 	
 		createTabbedPaneRight();
 		Vector accounts = mspaApp.displayAccounst();
-		accountTree = new AccountsTree(getMartusServerName(), accounts, this);
+		accountTree = new AccountsTree(mspaApp.getCurrentServerPublicCode(), accounts, this);
 								
 		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);
 		m_sp.setContinuousLayout(false);
@@ -91,7 +90,7 @@ public class UiMainWindow extends JFrame
 		m_sp.setDividerSize(5);		
 		m_sp.setOneTouchExpandable(true);
 		
-		mainPanel.add(createServerInfoPanel("", getMartusServerName()),BorderLayout.NORTH );
+		mainPanel.add(createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode()),BorderLayout.NORTH );
 		mainPanel.add(m_sp, BorderLayout.CENTER);
 		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);
 
@@ -265,12 +264,7 @@ public class UiMainWindow extends JFrame
 		else
 			dataDirectory = System.getProperty("user.home")+"/.MSPAClient/";
 		return new File(dataDirectory);
-	}
-	
-	private String getMartusServerName()
-	{
-		return serverName;
-	}
+	}	
 	
 	public MSPAClient getMSPAApp()
 	{

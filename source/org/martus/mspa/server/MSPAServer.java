@@ -25,6 +25,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{	
 		mspaHandler = new ServerSideHandler(this);								
 		initalizeFileDatabase(dir);		
+		
 	}	
 	
 	private void initalizeFileDatabase(File dir)
@@ -33,7 +34,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		String keyPairFile = getConfigDirectory()+KEYPAIR_FILE;
 
 		security = loadMartusKeypair(keyPairFile);
-		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);
+		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
 
 		try
 		{
@@ -163,8 +164,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			System.out.println("Setting up socket connection for listener ...");
 			
 			MSPAServer server = new MSPAServer(MSPAServer.getDefaultDataDirectory());
-			server.setIPAddress(DEFAULT_HOST);
-			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());
+			server.setIPAddress("10.10.220.41");
+			server.setPortToUse(443);
+			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());			
 																				
 			System.out.println("Waiting for connection...");
 		

@@ -26,6 +26,7 @@ public class AccountsTree
 		JTree tree = null;
 
 		Object[] nodes = new Object[accounts.size()+1];
+	
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new AccountNode(whichServerToView, ""));
 		DefaultMutableTreeNode parent = top;
 		nodes[0] = top;
