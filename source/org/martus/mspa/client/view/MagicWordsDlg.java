@@ -1,6 +1,7 @@
 
 package org.martus.mspa.client.view;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,14 +27,11 @@ public class MagicWordsDlg extends JDialog
 	public MagicWordsDlg(UiMainWindow owner, Vector magicWords)
 	{
 		super((JFrame)owner, "Manage Magic Words", true);
-		parent = owner;			
-
-		getContentPane().setLayout(new ParagraphLayout());	
-		getContentPane().add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);
-		getContentPane().add(buildTopPanel(magicWords));	
+		parent = owner;	
 		
-		getContentPane().add(new JLabel(""), ParagraphLayout.NEW_PARAGRAPH);	
-		getContentPane().add(buildButtonsPanel());			
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(buildTopPanel(magicWords), BorderLayout.CENTER);
+		getContentPane().add(buildButtonsPanel(), BorderLayout.SOUTH);						
 
 		Utilities.centerDlg(this);
 		setResizable(false);
