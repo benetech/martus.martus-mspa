@@ -28,8 +28,8 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdUpdateAccountManageInfo = "updateAccountManageInfo";		
 	public static final String cmdGetListOfAvailableServers = "getListOfAvailableServers";		
 	public static final String cmdGetListOfAssignedServers = "getListOfAssignedServers";
-	public static final String cmdAddAvailableMirrorServer = "addAvailableMirrorServer";
-	public static final String cmdUpdateManagingMirrorServers = "updateManagingMirrorServers";
+	public static final String cmdAddAvailableServer = "addAvailableServer";
+	public static final String cmdUpdateAssignedServers = "updateAssignedServers";
 	
 	public static final String cmdSendCommandToServer = "sendCommandToServer";
 	

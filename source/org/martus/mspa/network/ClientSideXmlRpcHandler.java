@@ -164,23 +164,23 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetListOfAssignedServers, params);
 	}
 	
-	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo) throws IOException
+	public Vector addAvailableServer(String myAccountId, Vector mirrorInfo) throws IOException
 	{	
 		Vector params = new Vector();		
 		params.add(myAccountId);		
 		params.add(mirrorInfo);
 		
-		return (Vector)callServer(cmdAddAvailableMirrorServer, params);
+		return (Vector)callServer(cmdAddAvailableServer, params);
 	}	
 	
-	public Vector updateManagingMirrorServers(String myAccountId, Vector mirrorInfo, int manageType) throws IOException
+	public Vector updateAssignedServers(String myAccountId, Vector mirrorInfo, int manageType) throws IOException
 	{	
 		Vector params = new Vector();		
 		params.add(myAccountId);		
 		params.add(mirrorInfo);
 		params.add(new Integer(manageType));	
 		
-		return (Vector)callServer(cmdUpdateManagingMirrorServers, params);
+		return (Vector)callServer(cmdUpdateAssignedServers, params);
 	}	
 	
 	public Vector getMartusServerArguments(String myAccountId) throws IOException

@@ -10,7 +10,6 @@ import java.util.Vector;
 
 import org.martus.common.ContactInfo;
 import org.martus.common.bulletin.BulletinConstants;
-import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.packet.BulletinHeaderPacket;
@@ -475,69 +474,34 @@ public class ServerSideHandler implements NetworkInterface
 		return results;		
 	}	
 	
-	public Vector updateManagingMirrorServers(String myAccountId, Vector mirrorInfo, int mirrorType)
+	public Vector updateAssignedServers(String myAccountId, Vector mirrorInfo, int mirrorType)
 	{
 		Vector results = new Vector();		
-		try
+		if (!server.isAuthorizedMSPAClients(myAccountId))
 		{
-			if (!server.isAuthorizedMSPAClients(myAccountId))
-			{
-				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
-				return results;
-			}
-			
-			server.updateManagingMirrorServerInfo(mirrorInfo, mirrorType);								
-			results.add(NetworkInterfaceConstants.OK);		
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return results;
 		}
-
-		catch (Exception e1)
-		{
-			e1.printStackTrace();
-			results.add(NetworkInterfaceConstants.SERVER_ERROR);
-			return results;
-		}		
+		
+		server.updateAssignedServerInfo(mirrorInfo, mirrorType);								
+		results.add(NetworkInterfaceConstants.OK);		
+		return results;
 	}
 	
-	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo)
+	public Vector addAvailableServer(String myAccountId, Vector mirrorInfo)
 	{
-		Vector results = new Vector();
-		try
-		{						
-			if (!server.isAuthorizedMSPAClients(myAccountId))
-			{
-				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
-				return results;
-			}
-			
-			if (mirrorInfo.size() > 0)
-			{	
-				String ip = (String) mirrorInfo.get(0);
-				String publicCode = (String) mirrorInfo.get(1);				
-				String fileName = (String) mirrorInfo.get(2);
-				
-				String port = String.valueOf(server.getPortToUse());
-				File outputFileName = new File(MSPAServer.getAvailableMirrorServerDirectory(), fileName.trim());
-				
-				RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());
-				 
-				if (retrievePubKey.isSuccess())
-					results.add(NetworkInterfaceConstants.OK);
-				else
-					results.add(NetworkInterfaceConstants.NO_SERVER);
-			}										
-		}
-		catch (MartusSignatureException e)
+		Vector results = new Vector();				
+		if (!server.isAuthorizedMSPAClients(myAccountId))
 		{
-			e.printStackTrace();
-			System.out.println("Error signing request");
-		}
-		catch (Exception e1)
-		{
-			e1.printStackTrace();
-			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return results;
-		}		
+		}
+			
+		if (server.addAvailableServer(mirrorInfo))
+			results.add(NetworkInterfaceConstants.OK);
+		else
+			results.add(NetworkInterfaceConstants.NO_SERVER);
+				
 		return results;		
 	}
 	

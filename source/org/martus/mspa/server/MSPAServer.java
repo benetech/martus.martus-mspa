@@ -21,6 +21,7 @@ import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
@@ -31,6 +32,7 @@ import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.network.NetworkInterfaceConstants;
 import org.martus.mspa.network.NetworkInterfaceXmlRpcConstants;
+import org.martus.mspa.network.RetrievePublicKey;
 import org.martus.mspa.network.ServerSideHandler;
 import org.martus.mspa.network.roothelper.FileTransfer;
 import org.martus.mspa.network.roothelper.Messenger;
@@ -386,7 +388,44 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return hiddenBulletins.getListOfHiddenBulletins(accountId);
 	}
 	
-	public synchronized void updateManagingMirrorServerInfo(Vector mirrorInfo, int mirrorType)
+	public synchronized boolean addAvailableServer(Vector mirrorInfo)
+	{	
+		if (mirrorInfo.size() > 0)
+			return false;
+
+		boolean success=true;
+		try 
+		{				
+			String ip = (String) mirrorInfo.get(0);
+			String publicCode = (String) mirrorInfo.get(1);				
+			String fileName = (String) mirrorInfo.get(2);			
+			String port = String.valueOf(getPortToUse());
+
+			logActions("Add New Server<dir>"+ fileName, mirrorInfo);					 
+			getMessenger().setReadWrite(security.getPublicKeyString());					
+			
+			File outputFileName = new File(getAvailableMirrorServerDirectory(), fileName.trim());
+			RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());				 
+			getMessenger().setReadOnly(security.getPublicKeyString());
+			
+			success = retrievePubKey.isSuccess();
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			log("(Add New Server) Problem when try to create file: "+ e.toString());
+		}
+		catch (MartusSignatureException e)
+		{
+			e.printStackTrace();
+			log("MartusSignatureException: when tried to generate a publickey"+e.getMessage());
+			return false;
+		}	
+
+		return success;
+	}	
+	
+	public synchronized void updateAssignedServerInfo(Vector mirrorInfo, int mirrorType)
 	{
 		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
 		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);		

@@ -542,7 +542,7 @@ public class MSPAClient
 	{	
 		try
 		{						
-			Vector results = handler.addAvailableMirrorServer(security.getPublicKeyString(), serverInfo);
+			Vector results = handler.addAvailableServer(security.getPublicKeyString(), serverInfo);
 			currentStatus = (String) results.get(0);
 			if (results != null)
 			{
@@ -563,7 +563,7 @@ public class MSPAClient
 	{	
 		try
 		{			
-			handler.updateManagingMirrorServers(security.getPublicKeyString(), mirrorInfo, manageType);			
+			handler.updateAssignedServers(security.getPublicKeyString(), mirrorInfo, manageType);			
 		}		
 		catch (Exception e)
 		{
