@@ -318,7 +318,7 @@ public class ServerSideHandler implements NetworkInterface
 		Vector results = new Vector();	
 
 		Collector collector = new Collector();		
-		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);		
+		server.getDatabase().visitAllNonHiddenRecordsForAccount(collector, myAccountId);		
 											
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(collector.infos);		
