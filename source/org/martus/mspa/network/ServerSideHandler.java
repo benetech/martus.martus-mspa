@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.martus.common.ContactInfo;
+import org.martus.common.bulletin.BulletinConstants;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
@@ -210,9 +211,9 @@ public class ServerSideHandler implements NetworkInterface
 					{	
 						info.add(key.getLocalId().trim());							
 						if (key.isDraft())
-							info.add("Draft");
+							info.add(BulletinConstants.STATUSDRAFT);
 						else if (key.isSealed())
-							info.add("Sealed");				
+							info.add(BulletinConstants.STATUSSEALED);				
 	
 						infos.add(info);
 					}

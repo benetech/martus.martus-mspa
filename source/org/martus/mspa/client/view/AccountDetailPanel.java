@@ -316,11 +316,7 @@ public class AccountDetailPanel extends JPanel
 
 		private void handleDeleteBulletin()
 		{
-			if (!bulletinList.isSelectionEmpty())
-			{	
-				
-			}
-												
+											
 			if (!bulletinList.isSelectionEmpty())
 			{	
 				Object[] items = bulletinList.getSelectedValues();
@@ -329,7 +325,7 @@ public class AccountDetailPanel extends JPanel
 				{
 					String item = (String) items[i];
 	
-					String status = item.substring(item.indexOf("\t")+1);
+					String status = item.substring(item.indexOf("\t")+1);			
 					if (status.equals(BulletinConstants.STATUSSEALED))				
 					{					
 						hiddenList.add(item);
