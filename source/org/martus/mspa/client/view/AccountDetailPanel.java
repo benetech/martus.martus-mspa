@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.martus.common.bulletin.BulletinConstants;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.swing.ParagraphLayout;
@@ -314,7 +315,12 @@ public class AccountDetailPanel extends JPanel
 		}
 
 		private void handleDeleteBulletin()
-		{									
+		{
+			if (!bulletinList.isSelectionEmpty())
+			{	
+				
+			}
+												
 			if (!bulletinList.isSelectionEmpty())
 			{	
 				Object[] items = bulletinList.getSelectedValues();
@@ -322,8 +328,18 @@ public class AccountDetailPanel extends JPanel
 				for (int i=0;i< items.length;++i)
 				{
 					String item = (String) items[i];
-					hiddenList.add(item);
-					bulletinListModel.removeElement(item);			
+	
+					String status = item.substring(item.indexOf("\t")+1);
+					if (status.equals(BulletinConstants.STATUSSEALED))				
+					{					
+						hiddenList.add(item);
+						bulletinListModel.removeElement(item);
+					}
+					else
+					{
+						String errorMessage = "Delete a draft bulletin is not supported at thie moment.\n" ;
+						app.warningMessageDlg(errorMessage);						
+					}				
 				}
 				
 				app.removeBulletin(accountId, hiddenList);

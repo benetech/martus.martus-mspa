@@ -101,7 +101,7 @@ public class HiddenBulletins
 			HiddenBulletinInfo bulletinInfo = (HiddenBulletinInfo) hiddenUids.get(i);
 			String targetId = bulletinInfo.getAccountId();
 			if (targetId.equals(accountId))
-				writer.writeln("     "+bulletinInfo.getLineOfHiddenBulletins());	
+				writer.writeln("    "+bulletinInfo.getLineOfHiddenBulletins());	
 		}	
 		
 	}
@@ -238,7 +238,7 @@ public class HiddenBulletins
 			DatabaseKey headerKey = DatabaseKey.createKey(uid, status);
 			if (!database.doesRecordExist(headerKey))
 			{
-				String errorMessage = "The bulltin ("+uid.getLocalId()+" ) does not exist in database.\n" ;
+				String errorMessage = "The bulletin ("+uid.getLocalId()+" ) does not exist in database.\n" ;
 				JOptionPane.showMessageDialog(null, errorMessage, "MSPA Listener:", JOptionPane.ERROR_MESSAGE);
 				return "";
 			}					

@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import org.martus.common.ContactInfo;
 import org.martus.common.MartusUtilities;
 import org.martus.common.clientside.UiBasicLocalization;
@@ -445,6 +448,18 @@ public class MSPAClient
 		}
 		
 		return publicCode;
+	}
+	
+	public void warningMessageDlg(String message)
+	{
+		String title = "MSPA Client";
+		String cause = message;
+		String ok = "OK";
+		String[] buttons = { ok };
+		JOptionPane pane = new JOptionPane(cause, JOptionPane.INFORMATION_MESSAGE,
+				 JOptionPane.DEFAULT_OPTION, null, buttons);
+		JDialog dialog = pane.createDialog(null, title);
+		dialog.show();
 	}
 				
 	
