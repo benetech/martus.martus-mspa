@@ -1,0 +1,41 @@
+Notes for getting the MSPA client working on your workstation.
+2004-04-08 Kevin B. Smith
+
+These are TEMPORARY instructions, and may become obsolete 
+within a week or two!
+
+
+---- BEGIN ONE-TIME SETUP ----
+1. Go to this directory:
+     C:\work\eclipse-martus\martus-mspa\bin>
+   
+   and give this command:
+     rmic -d . org.martus.mspa.network.roothelper.MessengerImpl
+     
+   (Later, this will be part of the ANT build script, so it will be automated
+
+2. Create c:\MSPAServer with:
+   deleteOnStartup\
+       keypair.dat
+       authorizedClients\
+   MartusServerData\
+
+---- END ONE-TIME SETUP ----
+
+
+3. For each MSPA client that you want to allow in, copy their server-format 
+public key file into the authorizedClients directory. 
+The filenames do not matter.
+
+NOTE: If you are trying to manage an existing development server, 
+you will need to copy files from that server's directory into 
+the MartusServerData directory. They will NOT be copied back to 
+your development server, because that is normally handled by a 
+Scott-script on the production servers.
+
+  
+4. Run org.martus.mspa.network.roothelper.RootHelper (no parameters needed)
+
+5. Run org.martus.mspa.server.MSPAServer (no parameters needed)
+
+6. You can now run an MSPA client and connect to this MSPAServer (listener).
