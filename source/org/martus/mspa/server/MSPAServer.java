@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -912,16 +913,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private Vector getCurrentFilesAndFolders()
 	{
-		Vector currentList = new Vector();
-				
 		File[] deleteOnStartUp = getMSPADeleteOnStartup().listFiles();
-		for (int i=0; i< deleteOnStartUp.length;++i)
-			currentList.add(deleteOnStartUp[i]);
-			
 		File[] martusServerData = getMartusServerDataDirectory().listFiles();
-		for (int j=0; j< martusServerData.length;++j)
-			currentList.add(martusServerData[j]);
-			
+		
+		Vector currentList = new Vector(Arrays.asList(deleteOnStartUp));
+		currentList.add(Arrays.asList(martusServerData));			
 		return currentList;
 	}
 	
