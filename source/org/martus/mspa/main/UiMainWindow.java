@@ -2,7 +2,6 @@ package org.martus.mspa.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -23,8 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
@@ -46,6 +43,7 @@ import org.martus.mspa.client.view.menuitem.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
 import org.martus.mspa.client.view.menuitem.MenuItemMartusServerArgumentsConfig;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
+import org.martus.swing.ParagraphLayout;
 import org.martus.swing.Utilities;
 import org.martus.util.Base64.InvalidBase64Exception;
 
@@ -106,25 +104,25 @@ public class UiMainWindow extends JFrame
 			return false;
 		}	
 		
-		setSize(800, 680);
+		setSize(840, 650);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
-		mainPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));		
+	
 	
 		JMenuBar menuBar = createMenuBar();
 		setJMenuBar(menuBar);
 	
 		createTabbedPaneRight();
 		Vector accounts = mspaApp.displayAccounts();			
-		accountTree = new AccountsTree(mspaApp.getCurrentServerPublicCode(), accounts, this);
-								
-		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, accountTree.getScrollPane(),tabPane);
+		accountTree = new AccountsTree(accounts, this);
+
+		JPanel leftPanel = createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode());								
+		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,tabPane);
 		m_sp.setContinuousLayout(false);
-		m_sp.setDividerLocation(220);
+		m_sp.setDividerLocation(250);
 		m_sp.setDividerSize(5);		
 		m_sp.setOneTouchExpandable(true);
 		
-		mainPanel.add(createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode()),BorderLayout.NORTH );
 		mainPanel.add(m_sp, BorderLayout.CENTER);
 		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);	
 		setStatusText(mspaApp.getStatus());
@@ -191,16 +189,32 @@ public class UiMainWindow extends JFrame
 	
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new BorderLayout());
+
 		JPanel serverInfoPanel = new JPanel();		
-		serverInfoPanel.setLayout(new GridLayout(1,4));
+		serverInfoPanel.setLayout(new ParagraphLayout());
 		try
 		{		
-			JLabel ipLabel = new JLabel("MSPA Server IP Address: "+InetAddress.getByName(ipAddr).getHostAddress());
-			ipLabel.setForeground(Color.BLUE);					
-			JLabel publicCodeLabel = new JLabel("MSPA Server Public code: "+ mspaApp.getCurrentServerPublicCode());
-			publicCodeLabel.setForeground(Color.BLUE);
-			serverInfoPanel.add(ipLabel);	
-			serverInfoPanel.add(publicCodeLabel);	
+			JTextField ipLabel = new JTextField(InetAddress.getByName(ipAddr).getHostAddress());
+			ipLabel.setEditable(false);
+				
+			JTextField publicCodeLabel = new JTextField(mspaApp.getCurrentServerPublicCode());
+			publicCodeLabel.setEditable(false);
+					
+			JLabel title = new JLabel("MSPA Server Info: ");			
+			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);			
+			serverInfoPanel.add(title);	
+			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			serverInfoPanel.add(new JLabel("IP Address:"));			
+			serverInfoPanel.add(ipLabel);
+			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);	
+			serverInfoPanel.add(new JLabel("Public Code:"));	
+			serverInfoPanel.add(publicCodeLabel);
+			serverInfoPanel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			JLabel accountListLabel = new JLabel("Martus Client accounts on this server:");
+			accountListLabel.setForeground(Color.BLUE);
+			serverInfoPanel.add(accountListLabel);			
 		}
 		catch (UnknownHostException e)
 		{
@@ -208,7 +222,9 @@ public class UiMainWindow extends JFrame
 			e.printStackTrace();
 		}
 				
-		return serverInfoPanel;
+		leftPanel.add(serverInfoPanel, BorderLayout.NORTH);
+		leftPanel.add(accountTree.getScrollPane(), BorderLayout.CENTER); 	
+		return leftPanel;
 	}
 
 	protected JTextField createStatusInfo()
@@ -228,7 +244,7 @@ public class UiMainWindow extends JFrame
 		tabPane = new JTabbedPane();				
 
 		loadEmptyAccountDetailPanel();			
-		tabPane.setTabPlacement(JTabbedPane.BOTTOM);		
+		tabPane.setTabPlacement(JTabbedPane.TOP);		
 		
 		return tabPane;
 	}

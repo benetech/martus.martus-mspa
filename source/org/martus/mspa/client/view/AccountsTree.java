@@ -14,12 +14,11 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.martus.mspa.main.UiMainWindow;
 
-
 public class AccountsTree
 {
-	public AccountsTree(String server, Vector accounts, UiMainWindow mainWin)
-	{	
-		String whichServerToView = server;		
+	public AccountsTree(Vector accounts, UiMainWindow mainWin)
+	{		
+
 		parentWindow = mainWin;
 			
 		DefaultTreeModel model = null;
@@ -27,14 +26,15 @@ public class AccountsTree
 
 		Object[] nodes = new Object[accounts.size()+1];
 	
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new AccountNode(whichServerToView, ""));
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode();		
 		DefaultMutableTreeNode parent = top;
 		nodes[0] = top;
 		
 		loadAccountsToTreeNode(nodes, accounts.toArray(), parent);
 		 		
-		model = new DefaultTreeModel(top);
+		model = new DefaultTreeModel(top);		
 		tree = new JTree(model);
+		tree.setRootVisible(false);
 
 		tree.addTreeSelectionListener(new AccountNodeSelectionListener());
 		
@@ -46,7 +46,9 @@ public class AccountsTree
 
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
-		 
+		
+		tree.setSelectionRow(0);		
+
 	}
 	
 	DefaultMutableTreeNode getTreeNode(TreePath path)
