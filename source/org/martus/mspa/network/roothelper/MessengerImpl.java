@@ -92,7 +92,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	{
 		try
 		{
-			logger.log( "Who call this script ("+scriptType+"): " + RemoteServer.getClientHost() );
+			logger.log( "Script ("+scriptType+") has been called by " + RemoteServer.getClientHost() );
 		}
 		catch (ServerNotActiveException e)
 		{
