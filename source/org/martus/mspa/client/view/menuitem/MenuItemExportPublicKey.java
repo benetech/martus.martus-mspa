@@ -27,16 +27,11 @@ package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.martus.common.MartusUtilities;
-import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.util.Base64.InvalidBase64Exception;
 
 
 public class MenuItemExportPublicKey extends AbstractAction
@@ -56,35 +51,16 @@ public class MenuItemExportPublicKey extends AbstractAction
 			JOptionPane.showMessageDialog(parent, keypair.getParent()+"Keypair not found.",
 				 "MSPA Error Message", JOptionPane.ERROR_MESSAGE);
 		}	
-		
-		MartusCrypto security = parent.getMSPAApp().getSecurity();
+				
 		File outputFile = new File(currentDir, "publicKey.txt");
-		try
-		{
-			// would just overwritten the existing file.
-			MartusUtilities.exportServerPublicKey(security, outputFile);			
-			if (outputFile.exists())				
-				JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
-				 "Export Public Key", JOptionPane.INFORMATION_MESSAGE);
-			else
-				JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
-				 "Export Error", JOptionPane.ERROR_MESSAGE);
-		}
-		catch (MartusSignatureException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvalidBase64Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		
+		parent.getMSPAApp().exportServerPublicKeyFile(outputFile);		
+		if (outputFile.exists())				
+			JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
+			 "Export Public Key", JOptionPane.INFORMATION_MESSAGE);
+		else
+			JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
+			 "Export Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	UiMainWindow parent;

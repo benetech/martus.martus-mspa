@@ -13,6 +13,7 @@ import org.martus.common.MartusUtilities;
 import org.martus.common.clientside.UiBasicLocalization;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
+import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.network.ClientSideXmlRpcHandler;
@@ -146,7 +147,7 @@ public class MSPAClient
 		return listOfServers;
 	}	
 	
-	private File getServerToCallDirectory()
+	public File getServerToCallDirectory()
 	{
 		return new File(UiMainWindow.getDefaultDirectoryPath(), SERVER_WHO_WE_CALL_DIRIRECTORY);
 	}
@@ -585,6 +586,30 @@ public class MSPAClient
 		}
 		
 		return publicCode;
+	}
+	
+	public void exportServerPublicKeyFile(File outputFile)
+	{
+		
+		try
+		{
+			MartusUtilities.exportServerPublicKey(security, outputFile);			
+		}
+		catch (MartusSignatureException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (InvalidBase64Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	}
 	
 	public void warningMessageDlg(String message)

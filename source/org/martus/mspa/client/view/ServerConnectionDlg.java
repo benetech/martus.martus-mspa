@@ -34,19 +34,15 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.swing.ParagraphLayout;
 import org.martus.swing.Utilities;
 
 
@@ -54,69 +50,27 @@ public class ServerConnectionDlg extends JDialog
 {
 	public ServerConnectionDlg(UiMainWindow owner, Vector availableServers) 
 	{				
-		super((JFrame)owner, "Server to Connect: ", true);
+		super(owner, "Server to Connect: ", true);
 		parent = owner;		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-			
-		mainPanel.add(displayAvailableServerPane(availableServers), BorderLayout.CENTER);
+		mainPanel.add(new JLabel("Select a server to connect: "), BorderLayout.NORTH);	
+		mainPanel.add(createDisplayServerListPane(availableServers), BorderLayout.CENTER);
 		mainPanel.add(buildButtonsPanel(), BorderLayout.SOUTH);						
-		
+				
 		getContentPane().add(mainPanel);
 		Utilities.centerDlg(this);
 		setResizable(false);
-	}
+	}	
 	
-	private JTabbedPane displayAvailableServerPane(Vector availableServers)
+	private JScrollPane createDisplayServerListPane(Vector availableServers)
 	{
-		availableServerTabPane = new JTabbedPane();				
-		availableServerTabPane.setTabPlacement(JTabbedPane.TOP);
-					
 		availabelServerListModel = loadElementsToList(availableServers);
 		availabelServerList = createServerList(availabelServerListModel);
-		availabelServerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);						
-		
-		availableServerTabPane.add(createAddServerPane(), 0);
-		availableServerTabPane.setTitleAt(0, "Add Server");
+		availabelServerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 
-		availableServerTabPane.add(createDisplayServerListPane(), 1);
-		availableServerTabPane.setTitleAt(1, "Which Server");
-		
-		if (availableServers.size() >0)
-			availableServerTabPane.setSelectedIndex(1);
-	
-		return availableServerTabPane;
-	}
-	
-	private JPanel createAddServerPane()
-	{
-		JPanel panel = new JPanel();
-		panel.setBorder(new EmptyBorder(5,5,5,5));		
-		panel.setLayout(new ParagraphLayout());
-		
-		serverIPField = new JTextField("", 20);
-		serverPublicCodeField = new JTextField("", 20);
-		
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel("Enter Server IP: ")); 
-		panel.add(serverIPField);
-		panel.add(new JLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-		panel.add(new JLabel("Enter Server Public Code: ")); 
-		panel.add(serverPublicCodeField);
-		
-		return panel;
-	}
-	
-	private JPanel createDisplayServerListPane()
-	{
-		JPanel panel = new JPanel();
-		panel.setBorder(new EmptyBorder(5,5,5,5));		
-		panel.setLayout(new BorderLayout());
-		
-		JScrollPane sp = new JScrollPane(availabelServerList);
-		panel.add(sp, BorderLayout.CENTER);
-		return panel;
+		return new JScrollPane(availabelServerList);
 	}
 	
 	private JList createServerList(DefaultListModel dataModel)
@@ -154,13 +108,9 @@ public class ServerConnectionDlg extends JDialog
 		JPanel panel = new JPanel();		
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 							
-		ok = new JButton("Ok");
-		ok.addActionListener(new CommitButtonHandler());	
-		panel.add(ok);					
-		
-		cancel = new JButton("Cancel");
-		cancel.addActionListener(new CommitButtonHandler());
-		panel.add(cancel);
+		connect = new JButton("Connect");
+		connect.addActionListener(new CommitButtonHandler());	
+		panel.add(connect);					
 
 		return panel;
 	}	
@@ -173,65 +123,33 @@ public class ServerConnectionDlg extends JDialog
 	public String getServerPublicCodeToUse()
 	{
 		return serverPublicCodeToUse;
-	}	
-	
-	public boolean isErrorMessagePopped()
-	{
-		if (serverIpToUse.length() <=0 || serverPublicCodeToUse.length() <=0)
-		{
-			JOptionPane.showMessageDialog(parent, "MSPA Server IP and Public code are required.", "MSPA Error Message", JOptionPane.ERROR_MESSAGE);
-			return true;					
-		}	
-		
-		return false;
-	}
+	}		
 	
 	class CommitButtonHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ae)
 		{
-			if (ae.getSource().equals(ok))				
-				handleServerToCall();
-
-			if (ae.getSource().equals(cancel))				
-				handleCancel();				
+			if (ae.getSource().equals(connect))				
+				handleServerToCall();						
+				
 		}
 		
 		private void handleServerToCall()
 		{
-			if (availableServerTabPane.getSelectedIndex()==0)
+
+			if (!availabelServerList.isSelectionEmpty())
 			{
-				serverIpToUse = serverIPField.getText();
-				serverPublicCodeToUse = serverPublicCodeField.getText();
-				
-				if (!isErrorMessagePopped())
-				{
-					parent.getMSPAApp().setCurrentServerIp(serverIpToUse);
-					parent.getMSPAApp().setCurrentServerPublicCode(serverPublicCodeToUse);
-					dispose();
-				}				
-			}	
-			else 
-			{	
-				if (!availabelServerList.isSelectionEmpty())
-				{
-					String item = (String) availabelServerList.getSelectedValue();
-					serverIpToUse = item.substring(0, item.indexOf("\t"));
-					serverPublicCodeToUse= item.substring(item.indexOf("\t")+1);
-					parent.getMSPAApp().setCurrentServerIp(serverIpToUse.trim());
-					parent.getMSPAApp().setCurrentServerPublicCode(serverPublicCodeToUse.trim());
-					dispose();
-				}
-				else
-					isErrorMessagePopped();	
+				String item = (String) availabelServerList.getSelectedValue();
+				serverIpToUse = item.substring(0, item.indexOf("\t"));
+				serverPublicCodeToUse= item.substring(item.indexOf("\t")+1);
+				parent.getMSPAApp().setCurrentServerIp(serverIpToUse.trim());
+				parent.getMSPAApp().setCurrentServerPublicCode(serverPublicCodeToUse.trim());
+				dispose();
 			}
+			else
+				JOptionPane.showMessageDialog(parent, "No server has been selected.", "MSPA message", JOptionPane.WARNING_MESSAGE);						
 		}
-		
-		private void handleCancel()
-		{			
-			if (!isErrorMessagePopped())
-				 dispose();
-		}
+
 	}
 
 	
@@ -239,12 +157,7 @@ public class ServerConnectionDlg extends JDialog
 	JList availabelServerList;	
 	DefaultListModel availabelServerListModel;
 	
-	JTabbedPane availableServerTabPane;
-	JTextField serverIPField;
-	JTextField serverPublicCodeField;
-	
-	JButton ok;
-	JButton cancel;
+	JButton connect;	
 	
 	String serverIpToUse="";
 	String serverPublicCodeToUse=""; 

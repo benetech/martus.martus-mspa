@@ -100,7 +100,7 @@ public class UiMainWindow extends JFrame
 		
 		if (!whichServerToCall())
 		{
-			JOptionPane.showMessageDialog(this, "MSPA Client would not be able to continue due to missing connect server ip and public code.", "MSAP error message", JOptionPane.ERROR_MESSAGE);	
+			JOptionPane.showMessageDialog(this, "MSPA Client would not be able to continue due to missing connect server ip and public code.", "MSPA error message", JOptionPane.ERROR_MESSAGE);	
 			return false;
 		}	
 		
