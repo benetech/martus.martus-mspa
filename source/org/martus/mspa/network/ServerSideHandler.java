@@ -205,6 +205,35 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
+	public Vector recoverHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
+	{
+		Vector results = new Vector();
+		try
+		{	
+			if (!server.isAuthorizedMSPAClients(myAccountId))
+			{
+				results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+				return results;
+			}
+											
+			boolean result = server.recoverHiddenBulletins(manageAccountId, localIds);
+			if (result)	
+				results.add(NetworkInterfaceConstants.OK);
+			else
+				results.add(NetworkInterfaceConstants.NOT_FOUND);
+	
+			return results;
+		}
+		
+		catch (Exception e1)
+		{
+			e1.printStackTrace();
+			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+			return results;
+		}			
+	}
+
+	
 	public Vector getListOfHiddenBulletinIds(String myAccountId, String manageAccountId) 
 	{		
 		Vector results = new Vector();
@@ -232,7 +261,10 @@ public class ServerSideHandler implements NetworkInterface
 					Vector info = new Vector();						
 					String localId = key.getLocalId().trim();	
 					if (BulletinHeaderPacket.isValidLocalId(localId))
-					{	
+					{
+						if (server.containHiddenBulletin(key.getUniversalId()))
+							return;
+							
 						info.add(key.getLocalId().trim());							
 						if (key.isDraft())
 							info.add(BulletinConstants.STATUSDRAFT);
@@ -244,7 +276,7 @@ public class ServerSideHandler implements NetworkInterface
 				}
 				catch (Exception e)
 				{		
-					server.getLogger().log("ListBulletins: Problem when visited record for account."+ e.toString());
+					server.log("ListBulletins: Problem when visited record for account."+ e.toString());
 				}
 			}
 			
@@ -255,7 +287,7 @@ public class ServerSideHandler implements NetworkInterface
 
 		Collector collector = new Collector();		
 		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);		
-												
+											
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(collector.infos);		
 

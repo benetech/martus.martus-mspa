@@ -23,6 +23,7 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdGetListOfHiddenBulletinIds = "getListOfHiddenBulletinIds";
 	public static final String cmdRemoveHiddenBulletins = "removeHiddenBulletins";	
 	public static final String cmdGetListOfBulletinIds = "getListOfBulletinIds";
+	public static final String cmdRecoverHiddenBulletins = "recoverHiddenBulletins";
 		
 	public static final String cmdUpdateAccountManageInfo = "updateAccountManageInfo";		
 	public static final String cmdGetListOfAvailableServers = "getListOfAvailableServers";		

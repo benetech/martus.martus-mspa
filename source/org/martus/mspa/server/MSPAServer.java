@@ -22,6 +22,7 @@ import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
+import org.martus.common.packet.UniversalId;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.client.core.AccountAdminOptions;
 import org.martus.mspa.client.core.ManagingMirrorServerConstants;
@@ -334,10 +335,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}	
 	}
 	
-	public synchronized boolean hideBulletins(String accountId, Vector localIds)
-	{	
-		hiddenBulletins.hideBulletins(accountId, localIds);
-				
+	private void writeHiddenBulletinToFile()
+	{
 		try
 		{	
 			File backUpFile = new File(getDeleteOnStartupBackupDirectory().getPath(), HIDDEN_PACKETS_FILENAME);				
@@ -356,6 +355,27 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{	
 			log("Unable to read/write isHidden.txt."+ ieo.toString());		
 		}			
+	}
+	
+	public boolean containHiddenBulletin(UniversalId uid)
+	{
+		return hiddenBulletins.containHiddenUids(uid);
+	}
+	
+	public synchronized boolean hideBulletins(String accountId, Vector localIds)
+	{	
+		hiddenBulletins.hideBulletins(accountId, localIds);
+		writeHiddenBulletinToFile();		
+
+		return true;
+	}
+	
+	public synchronized boolean recoverHiddenBulletins(String accountId, Vector localIds)
+	{	
+		if (!hiddenBulletins.recoverHiddenBulletins(accountId, localIds))
+			return false;
+			
+		writeHiddenBulletinToFile();	
 		return true;
 	}
 	

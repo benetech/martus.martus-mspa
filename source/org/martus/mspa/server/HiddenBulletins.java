@@ -48,7 +48,7 @@ public class HiddenBulletins
 {
 		
 	public HiddenBulletins(Database databaseToUse, 
-			MartusCrypto securityToUse, LoggerInterface loggerToUse, File hiddenFileLocation)
+		MartusCrypto securityToUse, LoggerInterface loggerToUse, File hiddenFileLocation)
 	{
 		database = databaseToUse;	
 		hiddenUids = new Vector();
@@ -70,7 +70,6 @@ public class HiddenBulletins
 			HiddenBulletinInfo hiddenUid = new HiddenBulletinInfo(uid);
 			hiddenUid.setLineOfHiddenBulletins(lineOfPacket);				
 			hiddenUids.add(hiddenUid);					
-			database.hide(uid);
 		}
 	}
 	
@@ -151,8 +150,6 @@ public class HiddenBulletins
 						HiddenBulletinInfo hiddenUid = new HiddenBulletinInfo(uid);
 						hiddenUid.setLineOfHiddenBulletins(lineOfPacketIds);
 						hiddenUids.add(hiddenUid);				
-						
-						hidePackets(accountId, packetIds);
 					}		
 				}
 				else
@@ -163,20 +160,7 @@ public class HiddenBulletins
 		{
 			reader.close();
 		}
-	}
-	
-	void hidePackets(String accountId, String[] packetList) throws InvalidBase64Exception
-	{	
-		String publicCode = MartusCrypto.getFormattedPublicCode(accountId);
-							
-		for (int i = 0; i < packetList.length; i++)
-		{
-			String localId = packetList[i].trim();
-			UniversalId uid = UniversalId.createFromAccountAndLocalId(accountId, localId);					
-			database.hide(uid);
-			logger.log("Deleting " + publicCode + ": " + localId);
-		}
-	}
+	}	
 
 	private static String removeExtraSpaces(String str)
 	{
@@ -189,13 +173,25 @@ public class HiddenBulletins
 		return strBuffer.toString().trim();
 	}
 	
-	private boolean containHiddenUids(UniversalId uid)
+	public boolean containHiddenUids(UniversalId uid)
 	{
 		for (int i=0; i < hiddenUids.size(); ++i)
 		{
 			HiddenBulletinInfo id = (HiddenBulletinInfo) hiddenUids.get(i);
 			if (id.isSameUid(uid))
 				return true;
+		}				
+
+		return false;
+	}
+	
+	private boolean removeHiddenUidFromList(UniversalId uid)
+	{
+		for (int i=0; i < hiddenUids.size(); ++i)
+		{
+			HiddenBulletinInfo id = (HiddenBulletinInfo) hiddenUids.get(i);
+			if (id.isSameUid(uid))
+				return hiddenUids.remove(id);
 		}				
 
 		return false;
@@ -208,6 +204,23 @@ public class HiddenBulletins
 		String privateLocalId = bhp.getPrivateFieldDataPacketId();
 		
 		return (bulletinLocalId+ "  "+ dataLocalId+ "  "+ privateLocalId);				
+	}
+	
+	public synchronized boolean recoverHiddenBulletins(String accountId, Vector localIds)
+	{									
+		if (localIds == null || localIds.size() <=0)
+			return false;
+			
+		for (int i=0;i<localIds.size();++i)
+		{					
+			String localId = (String) localIds.get(i);	
+			if (BulletinHeaderPacket.isValidLocalId(localId))
+			{					
+				UniversalId uid = UniversalId.createFromAccountAndLocalId(accountId, localId);
+				removeHiddenUidFromList(uid);
+			}
+		}
+		return true;		
 	}
 			
 	public synchronized boolean hideBulletins(String accountId, Vector localIds)

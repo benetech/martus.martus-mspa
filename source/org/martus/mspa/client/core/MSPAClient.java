@@ -404,6 +404,23 @@ public class MSPAClient
 		return msg;
 	}
 	
+	public String recoverHiddenBulletin(String accountId, Vector localIds)
+	{
+		String msg = "";
+		try
+		{												
+			Vector results = handler.recoverHiddenBulletins(security.getPublicKeyString(), accountId, localIds);			
+			if (results != null && !results.isEmpty())
+				msg = (String) results.get(0);
+		}		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return msg;
+	}
+	
 	public Vector getPacketDirNames(String accountId)
 	{	
 		try

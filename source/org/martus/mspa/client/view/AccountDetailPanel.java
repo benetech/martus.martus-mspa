@@ -231,7 +231,7 @@ public class AccountDetailPanel extends JPanel
 		hiddenList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		viewHiddenButton = new JButton("View");
 		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
-		bulletinTabPane.setTitleAt(1, "List Of Delete Bulletins");
+		bulletinTabPane.setTitleAt(1, "List Of Delete Bulletins");			
 
 		return bulletinTabPane;
 	}
@@ -256,7 +256,6 @@ public class AccountDetailPanel extends JPanel
 		layout.setAlignment(FlowLayout.RIGHT);
 		buttonPanel.setLayout(layout);
 		
-		view = new JButton("View");
 		view.addActionListener(new CommitButtonHandler());	
 		buttonPanel.add(view);
 
@@ -265,6 +264,12 @@ public class AccountDetailPanel extends JPanel
 			delBulletins = new JButton("Delete");
 			delBulletins.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(delBulletins);
+		}	
+		else
+		{
+			recoverHiddenButton = new JButton("Recover Hidden Bulletin");
+			recoverHiddenButton.addActionListener(new CommitButtonHandler());	
+			buttonPanel.add(recoverHiddenButton);
 		}		
 
 		JScrollPane ps = createScrollPane();
@@ -304,14 +309,44 @@ public class AccountDetailPanel extends JPanel
 		{
 			if (ae.getSource().equals(saveButton))				
 				handleConfigurationAccountInfo();
-
-			if (ae.getSource().equals(delBulletins))				
-				handleDeleteBulletin();				
+			else if (ae.getSource().equals(delBulletins))				
+				handleDeleteBulletin();		
+			else if (ae.getSource().equals(recoverHiddenButton))				
+				handleRecoverHiddenBulletin();					
 		}
 
 		private void handleConfigurationAccountInfo()
 		{								
 			app.updateAccountManageInfo(accountId, admOptions.getOptions());			
+		}
+
+		private void handleRecoverHiddenBulletin()
+		{
+											
+			if (!hiddenList.isSelectionEmpty())
+			{	
+				Object[] items = hiddenList.getSelectedValues();
+				Vector recoverList = new Vector();
+				for (int i=0;i< items.length;++i)
+				{
+					String item = (String) items[i];
+					recoverList.add(item);
+					hiddenListModel.removeElement(item);			
+				}
+				
+				app.recoverHiddenBulletin(accountId, recoverList);
+						
+				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
+				if (hiddenBulletins != null)
+					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));
+					
+				Vector rawBullectins = app.getPacketDirNames(accountId);	
+				Vector listOfFormattedBulletins = loadBulletinIds(rawBullectins);
+				bulletinListModel.removeAllElements();
+				for (int i=0; i<listOfFormattedBulletins.size();++i)
+					bulletinListModel.add(i, listOfFormattedBulletins.get(i));
+		
+			}			
 		}
 
 		private void handleDeleteBulletin()
@@ -365,6 +400,7 @@ public class AccountDetailPanel extends JPanel
 	JButton delBulletins;
 	JButton viewActivity;
 	JButton viewStatistics;
+	JButton recoverHiddenButton;
 
 	JList bulletinList;	
 	DefaultListModel bulletinListModel;

@@ -15,6 +15,8 @@ public interface NetworkInterface
 	public Vector getListOfBulletinIds(String myAccountId) throws IOException;
 	public Vector getListOfHiddenBulletinIds(String myAccountId, String manageAccountId) throws IOException;
 	public Vector removeHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException;
+	public Vector recoverHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException;
+
 	
 	public Vector getInactiveMagicWords(String myAccountId) throws IOException;
 	public Vector getActiveMagicWords(String myAccountId) throws IOException;
