@@ -174,7 +174,8 @@ public class ServerSideHandler implements NetworkInterface
 	}
 	
 	public Vector getListOfBulletinIds(String myAccountId)
-	{	
+	{			
+
 		class Collector implements Database.PacketVisitor
 		{
 			public void visit(DatabaseKey key)
@@ -186,12 +187,13 @@ public class ServerSideHandler implements NetworkInterface
 					if (key.isDraft())
 						info.add("Draft");
 					else if (key.isSealed())
-						info.add("Sealed");
+						info.add("Sealed");				
 	
 					infos.add(info);
 				}
 				catch (Exception e)
-				{				
+				{		
+					server.getLogger().log("ListBulletins: Problem when visited record for account."+ e.toString());
 				}
 			}
 			
