@@ -882,7 +882,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			deleteList.add(startupFiles[i]);
 		}
 				
-		MartusUtilities.deleteAllFiles(deleteList);
+		try
+		{
+			getMessenger().setReadWrite(security.getPublicKeyString());
+			MartusUtilities.deleteAllFiles(deleteList);
+			getMessenger().setReadOnly(security.getPublicKeyString());
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 		
 		File[] remainingStartupFiles = getMSPADeleteOnStartup().listFiles();
 		if(remainingStartupFiles.length != 0)
