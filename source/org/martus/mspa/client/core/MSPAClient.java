@@ -221,10 +221,10 @@ public class MSPAClient
 		String msg = "";
 		try
 		{												
-			Vector results = handler.sendCommandToServer(security.getPublicKeyString(), new Integer(cmdType));
+			Vector results = handler.sendCommandToServer(security.getPublicKeyString(), cmdType);
 			
 			if (results != null && !results.isEmpty())
-				msg = (String) results.get(1);					
+				msg = (String) results.get(0);					
 		}		
 		catch (Exception e)
 		{

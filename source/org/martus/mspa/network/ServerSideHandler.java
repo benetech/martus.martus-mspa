@@ -149,11 +149,11 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
-	public Vector sendCommandToServer(String myAccountId, Integer cmdType) throws IOException
+	public Vector sendCommandToServer(String myAccountId, int cmdType) throws IOException
 	{
 		Vector results = new Vector();		
 			
-		if (server.sendCmdToStartServer(cmdType.intValue()))
+		if (server.sendCmdToStartServer(cmdType))
 			results.add(NetworkInterfaceConstants.OK);
 		else
 			results.add(NetworkInterfaceConstants.REJECTED);
