@@ -70,7 +70,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			System.out.println(targetFile.getPath()+" error when created.");
+			logger.log(targetFile.getPath()+" error when created."+e.toString());
 		}		
 	}
 	
@@ -222,6 +222,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		catch (Exception e) 
 		{
 			e.printStackTrace();
+			logger.log("(Update Mirror Server) Problem when try to update/copy files: "+ e.toString());
 		}	
 	}
 	
@@ -229,9 +230,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		boolean result = true;
 		if (cmdType == NetworkInterface.COMMAND_START_SERVER)
-		{
+		{			
 			result = copyAllManageFilesToMartusDeleteOnStart();
-			//send cmd over ...
+			//send cmd to root helper...
 		}	
 		
 		return result;
@@ -324,12 +325,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private void updateAccountConfigFiles()
 	{
-		writeToFile(getBannedFile(), clientsBanned);
-		writeToFile(getAllowUploadFile(), clientsAllowedUpload);
-		writeToFile(getClientsNotToAmplifiyFile(), clientNotSendToAmplifier);
+		writeListToFile(getBannedFile(), clientsBanned);
+		writeListToFile(getAllowUploadFile(), clientsAllowedUpload);
+		writeListToFile(getClientsNotToAmplifiyFile(), clientNotSendToAmplifier);
 	}
 	
-	private void writeToFile(File file, Vector list)
+	private void writeListToFile(File file, Vector list)
 	{
 		try
 		{
@@ -404,12 +405,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public boolean isAccountNotSendToAmplifier(String clientId)
 	{
 		return clientNotSendToAmplifier.contains(clientId);
-	}
-	
-	public Vector getPacketDirectoryNames()
-	{
-		
-		return new Vector();
 	}
 	
 	public void createMSPAXmlRpcServerOnPort(int port) throws Exception

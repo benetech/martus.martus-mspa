@@ -17,7 +17,7 @@ public interface NetworkInterfaceXmlRpcConstants
 	public static final String cmdGetAccountManageInfo = "getAccountManageInfo";
 	public static final String cmdGetNumOfHiddenBulletins = "getNumOfHiddenBulletins";
 	public static final String cmdUpdateAccountManageInfo = "updateAccountManageInfo";
-	public static final String cmdGetPacketDirNames = "getPacketDirNames";	
+	public static final String cmdGetListOfBulletinIds = "getListOfBulletinIds";	
 	public static final String cmdUpdateMagicWords = "updateMagicWords";
 			
 	public static final String cmdGetListOfAvailableServers = "getListOfAvailableServers";		

@@ -10,6 +10,7 @@ import java.util.Vector;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.Database;
+import org.martus.common.database.DatabaseKey;
 import org.martus.common.utilities.MartusServerUtilities;
 import org.martus.mspa.server.MSPAServer;
 
@@ -172,13 +173,37 @@ public class ServerSideHandler implements NetworkInterface
 		return results;		
 	}
 	
-	public Vector getPacketDirNames(String myAccountId)
+	public Vector getListOfBulletinIds(String myAccountId)
 	{	
-		Vector results = new Vector();				
-		Vector packetDir = server.getPacketDirectoryNames();
+		class Collector implements Database.PacketVisitor
+		{
+			public void visit(DatabaseKey key)
+			{
+				try
+				{					
+					Vector info = new Vector();
+					info.add(key.getLocalId().trim());				
+					if (key.isDraft())
+						info.add("Draft");
+					else if (key.isSealed())
+						info.add("Sealed");
+	
+					infos.add(info);
+				}
+				catch (Exception e)
+				{				
+				}
+			}
+			
+			Vector infos = new Vector();
+		}
+
+		Collector collector = new Collector();		
+		server.getDatabase().visitAllRecordsForAccount(collector, myAccountId);
 		
+		Vector results = new Vector();										
 		results.add(NetworkInterfaceConstants.OK);
-		results.add(packetDir);		
+		results.add(collector.infos);		
 
 		return results;					
 	}

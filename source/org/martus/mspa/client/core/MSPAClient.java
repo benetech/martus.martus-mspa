@@ -270,10 +270,11 @@ public class MSPAClient
 	{	
 		try
 		{						
-			Vector results = handler.getPacketDirNames(security.getPublicKeyString());
+			Vector results = handler.getListOfBulletinIds(security.getPublicKeyString());		
 			
 			if (results != null && !results.isEmpty())
 				return (Vector) results.get(1);
+							
 		}		
 		catch (Exception e)
 		{
@@ -445,4 +446,7 @@ public class MSPAClient
 	
 	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
 	private static final String SERVER_WHO_WE_CALL_DIRIRECTORY = "serverToCall";
+	
+	public static final String draftQuarantinePrefix = "qd-p";
+	public static final String sealedQuarantinePrefix = "qs-p";
 }

@@ -31,19 +31,37 @@ import org.martus.swing.UiTextArea;
 public class AccountDetailPanel extends JPanel
 {
 	public AccountDetailPanel(MSPAClient app, String id, Vector contactInfo, String hiddenBulletins, 
-			Vector dirNames, Vector manageAccount)
+			Vector bulletinIds, Vector manageAccount)
 	{
 		accountId = id;	
-		mspaApp = app;
+		mspaApp = app;		
 		numOfHiddenBulletins =	hiddenBulletins;
+		originalBulletinIds = bulletinIds;
+		
 		setBorder(new EmptyBorder(5,5,5,5));
 		setLayout(new BorderLayout());
 
 		loadAccountAdminInfo(manageAccount);		
 	
 		add(buildTopPanel(contactInfo),BorderLayout.NORTH);
-		add(getDisplayBulletinPanel(dirNames), BorderLayout.CENTER);
+		add(getDisplayBulletinPanel(loadBulletinIds()), BorderLayout.CENTER);
 		add(buildButtonsPanel(), BorderLayout.SOUTH);		
+	}
+
+	private Vector loadBulletinIds()
+	{
+		Vector newBulletinIds = new Vector();		
+		if (originalBulletinIds == null && originalBulletinIds.size() <=0)
+			return newBulletinIds;
+								
+		for (int i=0; i<originalBulletinIds.size(); ++i)
+		{	
+			Vector bulletinInfo= (Vector) originalBulletinIds.get(i);
+			String bulletinId = (String) bulletinInfo.get(0)+" \t"+(String)bulletinInfo.get(1);
+			newBulletinIds.add(bulletinId);
+			
+		}
+		return newBulletinIds;
 	}
 
 	private void loadAccountAdminInfo(Vector accountManagement)
@@ -192,36 +210,23 @@ public class AccountDetailPanel extends JPanel
 		bulletinList.setCellRenderer(renderer);
 	}	
 
-	private JPanel getDisplayBulletinPanel(Vector packetDirNames)
+	private JPanel getDisplayBulletinPanel(Vector bulletinsIds)
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder (new LineBorder (Color.gray, 1)," List Of Bulletins "));		
-		panel.setLayout(new BorderLayout());
-		
-		JPanel topPanel = new JPanel();
-		topPanel.setBorder(new EmptyBorder(5,5,5,5));
-		topPanel.setLayout(new ParagraphLayout());
+		panel.setLayout(new BorderLayout());		
 
-		JLabel dirNameLabel = new JLabel("Select Directory for view: ");
-		dirNameField = new GroupComboBox(packetDirNames);
-		dirNameField.setPreferredSize(new Dimension(180, 20));
-		dirNameField.setEditable(false);
-		
-		topPanel.add(dirNameLabel,ParagraphLayout.NEW_PARAGRAPH);		
-		topPanel.add(dirNameField);
-
-		bulletinListModel = loadElementsToList(new Vector());
+		bulletinListModel = loadElementsToList(bulletinsIds);
 		bulletinList = new JList(bulletinListModel);
-		bulletinList.setFixedCellWidth(200);
+		bulletinList.setFixedCellWidth(220);
 		configureTabList();   
 
 		JScrollPane ps = createScrollPane();
-		ps.setPreferredSize(new Dimension(250, 80));
-		ps.setMinimumSize(new Dimension(250, 80));
+		ps.setPreferredSize(new Dimension(220, 150));
+		ps.setMinimumSize(new Dimension(220, 150));
 		ps.setAlignmentX(LEFT_ALIGNMENT);			
 		ps.getViewport().add(bulletinList);	
 
-		panel.add(topPanel,BorderLayout.NORTH);
 		panel.add(ps, BorderLayout.CENTER);
 
 		return panel;
@@ -266,7 +271,6 @@ public class AccountDetailPanel extends JPanel
 	String accountId;
 	String numOfHiddenBulletins;
 	JButton saveButton;
-	GroupComboBox dirNameField;
 	AccountAdminOptions admOptions;
 	
 	JCheckBox canUpload;
@@ -282,4 +286,5 @@ public class AccountDetailPanel extends JPanel
 	DefaultListModel bulletinListModel;
 
 	MSPAClient mspaApp;
+	Vector originalBulletinIds;	
 }

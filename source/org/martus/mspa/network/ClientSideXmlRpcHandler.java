@@ -75,11 +75,11 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetNumOfHiddenBulletins, params);
 	}
 	
-	public Vector getPacketDirNames(String myAccountId) throws IOException	
+	public Vector getListOfBulletinIds(String myAccountId) throws IOException	
 	{		
 		Vector params = new Vector();
 		params.add(myAccountId);		
-		return (Vector)callServer(cmdGetPacketDirNames, params);
+		return (Vector)callServer(cmdGetListOfBulletinIds, params);
 	}
 	
 	public Vector getInactiveMagicWords(String myAccountId) throws IOException
