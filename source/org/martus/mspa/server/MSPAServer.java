@@ -615,11 +615,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			files[i].delete();
 	}
 	
-	FileTransfer getFileTransfer(File from, File to)
-	{
-		return new FileTransfer(from.getPath(), to.getPath());		
-	}	
-	
 	public synchronized void updateMagicWords(Vector words)
 	{				
 		try
