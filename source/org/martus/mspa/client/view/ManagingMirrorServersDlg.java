@@ -222,13 +222,8 @@ public class ManagingMirrorServersDlg extends JDialog
 	
 	String generateFileName(String ip, String publicKey)
 	{
-		String fileName ="ip="+ip+"-code="+publicKey;
-		if (serverManageType == ManagingMirrorServerConstants.WHO_CALLS_US)
-			fileName+=".dat";
-		else 
-			fileName+=".txt";
-		
-		return fileName;	
+		String fileName ="ip="+ip+"-code="+publicKey+".txt";
+		return fileName.trim();
 	}
 	
 	class ButtonHandler implements ActionListener

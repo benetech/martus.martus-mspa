@@ -44,19 +44,15 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
-	{	
-		Vector availableList = null;
-		Vector assignedList = null;
-		
+	{						
 		if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
 		{
 			availableList = parent.getMSPAApp().getInactiveMagicWords();
 			assignedList  = parent.getMSPAApp().getActiveMagicWords();
 		}
 		else
-		{
-			availableList = parent.getMSPAApp().getAvailableAccounts();
-			assignedList  = parent.getMSPAApp().getListOfAssignedAccounts(serverManageType);		
+		{			
+			getMirrorServers(parent.getMSPAApp().getAvailableAccounts());		
 		}			
 			
 		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, 
@@ -64,6 +60,33 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 		serverManagementDlg.show();
 	}	
 
+	void getMirrorServers(Vector orginalList)
+	{
+		availableList = new Vector();
+		assignedList  = parent.getMSPAApp().getListOfAssignedAccounts(serverManageType);	
+		
+		for (int i=0; i<orginalList.size();i++)
+		{
+			String serverName = (String) orginalList.get(i);
+			if (!hasServerBeenAssigned(serverName))
+				availableList.add(serverName);
+		}						
+	}
+	
+	boolean hasServerBeenAssigned(String serverName)
+	{				
+		for (int i=0; i<assignedList.size();i++)
+		{
+			String account = (String) assignedList.get(i);
+			if (account.equals(serverName))
+				return true;
+		}							
+		return false;
+	}
+	
+	
 	UiMainWindow parent;	
 	int serverManageType;
+	Vector assignedList = null;
+	Vector availableList = null;
 }

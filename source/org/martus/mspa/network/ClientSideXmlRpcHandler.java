@@ -73,19 +73,19 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdUpdateMagicWords, params);
 	}	
 	
-	public Vector getListOfAvailableAccounts(String myAccountId) throws IOException
+	public Vector getListOfAvailableServers(String myAccountId) throws IOException
 	{		
 		Vector params = new Vector();
 		params.add(myAccountId);	
-		return (Vector)callServer(cmdGetListOfAvailableAccounts, params);
+		return (Vector)callServer(cmdGetListOfAvailableServers, params);
 	}
 	
-	public Vector getListOfAssignedAccounts(String myAccountId, int mirrorType) throws IOException
+	public Vector getListOfAssignedServers(String myAccountId, int mirrorType) throws IOException
 	{		
 		Vector params = new Vector();
 		params.add(myAccountId);
 		params.add(new Integer(mirrorType));	
-		return (Vector)callServer(cmdGetListOfAssignedAccounts, params);
+		return (Vector)callServer(cmdGetListOfAssignedServers, params);
 	}
 	
 	public Vector addAvailableMirrorServer(String myAccountId, Vector mirrorInfo) throws IOException

@@ -264,7 +264,7 @@ public class MSPAClient
 	{	
 		try
 		{					
-			Vector results = handler.getListOfAvailableAccounts(security.getPublicKeyString());
+			Vector results = handler.getListOfAvailableServers(security.getPublicKeyString());
 			
 			if (results != null && !results.isEmpty())
 				return (Vector) results.get(1);
@@ -281,7 +281,7 @@ public class MSPAClient
 	{	
 		try
 		{					
-			Vector results = handler.getListOfAssignedAccounts(security.getPublicKeyString(), mirrorType);
+			Vector results = handler.getListOfAssignedServers(security.getPublicKeyString(), mirrorType);
 			
 			if (results != null && !results.isEmpty())
 				return (Vector) results.get(1);

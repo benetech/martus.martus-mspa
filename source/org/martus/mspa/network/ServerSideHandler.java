@@ -173,7 +173,7 @@ public class ServerSideHandler implements NetworkInterface
 		}				
 	}
 	
-	public Vector getListOfAvailableAccounts(String myAccountId)
+	public Vector getListOfAvailableServers(String myAccountId)
 	{			
 		Vector results = new Vector();		
 		File availableDir = MSPAServer.getAvailableMirrorServerDirectory();	
@@ -185,7 +185,7 @@ public class ServerSideHandler implements NetworkInterface
 		return results;		
 	}	
 	
-	public Vector getListOfAssignedAccounts(String myAccountId, int mirrorType)
+	public Vector getListOfAssignedServers(String myAccountId, int mirrorType)
 	{			
 		Vector results = new Vector();		
 		File mirrorDir = MSPAServer.getMirrorDirectory(mirrorType);	
