@@ -781,9 +781,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{		
 		if (type == ManagingMirrorServerConstants.SERVERS_WHO_WE_MIRROR)
 			return getServerWhoWeCallDirectory();
-		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_MIRRORS_US)
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_MIRROR_US)
 			return getMirrorServerWhoCallUsDirectory();
-		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFIES_US)
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_US)
 			return getAmpsWhoCallUsDirectory();	
 
 		return getMirrorServerWhoWeCallDirectory();		

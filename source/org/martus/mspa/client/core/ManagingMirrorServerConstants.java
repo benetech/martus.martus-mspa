@@ -30,22 +30,22 @@ public interface ManagingMirrorServerConstants
 {
 	public static int SERVERS_WHO_WE_MIRROR		=100;
 	public static int SERVERS_WE_AMPLIFY		=101;
-	public static int SERVERS_WHO_AMPLIFIES_US	=102;
-	public static int SERVERS_WHO_MIRRORS_US	=103;
+	public static int SERVERS_WHO_AMPLIFY_US	=102;
+	public static int SERVERS_WHO_MIRROR_US	=103;
 
 	public static String SERVERS_WHO_WE_MIRROR_TITLE			="Servers Who We Mirror";
 	public static String SERVERS_WE_AMPLIFY_TITLE				="Servers We Amplify";
-	public static String SERVERS_WHO_AMPIFIES_US_TITLE			="Servers Who Amplifies Us";
-	public static String SERVERS_WHO_MIRRORS_US_TITLE			="Servers Who Mirrors Us";
+	public static String SERVERS_WHO_AMPLIFY_US_TITLE			="Servers Who Amplify Us";
+	public static String SERVERS_WHO_MIRROR_US_TITLE			="Servers Who Mirror Us";
 	
-	public static String SERVERS_WHO_WE_MIRROS_HEADER			="Backup My Data to Other Servers";
-	public static String SERVERS_WHO_WE_MIRRORS_ALLOWED_LABEL	="Can Backup My Data:";
+	public static String SERVERS_WHO_WE_MIRROR_HEADER			="Backup My Data to Other Servers";
+	public static String SERVERS_WHO_WE_MIRROR_ALLOWED_LABEL	="Can Backup My Data:";
 	public static String SERVERS_WE_AMPLIFY_HEADER				="All My Data to Amplify";
 	public static String SERVERS_WE_AMPLIFY_ALLOWED_LABEL		="Can Amplify to My Data:";
-	public static String SERVERS_WHO_AMPLIFIES_US_HEADER		="Be an Amplifier";
-	public static String SERVERS_WHO_AMPLIFIES_US_ALLOWED_LABEL	="Amplier Data:";
-	public static String SERVERS_WHO_MIRRORS_US_HEADER			="Act as A Backup For Other Servers";
-	public static String SERVERS_WHO_MIRRORS_US_ALLOWED_LABEL	="Can Upload Data";	
+	public static String SERVERS_WHO_AMPLIFY_US_HEADER			="Be an Amplifier";
+	public static String SERVERS_WHO_AMPLIFY_US_ALLOWED_LABEL	="Amplier Data:";
+	public static String SERVERS_WHO_MIRROR_US_HEADER			="Act as A Backup For Other Servers";
+	public static String SERVERS_WHO_MIRROR_US_ALLOWED_LABEL	="Can Upload Data";	
 	
 	public static String AVAILABLE_SERVER_LABEL				="Available Servers:";
 	public static String AVAILABLE_MAGIC_LABEL				="Available Magic Words:";	

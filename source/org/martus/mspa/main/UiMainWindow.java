@@ -344,9 +344,9 @@ public class UiMainWindow extends JFrame
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVERS_WE_AMPLIFY));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFIES_US));
+				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_US));
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_MIRRORS_US));		
+				ManagingMirrorServerConstants.SERVERS_WHO_MIRROR_US));		
 		mTool.add(manageServer);			
 		menuBar.add(mTool);
 		
