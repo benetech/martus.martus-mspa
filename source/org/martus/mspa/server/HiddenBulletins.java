@@ -32,13 +32,13 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.martus.common.BulletinStore;
 import org.martus.common.LoggerInterface;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.packet.BulletinHeaderPacket;
 import org.martus.common.packet.UniversalId;
-import org.martus.util.InputStreamWithSeek;
 import org.martus.util.UnicodeReader;
 import org.martus.util.UnicodeWriter;
 import org.martus.util.Base64.InvalidBase64Exception;
@@ -256,9 +256,7 @@ public class HiddenBulletins
 				return "";
 			}					
 
-			InputStreamWithSeek in = database.openInputStream(headerKey, security);				
-			bhp.loadFromXml(in, security);
-			in.close();
+			bhp = BulletinStore.loadBulletinHeaderPacket(database, headerKey, security);
 		}
 		catch (Exception e)
 		{
