@@ -51,7 +51,7 @@ public class TestRootHelper
 		{		 
 		  Registry registery = RootHelper.getRegistry(portToUse);	
 			
-		  MessengerImpl localObject = new MessengerImpl();
+		  MessengerImpl localObject = new MessengerImpl("password");
 		  registery.rebind("RootHelper", localObject);			  		 
 									  
 		  System.out.println("MessengerImpl object has been bound");

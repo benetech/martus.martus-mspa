@@ -25,29 +25,30 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.network.roothelper;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import org.martus.common.LoggerInterface;
 import org.martus.common.Version;
+import org.martus.util.UnicodeReader;
 
 
 public class RootHelper
 {
-	public RootHelper(String[] args)
-	{	
+	public RootHelper(String[] args, final String passphrase)
+	{			
 		processCommandLine(args);		
 		try 
 		{		
-			getRegistry(portToUse);				
-			MessengerImpl localObject = new MessengerImpl();
+			Registry registry = getRegistry(portToUse);				
+			MessengerImpl localObject = new MessengerImpl(passphrase);
 			String hostname = "//"+hostToBind+":"+portToUse+"/RootHelper";
-			Naming.bind(hostname, localObject);			
+			
+			registry.bind(hostname, localObject);			
 			System.out.println("Port to use for clients: "+ portToUse);							  
 			System.out.println("MessengerImpl object has been bound in the registry");
 		} 
@@ -60,12 +61,7 @@ public class RootHelper
 			e.printStackTrace();
 			logger.log("Port already bound: "+ e.getMessage());
 		}
-		catch (MalformedURLException e)
-		{			
-			e.printStackTrace();
-			logger.log("URL Exception: "+ e.getMessage());
-		} 
-}
+	}
 
 	public static Registry getRegistry( int port ) throws RemoteException 
 	{
@@ -75,6 +71,8 @@ public class RootHelper
 	  	} 
 		catch (Exception noRegistry) 
 		{
+			System.out.println("Create a new Registry with port: "+port+" is not available: "+noRegistry.getMessage());
+			System.out.println("Will return an default registry with port: "+port);
 	     	return LocateRegistry.getRegistry( port );
 	  	}
 	}
@@ -90,14 +88,14 @@ public class RootHelper
 		if(Version.isRunningUnderWindows())
 			appDirectory = WINDOW_ENVIRONMENT;
 		else
-			appDirectory = System.getProperty("user.home")+UNIX_ENVIRONMENT;
+			appDirectory = UNIX_ENVIRONMENT;
 		return new File(appDirectory);
 	}	
 	
 	private void setPortToUse(int port)
 	{
 		portToUse = port;
-	}		
+	}	
 	
 	private void processCommandLine(String[] args) 
 	{			
@@ -119,8 +117,22 @@ public class RootHelper
 		
 	public static void main(String[] args) 
 	{	
-		System.out.println("Initialize RootHelper environment");	
-		new RootHelper(args);
+		System.out.println("Initialize RootHelper environment");
+		String passphrase = null;
+		try
+		{
+			System.out.print("Enter passphrase: ");
+			System.out.flush();
+			BufferedReader reader = new BufferedReader(new UnicodeReader(System.in));		
+			passphrase = reader.readLine();
+		}
+		catch(Exception e)
+		{
+			System.out.println("RootHelper: " + e);
+			System.exit(3);
+		}
+		
+		new RootHelper(args, passphrase);
 	}	
 		
 	private int portToUse = DEFAULT_PORT;	

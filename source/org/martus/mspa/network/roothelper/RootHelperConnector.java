@@ -25,10 +25,10 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.network.roothelper;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 
 public class RootHelperConnector
@@ -36,10 +36,11 @@ public class RootHelperConnector
 	public RootHelperConnector(int portToUse) 
 	{			
 		try
-		{								
+		{	
+			Registry registry = LocateRegistry.getRegistry( portToUse );							
 			String hostToBind = "//"+DEFAULT_HOSTNAME_TO_BIND+":"+portToUse+"/RootHelper";
 			System.out.println("Lookup RootHelper connector from registry: "+ hostToBind);			
-			messenger = (Messenger)Naming.lookup(hostToBind);
+			messenger = (Messenger)registry.lookup(hostToBind);
 			System.out.println("\n");
 		}
 		catch (RemoteException e)
@@ -51,12 +52,7 @@ public class RootHelperConnector
 		{
 			System.out.println("Lookup status: failled ...");	
 			e.printStackTrace();
-		}
-		catch (MalformedURLException e)
-		{			
-			System.out.println("Lookup status: failled ...");	
-			e.printStackTrace();			
-		}				
+		}			
 	}	
 	
 	public Messenger getMessenger()

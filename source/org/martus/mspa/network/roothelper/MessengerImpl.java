@@ -42,7 +42,7 @@ import org.martus.common.LoggerToConsole;
 
 public class MessengerImpl extends UnicastRemoteObject implements Messenger, MessageType 
 {
-	public MessengerImpl() throws RemoteException 
+	public MessengerImpl(final String _passphrase) throws RemoteException 
 	{
 		super();
 		logger = new LoggerToConsole();	
@@ -102,7 +102,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		try
 		{
 			logWhoCallThisScript(callScript);						
-			Process process = Runtime.getRuntime().exec(callScript);
+			Process process = Runtime.getRuntime().exec(callScript);		
 	
 			StringBuffer errorStream = new StringBuffer();			
 			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),errorStream);
