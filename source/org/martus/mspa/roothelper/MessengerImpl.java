@@ -196,7 +196,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	
 	private synchronized void log(String message)
 	{
-		logger.log(message);
+		logger.logNotice(message);
 	}	
 	
 	class StreamGobbler extends Thread

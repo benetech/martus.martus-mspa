@@ -105,7 +105,7 @@ public class RootHelper
 	
 	public synchronized void log(String message)
 	{
-		logger.log(message);
+		logger.logNotice(message);
 	}
 
 	

@@ -938,7 +938,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public synchronized void log(String message)
 	{
-		getLogger().log(message);
+		getLogger().logNotice(message);
 	}
 
 	public synchronized void updateMartusServerArguments(Vector props)
