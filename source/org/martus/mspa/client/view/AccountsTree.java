@@ -52,8 +52,8 @@ public class AccountsTree
 	{
 		return (DefaultMutableTreeNode)(path.getLastPathComponent());
 	}
-	
 	private void loadAccountsToTreeNode(Object[] nodes, Object[] accountArray, DefaultMutableTreeNode parent)
+	
 	{
 		for (int i=0;i<accountArray.length;i++)
 		{		

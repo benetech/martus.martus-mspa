@@ -1,10 +1,13 @@
 package org.martus.mspa.main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -29,7 +32,7 @@ public class UiMainWindow extends JFrame
 	public UiMainWindow(String serverToView, MSPAClient app)
 	{		
 		super("Martus Server Policy Administrator (MSPA)");
-		currentActiveFrame = this;
+		currentActiveFrame = this;	
 		mspaApp = app;
 		
 		setSize(800, 550);
@@ -50,7 +53,7 @@ public class UiMainWindow extends JFrame
 		m_sp.setDividerSize(5);		
 		m_sp.setOneTouchExpandable(true);
 		
-		mainPanel.add(createServerInfoPanel("", ""),BorderLayout.NORTH );
+		mainPanel.add(createServerInfoPanel("", serverToView),BorderLayout.NORTH );
 		mainPanel.add(m_sp, BorderLayout.CENTER);
 		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);
 
@@ -67,17 +70,25 @@ public class UiMainWindow extends JFrame
 		setVisible(true);		
 	}	
 	
-	protected JPanel createServerInfoPanel(String ipAddr, String publicCode)
+	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
 		JPanel serverInfoPanel = new JPanel();		
 		serverInfoPanel.setLayout(new GridLayout(1,4));
-	
-		JLabel ipLabel = new JLabel("Server IP Address: "+ipAddr);		
-		JLabel publicCodeLabel = new JLabel("Public code: "+ publicCode);
+		try
+		{		
+			JLabel ipLabel = new JLabel("Martus Server IP Address: "+InetAddress.getByName(ipAddr).getHostAddress());
+			ipLabel.setForeground(Color.BLUE);					
+			JLabel publicCodeLabel = new JLabel("Martus Server Public code: "+ mspaApp.getPublicCode(accountId));
+			publicCodeLabel.setForeground(Color.BLUE);
+			serverInfoPanel.add(ipLabel);	
+			serverInfoPanel.add(publicCodeLabel);	
+		}
+		catch (UnknownHostException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 				
-		serverInfoPanel.add(ipLabel);	
-		serverInfoPanel.add(publicCodeLabel);		
-		
 		return serverInfoPanel;
 	}
 
@@ -117,8 +128,7 @@ public class UiMainWindow extends JFrame
 		if (tabPane.getTabCount() > 0)
 			tabPane.remove(0);
 			
-		tabPane.add(new JPanel(), "Account Detail");
-		
+		tabPane.add(new JPanel(), "Account Detail");		
 	}
 	
 	public boolean run()
@@ -171,5 +181,4 @@ public class UiMainWindow extends JFrame
 	JTabbedPane tabPane;
 	JTextField statusField;
 	AccountsTree accountTree;	
-	
 }

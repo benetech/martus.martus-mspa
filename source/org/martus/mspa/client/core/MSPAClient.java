@@ -4,9 +4,11 @@ package org.martus.mspa.client.core;
 import java.util.Vector;
 
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.crypto.MockMartusSecurity;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.network.ClientSideXmlRpcHandler;
+import org.martus.util.Base64.InvalidBase64Exception;
 
 public class MSPAClient 
 {				
@@ -137,6 +139,21 @@ public class MSPAClient
 			e.printStackTrace();
 		}				
 	}	
+	
+	public String getPublicCode(String accountId)
+	{
+		String publicCode = null;
+		try
+		{																		
+			publicCode = MartusSecurity.getFormattedPublicCode(accountId);
+		}
+		catch (InvalidBase64Exception e)
+		{						
+			e.printStackTrace();					
+		}
+		
+		return publicCode;
+	}		
 	
 	ClientSideXmlRpcHandler handler;
 	String ipToUse;
