@@ -96,11 +96,22 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(new JLabel("Which Port: (optional)"), ParagraphLayout.NEW_PARAGRAPH);	
 		panel.add(mirrorServerPort);			
 		
-		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)
+		if (serverManageType != ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)				
 			collectMirrorInfo(panel);
 		
 		return panel;				
 	}	
+	
+	private void configureTabList()
+	{
+		TabListCellRenderer renderer = new TabListCellRenderer();
+		renderer.setTabs(new int[] {130, 200, 300});
+		availableList.setCellRenderer(renderer);
+		
+		TabListCellRenderer renderer2 = new TabListCellRenderer();
+		renderer2.setTabs(new int[] {130, 200, 300});
+		allowedList.setCellRenderer(renderer);
+	}
 	
 	private void collectMirrorInfo(JPanel panel)
 	{
@@ -117,6 +128,9 @@ public class ManagingMirrorServersDlg extends JDialog
 		panel.add(getAvailablePanel());
 		panel.add(getShiftButtons());
 		panel.add(getAllowedPanel());
+		
+		if (serverManageType == ManagingMirrorServerConstants.LISTEN_FOR_CLIENTS)	
+			configureTabList();	
 
 		return panel;
 	}
