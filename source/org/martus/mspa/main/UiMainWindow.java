@@ -35,7 +35,6 @@ import org.martus.mspa.client.core.ManagingMirrorServerConstants;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
 import org.martus.mspa.client.view.MenuItemExitApplication;
-import org.martus.mspa.client.view.MenuItemManageMagicWords;
 import org.martus.mspa.client.view.MenuItemManagingMirrorServers;
 import org.martus.swing.Utilities;
 
@@ -238,8 +237,7 @@ public class UiMainWindow extends JFrame
 		mFile.setMnemonic('d');
 		menuBar.add(mEdit);
 		
-		JMenu mTool = new JMenu("Tools");		
-		mTool.add(new MenuItemManageMagicWords(this,"Manage Magic Words"));		
+		JMenu mTool = new JMenu("Tools");				
 		JMenu manageServer = new JMenu("Managing Mirror servers");	
 		manageServer.add(new MenuItemManagingMirrorServers(this,				
 				ManagingMirrorServerConstants.SERVER_WHO_WE_CALL));
