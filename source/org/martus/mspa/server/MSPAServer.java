@@ -238,7 +238,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return magicWords;
 	}
 	
-	public Vector getComplianceFile(String accountId)
+	public synchronized Vector getComplianceFile(String accountId)
 	{
 		Vector results = new Vector();
 		File complianceFile = getMSPAComplianceFile();
@@ -267,7 +267,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return results;	
 	}
 
-	public void updateComplianceFile(String accountId, String compliantsMsg)
+	public synchronized void updateComplianceFile(String accountId, String compliantsMsg)
 	{		
 		File complianceFile = getMSPAComplianceFile();
 		File martusComplianceFile = getMartusComplianceFile();
@@ -297,7 +297,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}	
 	}
 	
-	public boolean hideBulletins(String accountId, Vector localIds)
+	public synchronized boolean hideBulletins(String accountId, Vector localIds)
 	{
 		hiddenBulletins.hideBulletins(accountId, localIds);
 				
@@ -327,7 +327,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return hiddenBulletins.getListOfHiddenBulletins(accountId);
 	}
 	
-	public void updateManagingMirrorServerInfo(Vector mirrorInfo, int mirrorType)
+	public synchronized void updateManagingMirrorServerInfo(Vector mirrorInfo, int mirrorType)
 	{
 		File sourceDirectory = MSPAServer.getAvailableMirrorServerDirectory();
 		File destDirectory = MSPAServer.getMirrorDirectory(mirrorType);	
@@ -380,7 +380,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new FileTransfer(from.getPath(), to.getPath());		
 	}
 	
-	boolean copyAllManageFilesToMartusDeleteOnStart() throws RemoteException
+	synchronized boolean copyAllManageFilesToMartusDeleteOnStart() throws RemoteException
 	{
 		Messenger messenger = rootConnector.getMessenger();
 		Vector listOfFiles = new Vector();
@@ -397,7 +397,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 	}
 	
-	public void updateMagicWords(Vector words)
+	public synchronized void updateMagicWords(Vector words)
 	{				
 		try
 		{			
@@ -422,7 +422,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return options.getOptions();
 	}
 	
-	public void updateAccountInfo(String manageAccountId, Vector accountInfo)
+	public synchronized void updateAccountInfo(String manageAccountId, Vector accountInfo)
 	{		
 	
 		AccountAdminOptions options = new AccountAdminOptions();
@@ -590,13 +590,13 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
 	}
 
-	public void addAuthorizedMartusAccounts(String authorizedClientId)
+	public synchronized void addAuthorizedMartusAccounts(String authorizedClientId)
 	{
 		if (!isAuthorizedMartusAccounts(authorizedClientId))
 			authorizedMartusAccounts.add(authorizedClientId);
 	}
 	
-	public void addAuthorizedMSPAClients(String authorizedClientId)
+	public synchronized void addAuthorizedMSPAClients(String authorizedClientId)
 	{
 		if (!isAuthorizedMSPAClients(authorizedClientId))
 			authorizeMSPAClients.add(authorizedClientId);
@@ -622,7 +622,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		ipAddress = ipAddr;
 	}
 
-	public void updateMartusServerArguments(Vector props)
+	public synchronized void updateMartusServerArguments(Vector props)
 	{
 		File propertyFile = new File(getConfigDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
 		LoadMartusServerArguments args = new LoadMartusServerArguments();
@@ -630,7 +630,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		args.writePropertyFile(propertyFile.getPath());
 	}
 	
-	public static LoadMartusServerArguments getMartusServerArguments()
+	public synchronized static LoadMartusServerArguments getMartusServerArguments()
 	{
 		File propertyFile = new File(getConfigDirectory(), MARTUS_ARGUMENTS_PROPERTY_FILE);
 		LoadMartusServerArguments property = null;
@@ -653,7 +653,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return property;
 	}	
 
-	public static LoadMartusServerArguments loadDefaultMartusServerArguments(String propertyFile)
+	public synchronized static LoadMartusServerArguments loadDefaultMartusServerArguments(String propertyFile)
 	{
 		LoadMartusServerArguments property = new LoadMartusServerArguments(propertyFile);
 

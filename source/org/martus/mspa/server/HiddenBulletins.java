@@ -27,6 +27,9 @@ package org.martus.mspa.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -51,7 +54,7 @@ public class HiddenBulletins
 			MartusCrypto securityToUse, LoggerInterface loggerToUse, File hiddenFileLocation)
 	{
 		database = databaseToUse;
-		hiddenUids = new Vector();
+		hiddenUids = new HashSet();
 		security = securityToUse;
 		logger = loggerToUse;
 		hiddenFile = hiddenFileLocation;
@@ -59,7 +62,7 @@ public class HiddenBulletins
 		readLineOfHiddenBulletinsFromFile();
 	}
 
-	public void addHiddenBulletinUids(UniversalId uid, String status) 
+	public synchronized void addHiddenBulletinUids(UniversalId uid, String status) 
 	{
 		if (containHiddenUids(uid))
 			return;
@@ -79,34 +82,33 @@ public class HiddenBulletins
 		Vector bulletins = new Vector();	
 		if (hiddenUids == null) 
 			return bulletins;
-			
-		for (int i=0;i<hiddenUids.size();++i)
+					
+		for (Iterator itr = hiddenUids.iterator(); itr.hasNext();)
 		{
-			HiddenBulletinInfo uid = (HiddenBulletinInfo) hiddenUids.get(i);
+			HiddenBulletinInfo uid = (HiddenBulletinInfo) itr.next();
 			String localId = uid.getLocalId();
 				
 			if (uid.isSameAccountId(accountId) && uid.isBulletinHeaderPacket())			
 				bulletins.add(localId);
-		}		
+		}				
 		return bulletins;
 	}
 	
-	public void writeLineOfHiddenBulletinsToFile(String accountId, UnicodeWriter writer) throws Exception
+	public synchronized void writeLineOfHiddenBulletinsToFile(String accountId, UnicodeWriter writer) throws Exception
 	{
 		if (hiddenUids.size() <=0)
 			return;
 		
-		for (int i=0;i<hiddenUids.size();++i)
+		for (Iterator itr = hiddenUids.iterator(); itr.hasNext();)
 		{
-			HiddenBulletinInfo bulletinInfo = (HiddenBulletinInfo) hiddenUids.get(i);
+			HiddenBulletinInfo bulletinInfo = (HiddenBulletinInfo) itr.next();
 			String targetId = bulletinInfo.getAccountId();
 			if (targetId.equals(accountId))
 				writer.writeln("    "+bulletinInfo.getLineOfHiddenBulletins());	
-		}	
-		
+		}					
 	}
 
-	private void readLineOfHiddenBulletinsFromFile()
+	private synchronized void readLineOfHiddenBulletinsFromFile()
 	{				
 		try
 		{
@@ -192,12 +194,13 @@ public class HiddenBulletins
 	
 	private boolean containHiddenUids(UniversalId uid)
 	{
-		for (int i=0;i<hiddenUids.size();++i)
+		for (Iterator itr = hiddenUids.iterator(); itr.hasNext();)
 		{
-			HiddenBulletinInfo id = (HiddenBulletinInfo) hiddenUids.get(i);
+			HiddenBulletinInfo id = (HiddenBulletinInfo) itr.next();
 			if (id.isSameUid(uid))
 				return true;
-		}
+		}				
+
 		return false;
 	}
 		
@@ -210,7 +213,7 @@ public class HiddenBulletins
 		return (bulletinLocalId+ "  "+ dataLocalId+ "  "+ privateLocalId);				
 	}
 			
-	public boolean hideBulletins(String accountId, Vector localIds)
+	public synchronized boolean hideBulletins(String accountId, Vector localIds)
 	{									
 		if (localIds == null || localIds.size() <=0)
 			return false;
@@ -294,7 +297,7 @@ public class HiddenBulletins
 	}
 		
 	Database database;
-	Vector hiddenUids;
+	Set hiddenUids;
 	LoggerInterface logger;
 	MartusCrypto security;
 	File hiddenFile;
