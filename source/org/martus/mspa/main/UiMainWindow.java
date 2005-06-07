@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -415,6 +416,12 @@ public class UiMainWindow extends JFrame
 		System.exit(0);
 	}
 	
+	private static final long serialVersionUID = 1;
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
+	{
+		throw new NotSerializableException();
+	}
+
 	public static String START_MARTUS_SERVER ="Start Martus Server ...";
 	public static String STOP_MARTUS_SERVER  ="Stop Martus Server ..."; 
 	

@@ -28,6 +28,8 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -53,5 +55,11 @@ public class MenuItemManageMagicWords extends AbstractAction
 		magicWordsDlg.setVisible(true);
 	}	
 	
+	private static final long serialVersionUID = 1;
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
+	{
+		throw new NotSerializableException();
+	}
+
 	UiMainWindow parent;				
 }

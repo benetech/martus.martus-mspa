@@ -26,6 +26,8 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import java.awt.Component;
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -265,6 +267,12 @@ public class MagicWordTableData extends AbstractTableModel
 		}		
 	}
 	
+	private static final long serialVersionUID = 1;
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
+	{
+		throw new NotSerializableException();
+	}
+
 	Vector rowDataList;
 	Date   date;
 	Vector groupList;

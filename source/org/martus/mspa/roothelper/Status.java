@@ -25,10 +25,9 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
-import java.io.Serializable;
 
 
-public class Status implements Serializable
+public class Status
 {
 	public String stdErrorMsg="";
 	public String stdOutMsg="";

@@ -34,6 +34,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -448,6 +450,12 @@ public class AccountDetailPanel extends JPanel
 		}
 	}
 	
+	private static final long serialVersionUID = 1;
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
+	{
+		throw new NotSerializableException();
+	}
+
 	String accountId;
 	JButton saveButton;
 	AccountAdminOptions admOptions;

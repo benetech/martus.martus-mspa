@@ -29,6 +29,8 @@ import java.awt.Component;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.util.StringTokenizer;
 
 import javax.swing.JLabel;
@@ -132,4 +134,11 @@ public class TabListCellRenderer extends JLabel implements ListCellRenderer
 			x = getTab(index);
 		}
    }
+
+	private static final long serialVersionUID = 1;
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
+	{
+		throw new NotSerializableException();
+	}
+
 }
