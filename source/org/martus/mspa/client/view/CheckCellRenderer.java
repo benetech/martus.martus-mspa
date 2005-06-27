@@ -26,8 +26,6 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import java.awt.Component;
-import java.io.IOException;
-import java.io.NotSerializableException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
@@ -67,11 +65,5 @@ public class CheckCellRenderer extends JCheckBox implements TableCellRenderer
 		
 	  return this;
 	}	
-
-	private static final long serialVersionUID = 1;
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
-	{
-		throw new NotSerializableException();
-	}
 
 }

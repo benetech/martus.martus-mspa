@@ -25,8 +25,6 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.client.view;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -50,11 +48,5 @@ public class GroupComboBox extends JComboBox
 		if (getItemCount() > MAX_MEM_LEN)
 			removeItemAt(getItemCount()-1);
 	}	
-
-	private static final long serialVersionUID = 1;
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
-	{
-		throw new NotSerializableException();
-	}
 
 }

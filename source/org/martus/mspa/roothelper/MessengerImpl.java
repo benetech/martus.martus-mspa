@@ -32,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.NotSerializableException;
 import java.io.OutputStreamWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
@@ -228,12 +227,6 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 		}
 	}
 	
-	private static final long serialVersionUID = 1;
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
-	{
-		throw new NotSerializableException();
-	}
-
 	private LoggerInterface logger;
 	private String passphrase;	
 	public static final String CONNET_MSG = "[MessengerImpl] Connected: Ready to invoke ...\n";

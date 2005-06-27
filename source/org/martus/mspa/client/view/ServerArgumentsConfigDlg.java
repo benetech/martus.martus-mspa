@@ -31,8 +31,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.NotSerializableException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -208,12 +206,6 @@ public class ServerArgumentsConfigDlg extends JDialog
 		}
 	}
 	
-	private static final long serialVersionUID = 1;
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
-	{
-		throw new NotSerializableException();
-	}
-
 	UiMainWindow parent;
 	JButton saveButton;
 	JButton cancelButton;

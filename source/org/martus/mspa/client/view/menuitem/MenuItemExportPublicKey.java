@@ -27,8 +27,6 @@ package org.martus.mspa.client.view.menuitem;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
-import java.io.NotSerializableException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -65,12 +63,6 @@ public class MenuItemExportPublicKey extends AbstractAction
 			 "Export Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	private static final long serialVersionUID = 1;
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException
-	{
-		throw new NotSerializableException();
-	}
-
 	UiMainWindow parent;
 	File currentDir;	
 }
