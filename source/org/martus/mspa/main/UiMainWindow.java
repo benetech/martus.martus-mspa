@@ -52,7 +52,7 @@ import org.martus.common.Version;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
 import org.martus.common.clientside.CurrentUiState;
-import org.martus.common.clientside.UiBasicLocalization;
+import org.martus.common.clientside.UiLocalization;
 import org.martus.common.clientside.UiBasicSigninDlg;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.client.core.MSPAClient;
@@ -80,7 +80,7 @@ public class UiMainWindow extends JFrame
 		
 		try
 		{			
-			localization  = new UiBasicLocalization(getDefaultDirectoryPath(), EnglishStrings.strings);
+			localization  = new UiLocalization(getDefaultDirectoryPath(), EnglishStrings.strings);
 			mspaApp = new MSPAClient(localization);		
 			initalizeUiState();
 		}
@@ -92,7 +92,7 @@ public class UiMainWindow extends JFrame
 		currentActiveFrame = this;						
 	}
 	
-	public UiBasicLocalization getLocalization()
+	public UiLocalization getLocalization()
 	{
 		return localization;
 	}
@@ -424,7 +424,7 @@ public class UiMainWindow extends JFrame
 	JTabbedPane tabPane;
 	JTextField statusField;
 	AccountsTree accountTree;
-	UiBasicLocalization localization;
+	UiLocalization localization;
 	CurrentUiState 	uiState;
 	String serverName;
 	
