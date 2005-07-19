@@ -36,8 +36,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.martus.clientside.UiLocalization;
 import org.martus.common.VersionBuildDate;
-import org.martus.common.clientside.UiLocalization;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;

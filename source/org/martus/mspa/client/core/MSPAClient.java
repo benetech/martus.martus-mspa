@@ -34,10 +34,10 @@ import java.util.Vector;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import org.martus.clientside.PasswordHelper;
+import org.martus.clientside.UiLocalization;
 import org.martus.common.ContactInfo;
 import org.martus.common.MartusUtilities;
-import org.martus.common.clientside.PasswordHelper;
-import org.martus.common.clientside.UiLocalization;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;

@@ -48,12 +48,12 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.martus.clientside.CurrentUiState;
+import org.martus.clientside.UiBasicSigninDlg;
+import org.martus.clientside.UiLocalization;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
-import org.martus.common.clientside.CurrentUiState;
-import org.martus.common.clientside.UiLocalization;
-import org.martus.common.clientside.UiBasicSigninDlg;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.view.AccountDetailPanel;
