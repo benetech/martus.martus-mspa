@@ -32,8 +32,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import org.martus.common.BulletinStore;
 import org.martus.common.LoggerInterface;
+import org.martus.common.bulletinstore.BulletinStore;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
