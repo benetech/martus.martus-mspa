@@ -41,6 +41,7 @@ import org.martus.common.VersionBuildDate;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
+import org.martus.swing.UiVBox;
 import org.martus.swing.Utilities;
 
 public class AboutDlg extends JDialog implements ActionListener
@@ -65,15 +66,15 @@ public class AboutDlg extends JDialog implements ActionListener
 		JButton ok = new UiButton(localization.getButtonLabel("ok"));
 		ok.addActionListener(this);			
 				
-		Box vBoxVersionInfo = Box.createVerticalBox();
-		vBoxVersionInfo.add(new UiLabel(versionInfo));
-		vBoxVersionInfo.add(new UiLabel(" "));
-		vBoxVersionInfo.add(new UiLabel(" "));
-		vBoxVersionInfo.add(new UiLabel(UiConstants.copyright));
-		vBoxVersionInfo.add(new UiLabel(UiConstants.website));
-		vBoxVersionInfo.add(new UiLabel(" "));
-		vBoxVersionInfo.add(new UiLabel(buildDate, JLabel.CENTER));
-		vBoxVersionInfo.add(new UiLabel(" "));
+		UiVBox vBoxVersionInfo = new UiVBox();
+		vBoxVersionInfo.addCentered(new UiLabel(versionInfo));
+		vBoxVersionInfo.addSpace();
+		vBoxVersionInfo.addSpace();
+		vBoxVersionInfo.addCentered(new UiLabel(UiConstants.copyright));
+		vBoxVersionInfo.addCentered(new UiLabel(UiConstants.website));
+		vBoxVersionInfo.addSpace();
+		vBoxVersionInfo.addCentered(new UiLabel(buildDate, JLabel.CENTER));
+		vBoxVersionInfo.addSpace();
 
 		Box hBoxVersionAndIcon = Box.createHorizontalBox();
 		hBoxVersionAndIcon.add(Box.createHorizontalGlue());
@@ -85,9 +86,9 @@ public class AboutDlg extends JDialog implements ActionListener
 		hBoxOk.add(ok);
 		hBoxOk.add(Box.createHorizontalGlue());							
 		
-		Box vBoxAboutDialog = Box.createVerticalBox();
-		vBoxAboutDialog.add(hBoxVersionAndIcon);
-		vBoxAboutDialog.add(hBoxOk);		
+		UiVBox vBoxAboutDialog = new UiVBox();
+		vBoxAboutDialog.addCentered(hBoxVersionAndIcon);
+		vBoxAboutDialog.addCentered(hBoxOk);		
 		
 		panel.add(vBoxAboutDialog);
 		getContentPane().add(panel);
