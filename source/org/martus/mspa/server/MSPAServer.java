@@ -1109,15 +1109,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				
 			if(argument.startsWith(portToListenTag))
 			{	
-				String portToUse = argument.substring(portToListenTag.length());
-				setPortToUse(Integer.parseInt(portToUse));	
+				String portToListen = argument.substring(portToListenTag.length());
+				setPortToUse(Integer.parseInt(portToListen));	
 				System.out.println("Port to use for clients: "+ getPortToUse());
 			}
 			
 			if(argument.startsWith(rootPortTag))
 			{	
-				String portToUse = argument.substring(rootPortTag.length());
-				setRootHelperPortToUse(Integer.parseInt(portToUse));	
+				String portToListen = argument.substring(rootPortTag.length());
+				setRootHelperPortToUse(Integer.parseInt(portToListen));	
 				System.out.println("Port to use for connect to RootHelper: "+ getRootHelperPortToUse());
 			}
 						

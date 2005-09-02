@@ -146,8 +146,8 @@ public class RootHelper
 								
 			if(argument.startsWith(portToListenTag))
 			{	
-				String portToUse = argument.substring(portToListenTag.length());
-				setPortToUse(Integer.parseInt(portToUse));	
+				String portToListen = argument.substring(portToListenTag.length());
+				setPortToUse(Integer.parseInt(portToListen));	
 			}			
 		}
 		System.out.println("");

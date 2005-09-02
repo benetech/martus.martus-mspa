@@ -414,7 +414,7 @@ public class AccountDetailPanel extends JPanel
 			if (!bulletinList.isSelectionEmpty())
 			{	
 				Object[] items = bulletinList.getSelectedValues();
-				Vector hiddenList = new Vector();
+				Vector hiddenSealedList = new Vector();
 				for (int i=0;i< items.length;++i)
 				{
 					String item = (String) items[i];
@@ -422,7 +422,7 @@ public class AccountDetailPanel extends JPanel
 					String status = item.substring(item.indexOf("\t")+1);			
 					if (status.equals(BulletinConstants.STATUSSEALED))				
 					{					
-						hiddenList.add(item);
+						hiddenSealedList.add(item);
 						bulletinListModel.removeElement(item);
 					}
 					else
@@ -432,7 +432,7 @@ public class AccountDetailPanel extends JPanel
 					}				
 				}
 				
-				app.removeBulletin(accountId, hiddenList);
+				app.removeBulletin(accountId, hiddenSealedList);
 				postStatus("Remove Bulletins: ");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);

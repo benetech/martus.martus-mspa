@@ -74,8 +74,8 @@ public class MSPAClient
 	private void setServerPublicCode(String key)
 	{	
 
-		String serverPublicCode = MartusCrypto.removeNonDigits(key);
-		handler.getSimpleX509TrustManager().setExpectedPublicCode(serverPublicCode);	
+		String strippedServerPublicCode = MartusCrypto.removeNonDigits(key);
+		handler.getSimpleX509TrustManager().setExpectedPublicCode(strippedServerPublicCode);	
 	}
 				
 	private ClientSideXmlRpcHandler createXmlRpcNetworkInterfaceHandler()
