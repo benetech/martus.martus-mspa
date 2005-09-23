@@ -36,7 +36,6 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -66,6 +65,7 @@ import org.martus.mspa.common.network.ServerSideHandler;
 import org.martus.mspa.roothelper.Messenger;
 import org.martus.mspa.roothelper.RootHelperConnector;
 import org.martus.util.FileTransfer;
+import org.martus.util.MartusCalendar;
 import org.martus.util.UnicodeWriter;
 
 
@@ -782,11 +782,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private String getBackupFileExtension(Date today)
 	{
-		Calendar calendar = new GregorianCalendar();
+		MartusCalendar calendar = new MartusCalendar();
 		calendar.setTime(today);
-		int year = calendar.get(GregorianCalendar.YEAR);
-		int month = calendar.get(GregorianCalendar.MONTH);
-		int day = calendar.get(GregorianCalendar.DAY_OF_MONTH);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		
 		return Integer.toString(year)+Integer.toString(month+1)+Integer.toString(day);
 	}	
