@@ -34,7 +34,6 @@ import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -780,9 +779,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private String getBackupFileExtension()
 	{
 		MartusCalendar calendar = new MartusCalendar();
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH);
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		int year = calendar.getGregorianYear();
+		int month = calendar.getGregorianMonth();
+		int day = calendar.getGregorianDay();
 		
 		return Integer.toString(year)+Integer.toString(month+1)+Integer.toString(day);
 	}	
