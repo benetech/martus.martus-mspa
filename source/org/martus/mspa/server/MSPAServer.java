@@ -63,7 +63,7 @@ import org.martus.mspa.common.network.ServerSideHandler;
 import org.martus.mspa.roothelper.Messenger;
 import org.martus.mspa.roothelper.RootHelperConnector;
 import org.martus.util.FileTransfer;
-import org.martus.util.MartusCalendar;
+import org.martus.util.MultiCalendar;
 import org.martus.util.UnicodeWriter;
 
 
@@ -778,7 +778,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private String getBackupFileExtension()
 	{
-		MartusCalendar calendar = new MartusCalendar();
+		MultiCalendar calendar = new MultiCalendar();
 		int year = calendar.getGregorianYear();
 		int month = calendar.getGregorianMonth();
 		int day = calendar.getGregorianDay();
