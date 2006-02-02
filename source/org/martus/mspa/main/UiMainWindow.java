@@ -80,7 +80,7 @@ public class UiMainWindow extends JFrame
 		
 		try
 		{			
-			localization  = new UiLocalization(getDefaultDirectoryPath(), EnglishStrings.strings);
+			localization  = new MSPALocalization(getDefaultDirectoryPath(), EnglishStrings.strings);
 			mspaApp = new MSPAClient(localization);		
 			initalizeUiState();
 		}
@@ -424,7 +424,7 @@ public class UiMainWindow extends JFrame
 	JTabbedPane tabPane;
 	JTextField statusField;
 	AccountsTree accountTree;
-	UiLocalization localization;
+	MSPALocalization localization;
 	CurrentUiState 	uiState;
 	String serverName;
 	
