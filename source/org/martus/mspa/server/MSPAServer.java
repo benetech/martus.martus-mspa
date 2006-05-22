@@ -1230,7 +1230,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 	}	
 	
-	private class ShutdownRequestMonitor extends TimerTask
+	class ShutdownRequestMonitor extends TimerTask
 	{
 		public void run()
 		{

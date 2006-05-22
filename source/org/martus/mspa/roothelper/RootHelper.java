@@ -173,7 +173,7 @@ public class RootHelper
 		new RootHelper(args, passphrase);
 	}	
 	
-	private class ShutdownRequestMonitor extends TimerTask
+	class ShutdownRequestMonitor extends TimerTask
 	{
 		public void run()
 		{
