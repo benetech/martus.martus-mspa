@@ -315,7 +315,7 @@ public class UiMainWindow extends JFrame
 				
 		try
 		{
-			String userName = signinDlg.getName();
+			String userName = signinDlg.getNameText();
 			char[] password = signinDlg.getPassword();
 						
 			int userChoice = signinDlg.getUserChoice();
