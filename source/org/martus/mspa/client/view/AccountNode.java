@@ -27,7 +27,7 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.util.Base64.InvalidBase64Exception;
+import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 
 public class AccountNode

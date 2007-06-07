@@ -46,7 +46,7 @@ import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.common.network.ClientSideXmlRpcHandler;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.server.LoadMartusServerArguments;
-import org.martus.util.Base64.InvalidBase64Exception;
+import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class MSPAClient 
 {				

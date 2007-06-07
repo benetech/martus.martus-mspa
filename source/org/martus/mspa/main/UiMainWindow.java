@@ -70,7 +70,7 @@ import org.martus.mspa.common.ManagingMirrorServerConstants;
 import org.martus.swing.ParagraphLayout;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
-import org.martus.util.Base64.InvalidBase64Exception;
+import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class UiMainWindow extends JFrame
 {
