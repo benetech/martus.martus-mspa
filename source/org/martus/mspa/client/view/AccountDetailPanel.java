@@ -55,7 +55,7 @@ import org.martus.common.bulletin.BulletinConstants;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.common.AccountAdminOptions;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.swing.ParagraphLayout;
+import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.UiTextArea;
@@ -115,15 +115,15 @@ public class AccountDetailPanel extends JPanel
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(5,5,5,5));
-		panel.setLayout(new ParagraphLayout());
+		panel.setLayout(new MartusParagraphLayout());
 		JLabel numOfDelBulletinLabel = new UiLabel("Number of Deleted Bulletins: ");
 		numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
 		numOfDelBulletineField.setEditable(false);		
 
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(numOfDelBulletinLabel);
 		panel.add(numOfDelBulletineField);		
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(buildContactPanel(contactInfo));
 
 //		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
@@ -163,39 +163,39 @@ public class AccountDetailPanel extends JPanel
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder (new LineBorder (Color.gray, 1)," Contact Info "));
-		panel.setLayout(new ParagraphLayout());
+		panel.setLayout(new MartusParagraphLayout());
 											
-		panel.add(new UiLabel("Author: ") , ParagraphLayout.NEW_PARAGRAPH);			
+		panel.add(new UiLabel("Author: ") , MartusParagraphLayout.NEW_PARAGRAPH);			
 		JTextField author = new JTextField(30);		
 		author.setEditable(false);
 		panel.add(author);		
 		
-		panel.add(new UiLabel("Organization: "),ParagraphLayout.NEW_PARAGRAPH);			
+		panel.add(new UiLabel("Organization: "),MartusParagraphLayout.NEW_PARAGRAPH);			
 		JTextField  organization = new JTextField(30);			
 		organization.setEditable(false);
 		panel.add(organization);
 						
-		panel.add(new UiLabel("Email Address: "),ParagraphLayout.NEW_PARAGRAPH);			
+		panel.add(new UiLabel("Email Address: "),MartusParagraphLayout.NEW_PARAGRAPH);			
 		JTextField email = new JTextField(30);
 		email.setEditable(false);
 		panel.add(email);				
 		
-		panel.add(new UiLabel("Web Page: "),ParagraphLayout.NEW_PARAGRAPH);			
+		panel.add(new UiLabel("Web Page: "),MartusParagraphLayout.NEW_PARAGRAPH);			
 		JTextField web = new JTextField(30);
 		web.setEditable(false);
 		panel.add(web);	
 		
-		panel.add(new UiLabel("Phone #: "),ParagraphLayout.NEW_PARAGRAPH);			
+		panel.add(new UiLabel("Phone #: "),MartusParagraphLayout.NEW_PARAGRAPH);			
 		JTextField phone = new JTextField(30);
 		phone.setEditable(false);
 		panel.add(phone);		
 		
-		panel.add(new UiLabel("Mailing Address: "),ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("Mailing Address: "),MartusParagraphLayout.NEW_PARAGRAPH);
 		UiTextArea address = new UiTextArea(4, 35);		
 		address.setEditable(false);
 		JScrollPane addressScrollPane = new JScrollPane(address, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		panel.add(addressScrollPane,ParagraphLayout.NEW_LINE);
+		panel.add(addressScrollPane,MartusParagraphLayout.NEW_LINE);
 			
 		if (!contactInfo.isEmpty())
 		{

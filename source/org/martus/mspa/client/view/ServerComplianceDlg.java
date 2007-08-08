@@ -41,7 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.swing.ParagraphLayout;
+import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.UiWrappedTextArea;
@@ -69,7 +69,7 @@ public class ServerComplianceDlg extends JDialog
 	private JPanel buildCompliantTextArea(String compliants)
 	{
 		JPanel panel = new JPanel();
-		panel.setLayout(new ParagraphLayout());
+		panel.setLayout(new MartusParagraphLayout());
 		
 		JLabel label = new UiLabel("Compliance for this Martus Server:");
 		
@@ -81,9 +81,9 @@ public class ServerComplianceDlg extends JDialog
 		sp.getViewport().add(complianceEditor);
 		sp.setPreferredSize(new Dimension(250,180));
 		
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(label); 
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(sp);
 		
 		return panel;

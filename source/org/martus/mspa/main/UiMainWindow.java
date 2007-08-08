@@ -67,7 +67,7 @@ import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
 import org.martus.mspa.client.view.menuitem.MenuItemMartusServerCompliance;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.mspa.common.ManagingMirrorServerConstants;
-import org.martus.swing.ParagraphLayout;
+import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
 import org.martus.util.StreamableBase64.InvalidBase64Exception;
@@ -214,7 +214,7 @@ public class UiMainWindow extends JFrame
 	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
 	{
 		JPanel serverInfoPanel = new JPanel();
-		serverInfoPanel.setLayout(new ParagraphLayout());
+		serverInfoPanel.setLayout(new MartusParagraphLayout());
 		try
 		{		
 			JTextField ipLabel = new JTextField(InetAddress.getByName(ipAddr).getHostAddress(),20);
@@ -226,16 +226,16 @@ public class UiMainWindow extends JFrame
 			publicCodeLabel.setForeground(Color.BLUE);
 					
 			JLabel title = new UiLabel("MSPA Server Infomation: ");			
-			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);			
+			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);			
 			serverInfoPanel.add(title);	
-			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 			serverInfoPanel.add(new UiLabel("IP Address: "));			
 			serverInfoPanel.add(ipLabel);
-			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);	
+			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);	
 			serverInfoPanel.add(new UiLabel("Public Code:"));	
 			serverInfoPanel.add(publicCodeLabel);
-			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
-			serverInfoPanel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
+			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 			JLabel accountListLabel = new UiLabel("Martus Client accounts on this server:");			
 			serverInfoPanel.add(accountListLabel);			
 		}

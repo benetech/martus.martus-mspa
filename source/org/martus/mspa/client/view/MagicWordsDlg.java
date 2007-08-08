@@ -60,7 +60,7 @@ import javax.swing.table.TableColumn;
 
 import org.martus.common.MagicWords;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.swing.ParagraphLayout;
+import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
@@ -94,7 +94,7 @@ public class MagicWordsDlg extends JDialog
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Magic Word and Group"));
-		panel.setLayout(new ParagraphLayout());
+		panel.setLayout(new MartusParagraphLayout());
 				
 		addMagicWordsField = new JTextField(20);
 		addMagicWordsField.requestFocus();	
@@ -107,7 +107,7 @@ public class MagicWordsDlg extends JDialog
 		updateMagicWordButton = new UiButton("Update");
 		updateMagicWordButton.addActionListener(new MagicWordButtonHandler());						
 				
-		panel.add(new UiLabel(""), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel(""), MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(new UiLabel("Magic word:"));		
 		panel.add(addMagicWordsField);
 		
@@ -115,7 +115,7 @@ public class MagicWordsDlg extends JDialog
 		panel.add(new UiLabel("Assign to which group:"));
 		panel.add(groupComboField);				
 								
-		panel.add(new UiLabel(""), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel(""), MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(new UiLabel(""));		
 		panel.add(addMagicWordButton);	
 		panel.add(updateMagicWordButton);

@@ -45,7 +45,7 @@ import javax.swing.border.LineBorder;
 
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.server.LoadMartusServerArguments;
-import org.martus.swing.ParagraphLayout;
+import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.UiWrappedTextArea;
@@ -76,7 +76,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 
 		JPanel panel = new JPanel();		
 		panel.setBorder(new LineBorder(Color.gray));
-		panel.setLayout(new ParagraphLayout());
+		panel.setLayout(new MartusParagraphLayout());
 		
 		JLabel listenerIpLabel = new UiLabel("Listener IP :");
 		JLabel amplifierIpLabel = new UiLabel("Amplifier IP :");
@@ -105,28 +105,28 @@ public class ServerArgumentsConfigDlg extends JDialog
 		mirrorListener = new JCheckBox("Mirror-Listener",arguments.getMirrorListenerStatus());		
 		amplifierListener = new JCheckBox("Amplifier-Listener", arguments.getAmplifierListenerStatus());
 		 		
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(listenerIpLabel); 
 		panel.add(listenerIpTextField);
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(amplifierIpLabel); 
 		panel.add(amplifierIpTextField);
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 
 		 
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(passwordLabel); 
 		panel.add(passwordComboField);
 		panel.add(minutesLabel); 
 		panel.add(minutsComboField);
 		
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(amplifier); 
 		panel.add(clientListener);	
 		panel.add(mirrorListener); 
 		panel.add(amplifierListener);			
 		
-		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(previewPanel());
 		
 		return panel;

@@ -50,7 +50,7 @@ import javax.swing.border.TitledBorder;
 import org.martus.mspa.client.core.MirrorServerLabelFinder;
 import org.martus.mspa.client.core.MirrorServerLabelInfo;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.swing.ParagraphLayout;
+import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
@@ -81,18 +81,18 @@ public class ManagingMirrorServersDlg extends JDialog
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),""));
-		panel.setLayout(new ParagraphLayout());
+		panel.setLayout(new MartusParagraphLayout());
 		
 		manageIPAddr = new JTextField(20);		
 		manageIPAddr.requestFocus();		
 		managePublicCode = new JTextField(20);					
 		
-		panel.add(new UiLabel("IP Address: "), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("IP Address: "), MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(manageIPAddr);
-		panel.add(new UiLabel("Public Code: "), ParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel("Public Code: "), MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(managePublicCode);
 		mirrorServerName = new JTextField(20);
-		panel.add(new UiLabel("Server Name: "), ParagraphLayout.NEW_PARAGRAPH);	
+		panel.add(new UiLabel("Server Name: "), MartusParagraphLayout.NEW_PARAGRAPH);	
 		panel.add(mirrorServerName);			
 				
 		collectMirrorInfo(panel);
