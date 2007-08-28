@@ -28,9 +28,12 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.main;
 
 import java.awt.Toolkit;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import org.martus.mspa.client.core.MSPAClient;
 
 
 public class MSPAMain
@@ -39,6 +42,7 @@ public class MSPAMain
 	{					
 		final String javaVersion = System.getProperty("java.version");
 		final String minimumJavaVersion = "1.4.1";
+		
 		if(javaVersion.compareTo(minimumJavaVersion) < 0)
 		{
 			final String errorMessage = "Requires Java version " + minimumJavaVersion + " or later!";
@@ -48,6 +52,9 @@ public class MSPAMain
 			System.exit(2);
 		}
 
+		if(Arrays.asList(args).contains("--highport"))
+			MSPAClient.DEFAULT_PORT = 9984;
+		
 		try
 		{		
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());										
