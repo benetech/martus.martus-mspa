@@ -653,10 +653,10 @@ public class MSPAClient
 	File[] toCallFiles;
 	String currentStatus;
 	
-	final static int DEFAULT_PORT = 984;
+	public static int DEFAULT_PORT = 984;
 	final static String DEFAULT_HOST = "localHost";	
 	
-	private final static String KEYPAIR_FILE ="\\keypair.dat"; 
+	private final static String KEYPAIR_FILE ="keypair.dat"; 
 	private static final String SERVER_WHO_WE_CALL_DIRIRECTORY = "serverToCall";
 	
 }
