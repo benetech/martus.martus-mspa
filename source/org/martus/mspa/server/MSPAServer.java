@@ -1195,7 +1195,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.deleteRunningFile();				
 						
 			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
+			{
+				System.out.println("Exiting");
 				System.exit(4);
+			}
 				
 			if (!server.getMSPAServerKeyPairFile().exists())
 			{	
@@ -1225,7 +1228,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		catch(Exception e) 
 		{
-			System.out.println("Exception: " + e);
+			e.printStackTrace();
 			System.exit(1);			
 		}
 	}	
