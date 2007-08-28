@@ -33,6 +33,7 @@ public class MSPALocalization extends UiLocalization
 	public MSPALocalization(File directoryToUse, String[] englishTranslations)
 	{
 		super(directoryToUse, englishTranslations);
+		setCurrentLanguageCode(ENGLISH);
 	}
 
 	public String getProgramVersionLabel()
