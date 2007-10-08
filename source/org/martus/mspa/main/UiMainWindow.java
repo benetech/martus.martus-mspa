@@ -32,6 +32,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -64,6 +65,7 @@ import org.martus.mspa.client.view.menuitem.MenuItemManagingMirrorServers;
 import org.martus.mspa.client.view.menuitem.MenuItemMartusServerCompliance;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.mspa.common.ManagingMirrorServerConstants;
+import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
@@ -126,7 +128,23 @@ public class UiMainWindow extends JFrame
 			{
 				initializationErrorDlg("Exiting because no server was selected");	
 				return false;
-			}	
+			}
+			
+			try
+			{
+				String serverStatus = mspaApp.getServerStatus();
+				if(!serverStatus.equals(NetworkInterfaceConstants.OK))
+				{
+					initializationErrorDlg("Server ping not ok, was: " + serverStatus);
+					return false;
+				}
+			} 
+			catch (IOException e)
+			{
+				MartusLogger.logException(e);
+				initializationErrorDlg("Unable to connect to server");
+				return false;
+			}
 			
 			setSize(840, 650);
 			JPanel mainPanel = new JPanel();
