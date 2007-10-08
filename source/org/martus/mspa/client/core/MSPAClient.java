@@ -112,37 +112,12 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
-	public boolean loadServerToCall() throws Exception
+	public void loadListOfConfiguredServers() throws Exception
 	{
-		boolean promptUserToSelectServer=false;
-		
 		portToUse = DEFAULT_PORT;					
 		File serverToCallDirectory = getServerToCallDirectory();
 		serverToCallDirectory.mkdirs();
 		toCallFiles = DirectoryUtils.listFiles(serverToCallDirectory);
-
-		if (toCallFiles.length != 1)
-			promptUserToSelectServer = true;
-		
-		
-		if(!promptUserToSelectServer)
-		{
-			File toCallFile = toCallFiles[0];		
-			if(!toCallFile.isDirectory())
-			{
-				ipToUse = MartusUtilities.extractIpFromFileName(toCallFile.getName());				
-				Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
-				String serverPublicKey = (String)publicInfo.get(0);	
-				if (serverPublicKey != null)
-				{				
-					String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
-					serverPublicCode = MartusCrypto.formatPublicCode(nonFormatPublicCode);	
-				}
-			}			
-			setXMLRpcEnviornments();
-		}	
-		
-		return promptUserToSelectServer;
 	}
 	
 	public Vector getLineOfServerIpAndPublicCode() throws

@@ -170,8 +170,7 @@ public class UiMainWindow extends JFrame
 	
 	private boolean whichServerToCall() throws Exception
 	{
-		if (!mspaApp.loadServerToCall())				
-			return true;
+		mspaApp.loadListOfConfiguredServers();				
 	
 		Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
 		ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
