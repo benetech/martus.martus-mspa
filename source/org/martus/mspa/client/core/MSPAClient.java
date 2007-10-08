@@ -112,12 +112,13 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
-	public void loadListOfConfiguredServers() throws Exception
+	public boolean loadListOfConfiguredServers() throws Exception
 	{
 		portToUse = DEFAULT_PORT;					
 		File serverToCallDirectory = getServerToCallDirectory();
 		serverToCallDirectory.mkdirs();
 		toCallFiles = DirectoryUtils.listFiles(serverToCallDirectory);
+		return (toCallFiles.length > 0);
 	}
 	
 	public Vector getLineOfServerIpAndPublicCode() throws
@@ -623,6 +624,6 @@ public class MSPAClient
 	final static String DEFAULT_HOST = "localHost";	
 	
 	private final static String KEYPAIR_FILE ="keypair.dat"; 
-	private static final String MSPA_SERVERS_DIRECTORY = "serverToCall";
+	private static final String MSPA_SERVERS_DIRECTORY = "knownServers";
 	
 }

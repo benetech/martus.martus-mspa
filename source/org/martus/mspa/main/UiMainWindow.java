@@ -116,6 +116,12 @@ public class UiMainWindow extends JFrame
 				return false;
 			}
 
+			if(!mspaApp.loadListOfConfiguredServers())
+			{
+				initializationErrorDlg("Exiting because no servers configured in " + mspaApp.getServerToCallDirectory());	
+				return false;
+			}
+		
 			if (!selectServer())
 			{
 				initializationErrorDlg("Exiting because no server was selected");	
@@ -170,8 +176,6 @@ public class UiMainWindow extends JFrame
 	
 	private boolean selectServer() throws Exception
 	{
-		mspaApp.loadListOfConfiguredServers();				
-	
 		Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
 		ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
 		dlg.setVisible(true);
