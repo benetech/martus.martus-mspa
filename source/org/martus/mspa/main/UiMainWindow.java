@@ -116,7 +116,7 @@ public class UiMainWindow extends JFrame
 				return false;
 			}
 
-			if (!whichServerToCall())
+			if (!selectServer())
 			{
 				initializationErrorDlg("Exiting because no server was selected");	
 				return false;
@@ -168,7 +168,7 @@ public class UiMainWindow extends JFrame
 		}
 	}
 	
-	private boolean whichServerToCall() throws Exception
+	private boolean selectServer() throws Exception
 	{
 		mspaApp.loadListOfConfiguredServers();				
 	
