@@ -186,7 +186,10 @@ public class MSPAClient
 	}
 	
 	
-			
+	public String getServerStatus() throws Exception
+	{
+		return (String)handler.ping().get(0);
+	}
 	
 	private Vector getAccountIds(String myAccountId, Vector parameters, String signature) throws IOException 
 	{	
