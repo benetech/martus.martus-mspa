@@ -40,6 +40,7 @@ import java.util.Vector;
 import org.martus.common.LoggerInterface;
 import org.martus.common.LoggerToConsole;
 import org.martus.common.MagicWords;
+import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
@@ -62,6 +63,7 @@ import org.martus.mspa.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.common.network.ServerSideHandler;
 import org.martus.mspa.roothelper.Messenger;
 import org.martus.mspa.roothelper.RootHelperConnector;
+import org.martus.util.DirectoryUtils;
 import org.martus.util.FileTransfer;
 import org.martus.util.MultiCalendar;
 import org.martus.util.UnicodeWriter;
@@ -1053,8 +1055,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private Vector getCurrentFilesAndFolders()
 	{
-		File[] deleteOnStartUp = getMSPADeleteOnStartup().listFiles();
-		File[] martusServerData = getMartusServerDataDirectory().listFiles();
+		File[] deleteOnStartUp = DirectoryUtils.listFiles(getMSPADeleteOnStartup());
+		File[] martusServerData = DirectoryUtils.listFiles(getMartusServerDataDirectory());
 		
 		Vector currentList = new Vector(Arrays.asList(deleteOnStartUp));
 		currentList.addAll(Arrays.asList(martusServerData));			
@@ -1195,16 +1197,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.deleteRunningFile();				
 						
 			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
-			{
-				System.out.println("Exiting");
-				System.exit(4);
-			}
+				exitWithCause("Unexpected files or folders in startup directory", 4);
 				
-			if (!server.getMSPAServerKeyPairFile().exists())
-			{	
-				System.out.println("***** Key pair file not found *****");
-				System.exit(2);
-			}												
+			File serverKeyPairFile = server.getMSPAServerKeyPairFile();
+			if (!serverKeyPairFile.exists())
+				exitWithCause("File not found: " + serverKeyPairFile, 2);
 
 			char[] passphrase = server.insecurePassword;
 			if(passphrase == null)
@@ -1219,7 +1216,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.initConfig();																						
 						
 			if(!server.deleteStartupFiles())
-				System.exit(5);		
+				exitWithCause("Delete startup files failed", 5);		
 				
 			server.startBackgroundTimers();		
 			ServerSideUtilities.writeSyncFile(server.getRunningFile(), "MSPAServer.main");
@@ -1228,10 +1225,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		catch(Exception e) 
 		{
-			e.printStackTrace();
-			System.exit(1);			
+			MartusLogger.logException(e);
+			exitWithCause("Unexpected Exception", 1);			
 		}
-	}	
+	}
+	
+	private static void exitWithCause(String cause, int exitStatus)
+	{
+		MartusLogger.logError(cause);
+		MartusLogger.logError("Exiting");
+		System.exit(exitStatus);
+	}
 	
 	class ShutdownRequestMonitor extends TimerTask
 	{
