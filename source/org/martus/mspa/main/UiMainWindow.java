@@ -79,7 +79,8 @@ public class UiMainWindow extends JFrame
 		super("Martus Server Policy Administrator (MSPA)");	
 		
 		try
-		{			
+		{
+			getDefaultDirectoryPath().mkdirs();
 			localization  = new MSPALocalization(getDefaultDirectoryPath(), EnglishStrings.strings);
 			mspaApp = new MSPAClient(localization);		
 			initalizeUiState();
@@ -115,7 +116,7 @@ public class UiMainWindow extends JFrame
 			
 			if (result != UiBasicSigninDlg.SIGN_IN)
 			{
-				String msg = "User Name and Passphrase not match.";
+				String msg = "User Name and Passphrase do not match.";
 				initializationErrorDlg(msg);					
 			}
 			result = signIn(UiBasicSigninDlg.INITIAL);
