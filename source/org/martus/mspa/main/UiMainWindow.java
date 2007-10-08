@@ -51,6 +51,7 @@ import javax.swing.JTextField;
 import org.martus.clientside.CurrentUiState;
 import org.martus.clientside.UiBasicSigninDlg;
 import org.martus.clientside.UiLocalization;
+import org.martus.common.MartusLogger;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
@@ -98,74 +99,78 @@ public class UiMainWindow extends JFrame
 		return localization;
 	}
 		
-	public boolean run()	
+	public boolean run()
 	{
-		int result = signIn(UiBasicSigninDlg.INITIAL); 
-		int loginTimes=0;
-		while (result != UiBasicSigninDlg.SIGN_IN)
-		{	
+		
+		try
+		{
+			if(!mspaApp.getKeypairFile().exists())
+			{
+				initializationErrorDlg("Missing keypair file: " + mspaApp.getKeypairFile());
+				return false;
+			}
+			
+			int result = signIn(UiBasicSigninDlg.INITIAL); 
 			if(result == UiBasicSigninDlg.CANCEL)
 				return false;
-				
-			if (loginTimes > 2)	
-			{
-				String msg = "Login Failed. Exit application.";
-				initializationErrorDlg(msg);	
-				return false;
-			}	
-			
+
 			if (result != UiBasicSigninDlg.SIGN_IN)
 			{
 				String msg = "User Name and Passphrase do not match.";
 				initializationErrorDlg(msg);					
+				return false;
 			}
-			result = signIn(UiBasicSigninDlg.INITIAL);
-			++loginTimes; 
-		}
-		
-		if (!whichServerToCall())
-		{
-			JOptionPane.showMessageDialog(this, "MSPA Client would not be able to continue due to missing connect server ip and public code.", "MSPA error message", JOptionPane.ERROR_MESSAGE);	
-			return false;
-		}	
-		
-		setSize(840, 650);
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout());		
-	
-	
-		JMenuBar menuBar = createMenuBar();
-		setJMenuBar(menuBar);
-	
-		createTabbedPaneRight();
-		Vector accounts = mspaApp.displayAccounts();			
-		accountTree = new AccountsTree(accounts, this);
 
-		JPanel leftPanel = createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode());								
-		m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,tabPane);
-		m_sp.setContinuousLayout(false);
-		m_sp.setDividerLocation(260);
-		m_sp.setDividerSize(5);		
-		m_sp.setOneTouchExpandable(true);
-		
-		mainPanel.add(m_sp, BorderLayout.CENTER);
-		mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);	
-		setStatusText(mspaApp.getStatus());
-
-		WindowListener wndCloser = new WindowAdapter()
-		{
-			public void windowClosing(WindowEvent e) 
+			if (!whichServerToCall())
 			{
-				System.exit(0);
-			}
-		};
-		addWindowListener(wndCloser);
-		getContentPane().add(mainPanel);
+				JOptionPane.showMessageDialog(this, "MSPA Client would not be able to continue due to missing connect server ip and public code.", "MSPA error message", JOptionPane.ERROR_MESSAGE);	
+				return false;
+			}	
 			
-		Utilities.centerFrame(this);	
-		setVisible(true);		
-						
-		return true;
+			setSize(840, 650);
+			JPanel mainPanel = new JPanel();
+			mainPanel.setLayout(new BorderLayout());		
+
+
+			JMenuBar menuBar = createMenuBar();
+			setJMenuBar(menuBar);
+
+			createTabbedPaneRight();
+			Vector accounts = mspaApp.displayAccounts();			
+			accountTree = new AccountsTree(accounts, this);
+
+			JPanel leftPanel = createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode());								
+			m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,tabPane);
+			m_sp.setContinuousLayout(false);
+			m_sp.setDividerLocation(260);
+			m_sp.setDividerSize(5);		
+			m_sp.setOneTouchExpandable(true);
+			
+			mainPanel.add(m_sp, BorderLayout.CENTER);
+			mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);	
+			setStatusText(mspaApp.getStatus());
+
+			WindowListener wndCloser = new WindowAdapter()
+			{
+				public void windowClosing(WindowEvent e) 
+				{
+					System.exit(0);
+				}
+			};
+			addWindowListener(wndCloser);
+			getContentPane().add(mainPanel);
+				
+			Utilities.centerFrame(this);	
+			setVisible(true);		
+							
+			return true;
+		} 
+		catch (Exception e)
+		{
+			MartusLogger.logException(e);
+			initializationErrorDlg("Exiting due to an unexpected error");
+			return false;
+		}
 	}
 	
 	private boolean whichServerToCall()
@@ -308,33 +313,22 @@ public class UiMainWindow extends JFrame
 	}
 	
 
-	int signIn(int mode)
+	private int signIn(int mode) throws Exception
 	{
-		int seconds = 0;
 		String iniPassword="";		
 		UiBasicSigninDlg signinDlg = new UiBasicSigninDlg(localization, uiState, currentActiveFrame, mode, "", iniPassword.toCharArray());
 				
-		try
-		{
-			String userName = signinDlg.getNameText();
-			char[] password = signinDlg.getPassword();
-						
-			int userChoice = signinDlg.getUserChoice();
-			if (userChoice != UiBasicSigninDlg.SIGN_IN)
-				return userChoice;
+		String userName = signinDlg.getNameText();
+		char[] password = signinDlg.getPassword();
+					
+		int userChoice = signinDlg.getUserChoice();
+		if (userChoice != UiBasicSigninDlg.SIGN_IN)
+			return userChoice;
 
-			if(mode == UiBasicSigninDlg.INITIAL)
-			{	
-				mspaApp.signIn(userName, password);
-			}
-		
-			return UiBasicSigninDlg.SIGN_IN;
-		}
-		catch (Exception e)
-		{			
-			System.out.println("Error: User name and Passphrase not match.");
-		}
-		return seconds;
+		if(mode == UiBasicSigninDlg.INITIAL)
+			mspaApp.signIn(userName, password);
+	
+		return UiBasicSigninDlg.SIGN_IN;
 	}		
 
 	protected JMenuBar createMenuBar()
@@ -402,7 +396,7 @@ public class UiMainWindow extends JFrame
 		if(Version.isRunningUnderWindows())
 			dataDirectory = "C:/MSPAClient/";
 		else
-			dataDirectory = System.getProperty("user.home")+"/.MSPAClient/";
+			dataDirectory = System.getProperty("user.home")+"/MSPAClient/";
 		return new File(dataDirectory);
 	}	
 	
