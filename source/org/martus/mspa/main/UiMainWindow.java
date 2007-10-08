@@ -32,7 +32,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -53,9 +52,6 @@ import org.martus.clientside.UiBasicSigninDlg;
 import org.martus.clientside.UiLocalization;
 import org.martus.common.MartusLogger;
 import org.martus.common.Version;
-import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
-import org.martus.common.MartusUtilities.PublicInformationInvalidException;
-import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
@@ -71,7 +67,6 @@ import org.martus.mspa.common.ManagingMirrorServerConstants;
 import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
-import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class UiMainWindow extends JFrame
 {
@@ -173,47 +168,19 @@ public class UiMainWindow extends JFrame
 		}
 	}
 	
-	private boolean whichServerToCall()
+	private boolean whichServerToCall() throws Exception
 	{
-		try
-		{
-			if (!mspaApp.loadServerToCall())				
-				return true;
+		if (!mspaApp.loadServerToCall())				
+			return true;
+	
+		Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
+		ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
+		dlg.setVisible(true);
 		
-			Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
-			ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
-			dlg.setVisible(true);
-			
-			if (mspaApp.getCurrentServerPublicCode().length() <=0)
-				return false;
-			
-			mspaApp.setXMLRpcEnviornments();				
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvalidPublicKeyFileException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (PublicInformationInvalidException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (SSLSocketSetupException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvalidBase64Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (mspaApp.getCurrentServerPublicCode().length() <=0)
+			return false;
+		
+		mspaApp.setXMLRpcEnviornments();				
 		return true;
 	}
 	

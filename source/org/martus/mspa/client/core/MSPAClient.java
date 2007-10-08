@@ -111,11 +111,7 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
-	public boolean loadServerToCall() throws
-			IOException, 
-			MartusUtilities.InvalidPublicKeyFileException, 
-			MartusUtilities.PublicInformationInvalidException, 
-			SSLSocketSetupException, InvalidBase64Exception
+	public boolean loadServerToCall() throws Exception
 	{
 		boolean prompUserToSelectServer=false;
 		
