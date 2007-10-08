@@ -45,8 +45,6 @@ public class NetworkInterfaceConstants
 	
 	public static final String START_SERVER= "Start";
 	public static final String STOP_SERVER = "Stop";
-	public static final String READ_WRITE = "read write";
-	public static final String READ_ONLY = "read only";
 	public static final String GET_STATUS = "get status";
 	public static final String ADD_HOST = "add host";
 	

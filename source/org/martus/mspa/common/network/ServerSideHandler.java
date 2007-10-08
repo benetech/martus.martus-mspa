@@ -29,7 +29,6 @@ package org.martus.mspa.common.network;
 
 import java.io.File;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -198,27 +197,19 @@ public class ServerSideHandler implements NetworkInterface
 		}
 		
 		Status status = new Status();
-		try
-		{				
-			if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
-				status = server.getMessenger().startServer("");
-			else if (cmdType.equals(NetworkInterfaceConstants.STOP_SERVER))
-				status = server.getMessenger().stopServer("");
-			else if (cmdType.equals(NetworkInterfaceConstants.READ_WRITE))
-				status = server.getMessenger().setReadWrite("");
-			else if (cmdType.equals(NetworkInterfaceConstants.READ_ONLY))
-				status = server.getMessenger().setReadOnly("");
-			else
-			{
-				results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
-				return results;
-			}													
-		}
-		catch (RemoteException e)
+		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			status = server.startServer();
 		}
+		else if (cmdType.equals(NetworkInterfaceConstants.STOP_SERVER))
+		{
+			status = server.stopServer();
+		}
+		else
+		{
+			results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
+			return results;
+		}													
 						
 								
 		if (status.isSuccess())
