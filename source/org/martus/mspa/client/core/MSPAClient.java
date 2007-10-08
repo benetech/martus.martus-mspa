@@ -46,6 +46,7 @@ import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.common.network.ClientSideXmlRpcHandler;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.server.LoadMartusServerArguments;
+import org.martus.util.DirectoryUtils;
 import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class MSPAClient 
@@ -113,24 +114,18 @@ public class MSPAClient
 	
 	public boolean loadServerToCall() throws Exception
 	{
-		boolean prompUserToSelectServer=false;
+		boolean promptUserToSelectServer=false;
 		
 		portToUse = DEFAULT_PORT;					
 		File serverToCallDirectory = getServerToCallDirectory();
 		serverToCallDirectory.mkdirs();
-		toCallFiles = serverToCallDirectory.listFiles();
+		toCallFiles = DirectoryUtils.listFiles(serverToCallDirectory);
 
-		if(toCallFiles.length == 0)
-		{
-			System.out.println("No server to call.  Please configure the directory "+serverToCallDirectory.getAbsolutePath());
-			System.exit(3);
-		}
-		
-		if (toCallFiles.length >1)
-			prompUserToSelectServer = true;
+		if (toCallFiles.length != 1)
+			promptUserToSelectServer = true;
 		
 		
-		if(toCallFiles != null && !prompUserToSelectServer)
+		if(!promptUserToSelectServer)
 		{
 			File toCallFile = toCallFiles[0];		
 			if(!toCallFile.isDirectory())
@@ -147,7 +142,7 @@ public class MSPAClient
 			setXMLRpcEnviornments();
 		}	
 		
-		return prompUserToSelectServer;
+		return promptUserToSelectServer;
 	}
 	
 	public Vector getLineOfServerIpAndPublicCode() throws
@@ -180,7 +175,7 @@ public class MSPAClient
 	
 	public File getServerToCallDirectory()
 	{
-		return new File(UiMainWindow.getDefaultDirectoryPath(), SERVER_WHO_WE_CALL_DIRIRECTORY);
+		return new File(UiMainWindow.getDefaultDirectoryPath(), MSPA_SERVERS_DIRECTORY);
 	}
 	
 	
@@ -653,6 +648,6 @@ public class MSPAClient
 	final static String DEFAULT_HOST = "localHost";	
 	
 	private final static String KEYPAIR_FILE ="keypair.dat"; 
-	private static final String SERVER_WHO_WE_CALL_DIRIRECTORY = "serverToCall";
+	private static final String MSPA_SERVERS_DIRECTORY = "serverToCall";
 	
 }
