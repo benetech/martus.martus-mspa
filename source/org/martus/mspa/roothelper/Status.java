@@ -67,6 +67,7 @@ public class Status
 	{
 		String newLine = System.getProperty("line.separator");
 		StringBuffer message = new StringBuffer();
+		message.append(getStatus());
 		if (stdErrorMsg != "")
 			message.append(newLine).append("stderr: ").append(stdErrorMsg);
 			

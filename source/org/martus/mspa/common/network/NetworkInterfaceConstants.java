@@ -41,7 +41,7 @@ public class NetworkInterfaceConstants
 	public static final String NOT_AUTHORIZED = "not authorized";
 	public static final String NOT_FOUND = "not found";
 	public static final String REJECTED = "account rejected";
-	public static final String EXEC_ERROR = "error when execute script";	
+	public static final String EXEC_ERROR = "error starting or stopping service";	
 	
 	public static final String START_SERVER= "Start";
 	public static final String STOP_SERVER = "Stop";
