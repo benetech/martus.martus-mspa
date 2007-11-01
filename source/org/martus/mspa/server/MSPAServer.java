@@ -266,23 +266,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 					authorizeMSPAClients.add(serverPublicKey);
 					System.out.println("Client authorized to call us: "+authorizedFile.getName());
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (InvalidPublicKeyFileException e)
-				{
-					// TODO Auto-generated catch block
-//					e.printStackTrace();
 					log("Error when load "+authorizedFile.getName());
 				}
-				catch (PublicInformationInvalidException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
 			}
 		}			
 	}	
@@ -469,7 +457,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{
 		
-			logAction("Update compliance file", compliantsMsg);			
+			logAction("Update compliance file", compliantsMsg);
+			complianceFile.mkdirs();
 			backupFile(complianceFile);
 						
 			UnicodeWriter writer = new UnicodeWriter(complianceFile);
@@ -768,6 +757,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private void deletePreviousBackupFile(String targetFileName)
 	{		
 		File backupDir = getMartusServerDataBackupDirectory();
+		backupDir.mkdirs();
 		File[] files = backupDir.listFiles();
 		for (int i=0; i<files.length;++i)
 		{			
