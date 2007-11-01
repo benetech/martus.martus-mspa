@@ -34,6 +34,6 @@ public class UiConstants
 	public static final String programName = "Martus Adminstrator Policy(TM)";
 	public static final String versionLabel = "Internal 1.0-prerelease";
 	
-	public static final String copyright = "Copyright 2004 Beneficent Technology, Inc.";
+	public static final String copyright = "Copyright 2004-2007 Beneficent Technology, Inc.";
 	public static final String website = "(Benetech, at www.benetech.org)";
 }
