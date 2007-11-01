@@ -401,13 +401,13 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}
 						
-		Vector magicWords = server.getMagicWordsInfo().getActiveMagicWords();
+		Vector magicWords = server.getActiveMagicWords();
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);
 
 		return results;					
 	}
-	
+
 	public Vector getAllMagicWords(String myAccountId)
 	{			
 		Vector results = new Vector();
@@ -418,7 +418,7 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}		
 
-		Vector magicWords = server.getMagicWordsInfo().getAllMagicWords();			
+		Vector magicWords = server.getAllMagicWords();			
 		results.add(NetworkInterfaceConstants.OK);
 		results.add(magicWords);		
 

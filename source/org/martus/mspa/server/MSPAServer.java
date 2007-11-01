@@ -82,7 +82,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 								
 	}
 	
-	public void initConfig()
+	public void initConfig() throws Exception
 	{			
 		initializedEnvironmentDirectory();	
 		loadConfigurationFiles();
@@ -228,7 +228,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		targetFile.createNewFile();			
 	}
 	
-	private void loadConfigurationFiles()
+	private void loadConfigurationFiles() throws IOException
 	{						
 		clientsBanned = MartusUtilities.loadClientListAndExitOnError(getBannedFile());
 		clientsAllowedUpload = MartusUtilities.loadClientList(getAllowUploadFile());		
@@ -236,6 +236,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				
 		hiddenBulletins = new HiddenBulletins(getDatabase(),security, getLogger(), getHiddenPacketsFile());
 		loadAuthorizedClients();
+		loadMagicWords();
 	}
 
 	private void loadAuthorizedClients() 
@@ -274,6 +275,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			}
 		}			
 	}	
+	
+	private void loadMagicWords() throws IOException
+	{
+		getMagicWordsInfo().loadMagicWords(getMagicWordsFile());
+		log("Loaded " + getMagicWordsInfo().getNumberOfAllMagicWords() + " magic words");
+	}
 	
 	public void initalizeFileDatabase()
 	{									
@@ -327,9 +334,14 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP);
 	}
 	
+	public static File getMartusServerDeleteOnStartup()
+	{
+		return new File(getMartusServerDataDirectory(), DELETE_ON_STARTUP);
+	}
+	
 	public File getTriggerDirectory()
 	{
-		return new File(getAppDirectoryPath(), ADMINTRIGGERDIRECTORY);
+		return new File(getMartusServerDataDirectory(), ADMINTRIGGERDIRECTORY);
 	}
 
 	public static File getAuthorizedClientsDir()
@@ -369,7 +381,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getPacketDirectory()
 	{
-		return new File(getServerDirectory(), "packets");
+		return new File(getMartusServerDataDirectory(), "packets");
 	}
 	
 	public File getServerDirectory()
@@ -587,21 +599,32 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			files[i].delete();
 	}
 	
-	public synchronized void updateMagicWords(Vector words)
+	public synchronized Vector getActiveMagicWords()
+	{
+		logAction("getActiveMagicWords", "");
+		return getMagicWordsInfo().getActiveMagicWords();
+	}
+
+	public synchronized Vector getAllMagicWords()
+	{
+		logAction("getAllMagicWords", "");
+		return getMagicWordsInfo().getAllMagicWords();
+	}
+
+	public synchronized Vector getInactiveMagicWordsWithNoSign()
+	{
+		logAction("getInactiveMagicWords", "");
+		return getMagicWordsInfo().getInactiveMagicWordsWithNoSign();
+	}
+
+	public synchronized void updateMagicWords(Vector words) throws Exception
 	{				
-		try
-		{					
-			logActions("Update MagicWords", words);				
-								
-			backupFile(getMagicWordsFile());
-			magicWords.writeMagicWords(getMagicWordsFile(), words);
-			magicWords.loadMagicWords(getMagicWordsFile());
+		logActions("Update MagicWords", words);				
+							
+		backupFile(getMagicWordsFile());
+		magicWords.writeMagicWords(getMagicWordsFile(), words);
+		magicWords.loadMagicWords(getMagicWordsFile());
 			
-		}
-		catch (IOException ieo)
-		{	
-			log("MagicWord.txt file not found."+ ieo.toString());		
-		}	
 	}	
 	
 	public Vector getAccountAdminInfo(String manageAccountId)
@@ -747,11 +770,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private String getBackupFileExtension()
 	{
 		MultiCalendar calendar = new MultiCalendar();
-		int year = calendar.getGregorianYear();
-		int month = calendar.getGregorianMonth();
-		int day = calendar.getGregorianDay();
-		
-		return Integer.toString(year)+Integer.toString(month+1)+Integer.toString(day);
+		return calendar.toIsoDateString();
 	}	
 	
 	private void deletePreviousBackupFile(String targetFileName)
@@ -1001,6 +1020,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		files.add(getMartusServerDataComplianceFile());
 		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));	
 		files.add(new File(getMartusServerDataDirectory(), "webauthorized.txt"));				
+		files.add(new File(getMartusServerDataDirectory(), "authorizelog.txt"));				
 		
 		return files;		
 	}
@@ -1016,6 +1036,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		folders.add(getAmpsWhoCallUsDirectory());
 		folders.add(getAvailableServerDirectory());
 		folders.add(getMartusServerDataBackupDirectory());
+		folders.add(getTriggerDirectory());
+		folders.add(new File(getMartusServerDataDirectory(), "ampIndex"));
+		folders.add(new File(getMartusServerDataDirectory(), "ampPackets"));
+		folders.add(new File(getMartusServerDataDirectory(), "signatures"));
+		folders.add(getMartusServerDeleteOnStartup());
+		folders.add(getPacketDirectory());
 		
 		return folders;
 	}
@@ -1040,12 +1066,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			File file = (File) allFilesAndFoldersInStartupDirectory.get(i);
 			if(file.isFile()&&!startupFilesWeExpect.contains(file))
 			{	
-				log("Startup File not expected =" + file.getAbsolutePath());
+				log("Startup File not expected: " + file.getAbsolutePath());
 				return true;
 			}
 			if(file.isDirectory()&&!startupFoldersWeExpect.contains(file))
 			{	
-				log("Startup Folder not expected =" + file.getAbsolutePath());
+				log("Startup Folder not expected: " + file.getAbsolutePath());
 				return true;
 			}
 		}
