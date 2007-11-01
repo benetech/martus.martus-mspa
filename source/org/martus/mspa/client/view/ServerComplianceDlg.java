@@ -96,7 +96,7 @@ public class ServerComplianceDlg extends JDialog
 		
 		saveButton = new UiButton("Save");	
 		saveButton.addActionListener(new CommitButtonHandler());	
-		closeButton = new UiButton("Close");
+		closeButton = new UiButton("Cancel");
 		closeButton.addActionListener(new CommitButtonHandler());
 
 		panel.add(saveButton);
