@@ -60,7 +60,6 @@ import org.martus.mspa.common.RetrievePublicKey;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.common.network.ServerSideHandler;
-import org.martus.mspa.roothelper.RootHelperConnector;
 import org.martus.mspa.roothelper.RootHelperHandler;
 import org.martus.mspa.roothelper.Status;
 import org.martus.util.DirectoryUtils;
@@ -1277,7 +1276,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector clientsAllowedUpload;
 	Vector clientNotSendToAmplifier;
 	HiddenBulletins hiddenBulletins;
-	RootHelperConnector rootConnector;
 	Vector availabelMirrorServerPublicKeys;	
 	
 	private int rootHelperPort = ROOTHELPER_DEFAULT_PORT;

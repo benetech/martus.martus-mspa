@@ -51,7 +51,6 @@ public class TestRootHelper
 	{
 		TestSuite suite= new TestSuite("All RootHelper Tests");
 		startRootHelper(); 
-		suite.addTest(new TestSuite(TestRootHelperConnecter.class));
 		suite.addTest(new TestSuite(TestProcessStdinStdOut.class));
 
 		return suite;
