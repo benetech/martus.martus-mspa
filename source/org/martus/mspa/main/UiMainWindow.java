@@ -330,27 +330,22 @@ public class UiMainWindow extends JFrame
 		mFile.add(new MenuItemExitApplication(this));
 		menuBar.add(mFile);
 		
-		JMenu mTool = new JMenu("Tools");
-		mTool.add(new MenuItemMartusServerCompliance(this,"View Server Compliance"));
-		mTool.addSeparator();
-		mTool.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
-		mTool.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
-		mTool.addSeparator();
+		JMenu mTool = new JMenu("Manage");
+		mTool.setMnemonic('m');
+		mTool.add(new MenuItemMartusServerCompliance(this,"Server Compliance"));
 		mTool.add(new MenuItemManageMagicWords(this,"Magic Words"));	
 		mTool.addSeparator();
-		JMenu manageServer = new JMenu("Other Servers");	
-		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP));
-		manageServer.add(new MenuItemManagingMirrorServers(this,				
-						ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA));
-		manageServer.addSeparator();												
-		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY));
-		manageServer.add(new MenuItemManagingMirrorServers(this,				
-				ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA));
-		
-		mTool.add(manageServer);			
+		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP));
+		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA));
+		mTool.addSeparator();												
+		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY));
+		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA));
 		menuBar.add(mTool);
+
+		JMenu mServices = new JMenu("Services");
+		mServices.setMnemonic('s');
+		mServices.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
+		mServices.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
 		
 						
 		JMenu mHelp = new JMenu("Help");
