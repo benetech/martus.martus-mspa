@@ -25,9 +25,6 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -46,21 +43,8 @@ public class TestRootHelper
 	}
 	
 	private static void startRootHelper()
-	{	
-		try 
-		{		 
-		  Registry registry = RootHelper.getRegistry(portToUse);	
-			
-		  MessengerImpl localObject = new MessengerImpl("password");
-		  registry.rebind("RootHelper", localObject);			  		 
-									  
-		  System.out.println("MessengerImpl object has been bound");
-
-		} 
-		catch(RemoteException re) 
-		{
-		  System.out.println("RemoteException: " + re);
-		}
+	{
+		System.out.println("not implemented");
 	}		
 	
 	public static Test suite ( )

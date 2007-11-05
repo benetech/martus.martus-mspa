@@ -25,64 +25,55 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.net.InetAddress;
 import java.util.TimerTask;
 
 import org.martus.common.LoggerInterface;
 import org.martus.common.LoggerToConsole;
 import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
-import org.martus.util.UnicodeReader;
+import org.martus.common.network.MartusXmlRpcServer;
 
 
 public class RootHelper
 {
-	public RootHelper(String[] args, final String passphrase)
+	public static void main(String[] args) 
+	{	
+		try
+		{
+			System.out.println("***NOTE: THIS APP IS NOT YET FUNCTIONAL***");
+			new RootHelper(args);
+		}
+		catch(Exception e)
+		{
+			System.out.println("RootHelper: " + e);
+			e.printStackTrace();
+			System.exit(3);
+		}
+		
+	}	
+	
+	public RootHelper(String[] args) throws Exception
 	{			
 		logger = new LoggerToConsole();	
 		processCommandLine(args);		
+
+		startBackgroundTimers();	
+		InetAddress address = InetAddress.getByName(hostToBind);
 		try 
 		{		
-			Registry registry = getRegistry(portToUse);				
-			MessengerImpl localObject = new MessengerImpl(passphrase);
-			String hostname = "//"+hostToBind+":"+portToUse+"/RootHelper";
-			
-			registry.bind(hostname, localObject);			
-			System.out.println("Port to use for clients: "+ portToUse);							  
-			System.out.println("MessengerImpl object has been bound in the registry");
-			
-			startBackgroundTimers();	
-		} 
-		catch(RemoteException re) 
-		{
-		   	log("RemoteExecption: "+re.getMessage());
+			System.out.println("Creating root helper: " + hostToBind + ":" + portToUse);
+			MartusXmlRpcServer.createNonSSLXmlRpcServer(new RootHelperHandler(), "RootHelper", portToUse, address);
+			System.out.println("Waiting for connections...");
 		}
-		catch (AlreadyBoundException e)
+		catch(Exception e)
 		{
 			e.printStackTrace();
-			log("Port already bound: "+ e.getMessage());
+			System.exit(4);
 		}
 	}
 
-	public static Registry getRegistry( int port ) throws RemoteException 
-	{
-	  	try 
-		{
-	     	return LocateRegistry.createRegistry(port );
-	  	} 
-		catch (Exception noRegistry) 
-		{
-			System.out.println("Create a new Registry with port: "+port+" is not available: "+noRegistry.getMessage());
-			System.out.println("Will return an default registry with port: "+port);
-	     	return LocateRegistry.getRegistry( port );
-	  	}
-	}
-	
 	public static File getAuthorizedClientsFile()
 	{
 		return new File(getRootHelperDirectory().getPath(), AUTHORIZED_CLIENTS_FILE);
@@ -139,7 +130,6 @@ public class RootHelper
 	{			
 		String portToListenTag = "--port=";	
 		
-		System.out.println("");
 		for(int arg = 0; arg < args.length; ++arg)
 		{					
 			String argument = args[arg];				
@@ -150,29 +140,8 @@ public class RootHelper
 				setPortToUse(Integer.parseInt(portToListen));	
 			}			
 		}
-		System.out.println("");
 	}
 		
-	public static void main(String[] args) 
-	{	
-		System.out.println("Initialize RootHelper environment");
-		String passphrase = null;
-		try
-		{
-			System.out.print("Enter passphrase: ");
-			System.out.flush();
-			BufferedReader reader = new BufferedReader(new UnicodeReader(System.in));		
-			passphrase = reader.readLine();
-		}
-		catch(Exception e)
-		{
-			System.out.println("RootHelper: " + e);
-			System.exit(3);
-		}
-		
-		new RootHelper(args, passphrase);
-	}	
-	
 	class ShutdownRequestMonitor extends TimerTask
 	{
 		public void run()
@@ -193,10 +162,23 @@ public class RootHelper
 			}
 		}
 	}
+	
+	public class RootHelperHandler
+	{
+		public void startServices()
+		{
+			logger.logDebug("RootHelper.startServices");
+		}
+		
+		public void stopServices()
+		{
+			logger.logDebug("RootHelper.stopServices");
+		}
+	}
 		
 	private int portToUse = DEFAULT_PORT;	
 	private String hostToBind=DEFAULT_HOSTNAME_TO_BIND;
-	private LoggerInterface logger;
+	protected LoggerInterface logger;
 	private boolean loggedShutdownRequested;
 	
 	private final static int DEFAULT_PORT = 983;
