@@ -118,22 +118,22 @@ public class ClientSideXmlRpcHandler
 		return (Vector)callServer(cmdGetListOfHiddenBulletinIds, params);
 	}
 	
-	public Vector removeHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
+	public Vector hideBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
 	{
 		Vector params = new Vector();
 		params.add(myAccountId);	
 		params.add(manageAccountId);
 		params.add(localIds);	
-		return (Vector)callServer(cmdRemoveHiddenBulletins, params);
+		return (Vector)callServer(cmdHideBulletins, params);
 	}
 	
-	public Vector recoverHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
+	public Vector unhideBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
 	{
 		Vector params = new Vector();
 		params.add(myAccountId);	
 		params.add(manageAccountId);
 		params.add(localIds);	
-		return (Vector)callServer(cmdRecoverHiddenBulletins, params);
+		return (Vector)callServer(cmdUnhideBulletins, params);
 	}
 	
 	

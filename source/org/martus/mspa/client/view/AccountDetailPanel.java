@@ -116,7 +116,7 @@ public class AccountDetailPanel extends JPanel
 		JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(5,5,5,5));
 		panel.setLayout(new MartusParagraphLayout());
-		JLabel numOfDelBulletinLabel = new UiLabel("Number of Deleted Bulletins: ");
+		JLabel numOfDelBulletinLabel = new UiLabel("Number of Hidden Bulletins: ");
 		numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
 		numOfDelBulletineField.setEditable(false);		
 
@@ -280,9 +280,9 @@ public class AccountDetailPanel extends JPanel
 		hiddenList = createBulletinList(hiddenListModel);
 		hiddenList.setName("hidden");
 		hiddenList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		viewHiddenButton = new UiButton("View Deleted Bulletin");
+		viewHiddenButton = new UiButton("View Hidden Bulletin");
 		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
-		bulletinTabPane.setTitleAt(1, "Deleted Bulletins");			
+		bulletinTabPane.setTitleAt(1, "Hidden Bulletins");			
 
 		return bulletinTabPane;
 	}
@@ -308,13 +308,13 @@ public class AccountDetailPanel extends JPanel
 
 		if (list.getName().equals("bulletin"))
 		{
-			delBulletins = new UiButton("Delete Bulletin");
+			delBulletins = new UiButton("Hide Bulletin");
 			delBulletins.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(delBulletins);
 		}	
 		else
 		{
-			recoverHiddenButton = new UiButton("Recover Deleted Bulletin");
+			recoverHiddenButton = new UiButton("Recover Hidden Bulletin");
 			recoverHiddenButton.addActionListener(new CommitButtonHandler());	
 			buttonPanel.add(recoverHiddenButton);
 		}		
@@ -366,9 +366,9 @@ public class AccountDetailPanel extends JPanel
 			if (ae.getSource().equals(saveButton))				
 				handleConfigurationAccountInfo();
 			else if (ae.getSource().equals(delBulletins))				
-				handleDeleteBulletin();		
+				handleHideBulletin();		
 			else if (ae.getSource().equals(recoverHiddenButton))				
-				handleRecoverHiddenBulletin();					
+				handleUnhideBulletin();					
 		}
 
 		private void handleConfigurationAccountInfo()
@@ -376,7 +376,7 @@ public class AccountDetailPanel extends JPanel
 			app.updateAccountManageInfo(accountId, admOptions.getOptions());			
 		}
 
-		private void handleRecoverHiddenBulletin()
+		private void handleUnhideBulletin()
 		{
 											
 			if (!hiddenList.isSelectionEmpty())
@@ -391,10 +391,10 @@ public class AccountDetailPanel extends JPanel
 				}
 				
 				app.recoverHiddenBulletin(accountId, recoverList);
-				postStatus("Recover Delete Bulletin :");
+				postStatus("Recover Hidden Bulletin :");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
-				postStatus("List of Deleted Bulletins :");
+				postStatus("List of Hidden Bulletins :");
 				if (hiddenBulletins != null)
 					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));
 					
@@ -408,7 +408,7 @@ public class AccountDetailPanel extends JPanel
 			}			
 		}
 
-		private void handleDeleteBulletin()
+		private void handleHideBulletin()
 		{
 											
 			if (!bulletinList.isSelectionEmpty())
@@ -427,16 +427,16 @@ public class AccountDetailPanel extends JPanel
 					}
 					else
 					{
-						String errorMessage = "Delete a draft bulletin is not supported at thie moment.\n" ;
+						String errorMessage = "Hiding a draft bulletin is not supported at thie moment.\n" ;
 						app.warningMessageDlg(errorMessage);						
 					}				
 				}
 				
 				app.removeBulletin(accountId, hiddenSealedList);
-				postStatus("Remove Bulletins: ");
+				postStatus("Hide Bulletins: ");
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
-				postStatus("Get a list of Deleted Bulletings :");
+				postStatus("Get a list of Hidden Bulletins :");
 				if (hiddenBulletins != null)
 				{
 					numOfDelBulletineField.setText(Integer.toString(hiddenBulletins.size()));

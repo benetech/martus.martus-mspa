@@ -393,8 +393,8 @@ public class UiMainWindow extends JFrame
 		System.exit(0);
 	}
 	
-	public static String START_MARTUS_SERVER ="Start Martus Server ...";
-	public static String STOP_MARTUS_SERVER  ="Stop Martus Server ..."; 
+	public static String START_MARTUS_SERVER ="Start Services...";
+	public static String STOP_MARTUS_SERVER  ="Stop Services..."; 
 	
 	protected JSplitPane m_sp;
 	protected MSPAClient mspaApp;

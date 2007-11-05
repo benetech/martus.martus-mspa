@@ -384,7 +384,7 @@ public class MSPAClient
 	{		
 		try
 		{												
-			Vector results = handler.removeHiddenBulletins(security.getPublicKeyString(), accountId, localIds);
+			Vector results = handler.hideBulletins(security.getPublicKeyString(), accountId, localIds);
 			currentStatus = (String) results.get(0);			
 		}		
 		catch (Exception e)
@@ -399,7 +399,7 @@ public class MSPAClient
 	{		
 		try
 		{												
-			Vector results = handler.recoverHiddenBulletins(security.getPublicKeyString(), accountId, localIds);
+			Vector results = handler.unhideBulletins(security.getPublicKeyString(), accountId, localIds);
 			currentStatus = (String) results.get(0);				
 		}		
 		catch (Exception e)

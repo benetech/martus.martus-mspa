@@ -226,7 +226,7 @@ public class ServerSideHandler implements NetworkInterface
 		return results;	
 	}
 	
-	public Vector removeHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds)
+	public Vector hideBulletins(String myAccountId, String manageAccountId, Vector localIds)
 	{			
 		Vector results = new Vector();
 		try
@@ -254,7 +254,7 @@ public class ServerSideHandler implements NetworkInterface
 		}							
 	}	
 	
-	public Vector recoverHiddenBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
+	public Vector unhideBulletins(String myAccountId, String manageAccountId, Vector localIds) throws IOException
 	{
 		Vector results = new Vector();
 		try

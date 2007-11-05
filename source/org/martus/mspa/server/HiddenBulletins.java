@@ -113,12 +113,12 @@ public class HiddenBulletins
 		}
 		catch(FileNotFoundException nothingToWorryAbout)
 		{
-			logger.logInfo("Deleted packets file not found: " + hiddenFile.getName());
+			logger.logInfo("Hidden bulletins file not found: " + hiddenFile.getName());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.logError("loading Deleted Packets file: " + hiddenFile.getName());
+			logger.logError("loading Hidden Bulletins file: " + hiddenFile.getName());
 		}		
 		
 	}
