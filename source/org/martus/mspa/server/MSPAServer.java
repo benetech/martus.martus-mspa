@@ -29,9 +29,7 @@ package org.martus.mspa.server;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.TimerTask;
@@ -50,6 +48,7 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
+import org.martus.common.network.MartusNonSSLXmlrpcClient;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.packet.UniversalId;
@@ -62,6 +61,7 @@ import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.common.network.ServerSideHandler;
 import org.martus.mspa.roothelper.RootHelperConnector;
+import org.martus.mspa.roothelper.RootHelperHandler;
 import org.martus.mspa.roothelper.Status;
 import org.martus.util.DirectoryUtils;
 import org.martus.util.FileTransfer;
@@ -872,16 +872,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return (portToUse <= 0)? DEFAULT_PORT:portToUse;
 	}
 	
-	public void setRootHelperPortToUse(int port)
-	{
-		rootHelperPortToUse = port;
-	}
-
-	public int getRootHelperPortToUse()
-	{
-		return (rootHelperPortToUse <= 0)? ROOTHELPER_DEFAULT_PORT:rootHelperPortToUse;
-	}
-
 	public synchronized void addAuthorizedMartusAccounts(String authorizedClientId)
 	{
 		if (!isAuthorizedMartusAccounts(authorizedClientId))
@@ -1108,8 +1098,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			if(argument.startsWith(rootPortTag))
 			{	
 				String portToListen = argument.substring(rootPortTag.length());
-				setRootHelperPortToUse(Integer.parseInt(portToListen));	
-				System.out.println("Port to use for connect to RootHelper: "+ getRootHelperPortToUse());
+				rootHelperPort = Integer.parseInt(portToListen);	
+				System.out.println("Port to use for connect to RootHelper: "+ rootHelperPort);
 			}
 						
 			if(argument.equals(secureModeTag))
@@ -1128,19 +1118,34 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		System.out.println("");
 	}
 
-	private void setRootHelperConnector() throws UnknownHostException, MalformedURLException, RemoteException, NotBoundException
-	{		
-		rootConnector = new RootHelperConnector(getRootHelperPortToUse());	
-	}
-
 	public Status startServer()
 	{
-		return new Status("NOT IMPLEMENTED YET");
+		logger.logDebug("startServer");
+		return executeRootHelperCommand(RootHelperHandler.RootHelperStartServicesCommand);
 	}
-	
+
 	public Status stopServer()
 	{
-		return new Status("NOT IMPLEMENTED YET");
+		logger.logDebug("stopServer");
+		return executeRootHelperCommand(RootHelperHandler.RootHelperStopServicesCommand);
+	}
+	
+	private Status executeRootHelperCommand(String command)
+	{
+		try
+		{
+			MartusNonSSLXmlrpcClient rootHelper = new MartusNonSSLXmlrpcClient(LOCALHOST, rootHelperPort);
+			String result = (String)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, new Vector());
+			Status status = new Status(result);
+			return status;
+		} 
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Status status = new Status(NetworkInterfaceConstants.EXEC_ERROR);
+			return status;
+		}
 	}
 	
 	private void deleteRunningFile()
@@ -1214,7 +1219,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.initalizeFileDatabase();			
 			server.setMagicWords();
 			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
-			server.setRootHelperConnector();
 			server.initConfig();																						
 						
 			if(!server.deleteStartupFiles())
@@ -1275,10 +1279,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	HiddenBulletins hiddenBulletins;
 	RootHelperConnector rootConnector;
 	Vector availabelMirrorServerPublicKeys;	
+	
+	private int rootHelperPort = ROOTHELPER_DEFAULT_PORT;
 		
 	private File serverDirectory;
 	private boolean secureMode;
-	private int rootHelperPortToUse;	
 	public char[] insecurePassword;
 	private boolean loggedShutdownRequested;
 		
@@ -1305,5 +1310,5 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private final static int DEFAULT_PORT = 984;
 	private final static int ROOTHELPER_DEFAULT_PORT=983;
-	
+	private final static String LOCALHOST = "127.0.0.1";
 }

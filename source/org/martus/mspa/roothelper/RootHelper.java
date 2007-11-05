@@ -64,7 +64,7 @@ public class RootHelper
 		try 
 		{		
 			System.out.println("Creating root helper: " + hostToBind + ":" + portToUse);
-			MartusXmlRpcServer.createNonSSLXmlRpcServer(new RootHelperHandler(), "RootHelper", portToUse, address);
+			MartusXmlRpcServer.createNonSSLXmlRpcServer(new RootHelperHandler(logger), RootHelperHandler.RootHelperObjectName, portToUse, address);
 			System.out.println("Waiting for connections...");
 		}
 		catch(Exception e)
@@ -163,19 +163,6 @@ public class RootHelper
 		}
 	}
 	
-	public class RootHelperHandler
-	{
-		public void startServices()
-		{
-			logger.logDebug("RootHelper.startServices");
-		}
-		
-		public void stopServices()
-		{
-			logger.logDebug("RootHelper.stopServices");
-		}
-	}
-		
 	private int portToUse = DEFAULT_PORT;	
 	private String hostToBind=DEFAULT_HOSTNAME_TO_BIND;
 	protected LoggerInterface logger;
