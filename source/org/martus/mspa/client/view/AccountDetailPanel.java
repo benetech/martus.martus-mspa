@@ -118,6 +118,12 @@ public class AccountDetailPanel extends JPanel
 
 		panel.add(buildCheckboxes(), MartusParagraphLayout.NEW_PARAGRAPH);
 		
+		JLabel bulletinCountLabel = new UiLabel("Total Bulletin Count: ");
+		bulletinCountField = new JTextField(Integer.toString(originalBulletinIds.size()), 5);
+		bulletinCountField.setEditable(false);
+		panel.add(bulletinCountLabel, MartusParagraphLayout.NEW_PARAGRAPH);
+		panel.add(bulletinCountField);
+		
 		JLabel numOfDelBulletinLabel = new UiLabel("Number of Hidden Bulletins: ");
 		numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
 		numOfDelBulletineField.setEditable(false);		
@@ -469,5 +475,6 @@ public class AccountDetailPanel extends JPanel
 	Vector originalBulletinIds;
 	Vector hiddenBulletinIds;	
 	JTabbedPane bulletinTabPane;
+	JTextField bulletinCountField;
 	JTextField numOfDelBulletineField;
 }
