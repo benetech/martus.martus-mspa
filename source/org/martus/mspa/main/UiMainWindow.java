@@ -146,7 +146,7 @@ public class UiMainWindow extends JFrame
 				return false;
 			}
 			
-			setSize(840, 650);
+			setSize(1000, 700);
 			JPanel mainPanel = new JPanel();
 			mainPanel.setLayout(new BorderLayout());		
 
@@ -329,7 +329,7 @@ public class UiMainWindow extends JFrame
 		
 		JMenu mTool = new JMenu("Manage");
 		mTool.setMnemonic('m');
-		mTool.add(new MenuItemMartusServerCompliance(this,"Server Compliance"));
+		mTool.add(new MenuItemMartusServerCompliance(this,"Compliance Statement"));
 		mTool.add(new MenuItemManageMagicWords(this,"Magic Words"));	
 		mTool.addSeparator();
 		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP));
@@ -343,7 +343,7 @@ public class UiMainWindow extends JFrame
 		mServices.setMnemonic('s');
 		mServices.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mServices.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
-		
+		menuBar.add(mServices);
 						
 		JMenu mHelp = new JMenu("Help");
 		mHelp.setMnemonic('h');
