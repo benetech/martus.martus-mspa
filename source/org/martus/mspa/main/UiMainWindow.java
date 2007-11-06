@@ -44,7 +44,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -68,6 +67,7 @@ import org.martus.mspa.common.ManagingMirrorServerConstants;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiLabel;
+import org.martus.swing.UiScrollPane;
 import org.martus.swing.Utilities;
 
 public class UiMainWindow extends JFrame
@@ -159,14 +159,10 @@ public class UiMainWindow extends JFrame
 			accountTree = new AccountsTree(accounts, this);
 
 			JPanel leftPanel = createServerInfoPanel(mspaApp.getCurrentServerIp(), mspaApp.getCurrentServerPublicCode());								
-			m_sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,tabPane);
-			m_sp.setContinuousLayout(false);
-			m_sp.setDividerLocation(260);
-			m_sp.setDividerSize(5);		
-			m_sp.setOneTouchExpandable(true);
 			
-			mainPanel.add(m_sp, BorderLayout.CENTER);
-			mainPanel.add(createStatusInfo(), BorderLayout.SOUTH);	
+			mainPanel.add(leftPanel, BorderLayout.BEFORE_LINE_BEGINS);
+			mainPanel.add(tabPane, BorderLayout.CENTER);
+			mainPanel.add(createStatusInfo(), BorderLayout.AFTER_LAST_LINE);	
 			setStatusText(mspaApp.getStatus());
 
 			WindowListener wndCloser = new WindowAdapter()
@@ -276,8 +272,9 @@ public class UiMainWindow extends JFrame
 		Vector hiddenBulletins = mspaApp.getListOfHiddenBulletins(accountId);
 
 		tabPane.remove(0);
-		tabPane.add(new AccountDetailPanel(this, accountId, contactInfo, hiddenBulletins, 
-					packetDir, accountAdmin), "Account Detail");			
+		AccountDetailPanel accountDetailPanel = new AccountDetailPanel(this, accountId, contactInfo, hiddenBulletins, 
+							packetDir, accountAdmin);
+		tabPane.add(new UiScrollPane(accountDetailPanel), "Account Detail");			
 	}		
 	
 	public void loadEmptyAccountDetailPanel()
@@ -396,7 +393,6 @@ public class UiMainWindow extends JFrame
 	public static String START_MARTUS_SERVER ="Start Services...";
 	public static String STOP_MARTUS_SERVER  ="Stop Services..."; 
 	
-	protected JSplitPane m_sp;
 	protected MSPAClient mspaApp;
 	JFrame currentActiveFrame;	
 	JTabbedPane tabPane;

@@ -76,8 +76,8 @@ public class AccountDetailPanel extends JPanel
 
 		loadAccountAdminInfo(manageAccount);		
 	
-		add(buildTopPanel(contactInfo),BorderLayout.NORTH);		
-		add(loadBulletinDisplayPane(), BorderLayout.CENTER);			
+		add(buildTopPanel(),BorderLayout.NORTH);		
+		add(loadBulletinDisplayPane(contactInfo), BorderLayout.CENTER);			
 	}
 
 	Vector loadBulletinIds(Vector bulletins)
@@ -107,24 +107,22 @@ public class AccountDetailPanel extends JPanel
 		JPanel centerPanel = new JPanel();		
 		centerPanel.setLayout(new FlowLayout());
 		centerPanel.add(buildContactInfoPanel(contactInfo));		
-		centerPanel.add(buildCheckboxes());	
 		return centerPanel;
 	}
 
-	private JPanel buildTopPanel(Vector contactInfo)
+	private JPanel buildTopPanel()
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(5,5,5,5));
 		panel.setLayout(new MartusParagraphLayout());
+
+		panel.add(buildCheckboxes(), MartusParagraphLayout.NEW_PARAGRAPH);
+		
 		JLabel numOfDelBulletinLabel = new UiLabel("Number of Hidden Bulletins: ");
 		numOfDelBulletineField = new JTextField(Integer.toString(hiddenBulletinIds.size()),5);
 		numOfDelBulletineField.setEditable(false);		
-
-		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
-		panel.add(numOfDelBulletinLabel);
+		panel.add(numOfDelBulletinLabel, MartusParagraphLayout.NEW_PARAGRAPH);
 		panel.add(numOfDelBulletineField);		
-		panel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
-		panel.add(buildContactPanel(contactInfo));
 
 //		panel.add(new UiLabel("") , ParagraphLayout.NEW_PARAGRAPH);
 //		panel.add(buildButtonsPanel());
@@ -151,8 +149,6 @@ public class AccountDetailPanel extends JPanel
 		panel.add(canUpload);
 		panel.add(banned);
 		panel.add(canSendToAmp);
-		panel.add(new UiLabel(""));
-		panel.add(new UiLabel(""));		
 		panel.add(saveButton);
 		
 		return panel;
@@ -262,27 +258,27 @@ public class AccountDetailPanel extends JPanel
 		list.setCellRenderer(renderer);
 	}	
 
-	private JTabbedPane loadBulletinDisplayPane()
+	private JTabbedPane loadBulletinDisplayPane(Vector contactInfo)
 	{
 		bulletinTabPane = new JTabbedPane();				
 		bulletinTabPane.setTabPlacement(JTabbedPane.TOP);
 		
+		bulletinTabPane.add("Contact Information", buildContactPanel(contactInfo));
+
 		Vector formattedBulletinsIds = loadBulletinIds(originalBulletinIds);
 		bulletinListModel = loadElementsToList(formattedBulletinsIds);
 		bulletinList = createBulletinList(bulletinListModel);
 		bulletinList.setName("bulletin");
 		
 		viewBulletinButton = new UiButton("View Bulletin");
-		bulletinTabPane.add(getDisplayBulletinPanel(bulletinList, viewBulletinButton), 0);
-		bulletinTabPane.setTitleAt(0, "Active Bulletins");
+		bulletinTabPane.add("Active Bulletins", getDisplayBulletinPanel(bulletinList, viewBulletinButton));
 
 		hiddenListModel = loadElementsToList(hiddenBulletinIds);
 		hiddenList = createBulletinList(hiddenListModel);
 		hiddenList.setName("hidden");
 		hiddenList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		viewHiddenButton = new UiButton("View Hidden Bulletin");
-		bulletinTabPane.add(getDisplayBulletinPanel(hiddenList,viewHiddenButton), 1);
-		bulletinTabPane.setTitleAt(1, "Hidden Bulletins");			
+		bulletinTabPane.add("Hidden Bulletins", getDisplayBulletinPanel(hiddenList,viewHiddenButton));
 
 		return bulletinTabPane;
 	}
