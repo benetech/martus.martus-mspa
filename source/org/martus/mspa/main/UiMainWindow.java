@@ -42,7 +42,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -342,7 +341,7 @@ public class UiMainWindow extends JFrame
 
 		JMenu mServices = new JMenu("Services");
 		mServices.setMnemonic('s');
-		mServices.add(new JMenuItem(STATUS_MARTUS_SERVER));
+		mServices.add(new MenuItemServerCommands(this, STATUS_MARTUS_SERVER));
 		mServices.addSeparator();
 		mServices.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mServices.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	

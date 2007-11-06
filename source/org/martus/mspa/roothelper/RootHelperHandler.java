@@ -35,6 +35,12 @@ public class RootHelperHandler
 		logger = loggerToUse;
 	}
 	
+	public String getStatus()
+	{
+		logger.logDebug("RootHelper.getStatus");
+		return "StatusUnknown";		
+	}
+	
 	public String startServices()
 	{
 		logger.logDebug("RootHelper.startServices");
@@ -54,6 +60,7 @@ public class RootHelperHandler
 	}
 	
 	public static String RootHelperObjectName = "RootHelper";
+	public static String RootHelperGetStatusCommand = "getStatus";
 	public static String RootHelperStartServicesCommand = "startServices";
 	public static String RootHelperStopServicesCommand = "stopServices";
 	public static String RootHelperRestartServicesCommand = "restartServices";

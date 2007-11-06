@@ -1117,6 +1117,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		System.out.println("");
 	}
 
+	public Status getServerStatus()
+	{
+		logger.logDebug("getServerStatus");
+		return executeRootHelperCommand(RootHelperHandler.RootHelperGetStatusCommand);
+	}
+
 	public Status startServer()
 	{
 		logger.logDebug("startServer");
