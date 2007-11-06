@@ -59,6 +59,7 @@ import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.UiTextArea;
+import org.martus.swing.UiWrappedTextArea;
 
 public class AccountDetailPanel extends JPanel
 {
@@ -77,7 +78,7 @@ public class AccountDetailPanel extends JPanel
 		loadAccountAdminInfo(manageAccount);		
 	
 		add(buildTopPanel(),BorderLayout.NORTH);		
-		add(loadBulletinDisplayPane(contactInfo), BorderLayout.CENTER);			
+		add(createBottomTabbedPanel(contactInfo), BorderLayout.CENTER);			
 	}
 
 	Vector loadBulletinIds(Vector bulletins)
@@ -264,7 +265,7 @@ public class AccountDetailPanel extends JPanel
 		list.setCellRenderer(renderer);
 	}	
 
-	private JTabbedPane loadBulletinDisplayPane(Vector contactInfo)
+	private JTabbedPane createBottomTabbedPanel(Vector contactInfo)
 	{
 		bulletinTabPane = new JTabbedPane();				
 		bulletinTabPane.setTabPlacement(JTabbedPane.TOP);
@@ -286,6 +287,9 @@ public class AccountDetailPanel extends JPanel
 		viewHiddenButton = new UiButton("View Hidden Bulletin");
 		bulletinTabPane.add("Hidden Bulletins", getDisplayBulletinPanel(hiddenList,viewHiddenButton));
 
+		UiWrappedTextArea fullAccountId = new UiWrappedTextArea(accountId, 40);
+		fullAccountId.setEditable(false);
+		bulletinTabPane.add("Full Account Id", new JScrollPane(fullAccountId));
 		return bulletinTabPane;
 	}
 
