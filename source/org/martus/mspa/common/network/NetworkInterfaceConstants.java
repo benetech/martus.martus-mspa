@@ -45,6 +45,7 @@ public class NetworkInterfaceConstants
 	
 	public static final String START_SERVER= "Start";
 	public static final String STOP_SERVER = "Stop";
+	public static final String RESTART_SERVER = "Restart";
 	public static final String GET_STATUS = "get status";
 	public static final String ADD_HOST = "add host";
 	

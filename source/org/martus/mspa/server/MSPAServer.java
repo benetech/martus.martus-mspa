@@ -1129,6 +1129,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return executeRootHelperCommand(RootHelperHandler.RootHelperStopServicesCommand);
 	}
 	
+	public Status restartServer()
+	{
+		logger.logDebug("restartServer");
+		return executeRootHelperCommand(RootHelperHandler.RootHelperRestartServicesCommand);
+	}
+	
 	private Status executeRootHelperCommand(String command)
 	{
 		try

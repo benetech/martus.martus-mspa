@@ -47,9 +47,16 @@ public class RootHelperHandler
 		return NetworkInterfaceConstants.EXEC_ERROR;		
 	}
 	
+	public String restartServices()
+	{
+		logger.logDebug("RootHelper.restartServices");
+		return NetworkInterfaceConstants.EXEC_ERROR;		
+	}
+	
 	public static String RootHelperObjectName = "RootHelper";
 	public static String RootHelperStartServicesCommand = "startServices";
 	public static String RootHelperStopServicesCommand = "stopServices";
+	public static String RootHelperRestartServicesCommand = "restartServices";
 
 	LoggerInterface logger;
 }

@@ -42,6 +42,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -341,8 +342,11 @@ public class UiMainWindow extends JFrame
 
 		JMenu mServices = new JMenu("Services");
 		mServices.setMnemonic('s');
+		mServices.add(new JMenuItem(STATUS_MARTUS_SERVER));
+		mServices.addSeparator();
 		mServices.add(new MenuItemServerCommands(this,START_MARTUS_SERVER));	
 		mServices.add(new MenuItemServerCommands(this,STOP_MARTUS_SERVER));	
+		mServices.add(new MenuItemServerCommands(this,RESTART_MARTUS_SERVER));	
 		menuBar.add(mServices);
 						
 		JMenu mHelp = new JMenu("Help");
@@ -390,8 +394,10 @@ public class UiMainWindow extends JFrame
 		System.exit(0);
 	}
 	
+	public static String STATUS_MARTUS_SERVER ="Query Service Status";
 	public static String START_MARTUS_SERVER ="Start Services...";
 	public static String STOP_MARTUS_SERVER  ="Stop Services..."; 
+	public static String RESTART_MARTUS_SERVER ="Stop and Restart Services...";
 	
 	protected MSPAClient mspaApp;
 	JFrame currentActiveFrame;	

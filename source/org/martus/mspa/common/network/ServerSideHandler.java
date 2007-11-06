@@ -205,6 +205,10 @@ public class ServerSideHandler implements NetworkInterface
 		{
 			status = server.stopServer();
 		}
+		else if (cmdType.equals(NetworkInterfaceConstants.RESTART_SERVER))
+		{
+			status = server.restartServer();
+		}
 		else
 		{
 			results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);

@@ -69,6 +69,20 @@ public class MenuItemServerCommands extends AbstractAction
 				handleResults(results, "Stop");						
 			} 	
 		}	
+		if (menuType.equals(UiMainWindow.RESTART_MARTUS_SERVER))
+		{	
+			int answer = JOptionPane.showConfirmDialog(parent, 
+				"This command will stop and then restart the server, " +
+				"preventing any users from accessing it until the restart is complete.\n\n " +
+				"Are you sure you want to do this?",
+				"Restart Server", JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.YES_OPTION) 
+			{
+				parent.setStatusText("Stopping and Restarting Server ...");
+				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.RESTART_SERVER,"");
+				handleResults(results, "Restart");
+			} 	
+		}	
 	}
 	
 	private void handleResults(Vector results, String type)
