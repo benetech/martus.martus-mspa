@@ -63,15 +63,17 @@ public class ServerConnectionDlg extends JDialog
 		mainPanel.setPreferredSize(new Dimension(300,250));		
 		
 		getContentPane().add(mainPanel);
+		getRootPane().setDefaultButton(connect);
 		Utilities.centerDlg(this);
-		setResizable(true);
 	}	
 	
 	private JScrollPane createDisplayServerListPane(Vector availableServers)
 	{
 		availabelServerListModel = loadElementsToList(availableServers);
 		availabelServerList = createServerList(availabelServerListModel);
-		availabelServerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
+		availabelServerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		if(availableServers.size() == 1)
+			availabelServerList.setSelectedIndex(0);
 
 		return new JScrollPane(availabelServerList);
 	}
