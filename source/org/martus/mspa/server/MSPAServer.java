@@ -1001,15 +1001,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		Vector files = new Vector();
 		
 		files.add(getMSPAServerKeyPairFile());		
-		files.add(getBannedFile());
-		files.add(getAllowUploadFile());
-		files.add(getClientsNotToAmplifiyFile());
-		files.add(getMagicWordsFile());
-		files.add(getHiddenPacketsFile());
-		files.add(getMartusServerDataComplianceFile());
 		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));	
-		files.add(new File(getMartusServerDataDirectory(), "webauthorized.txt"));				
-		files.add(new File(getMartusServerDataDirectory(), "authorizelog.txt"));				
 		
 		return files;		
 	}
@@ -1019,40 +1011,23 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		Vector folders = new Vector();		
 						
 		folders.add(getAuthorizedClientsDir());	
-		folders.add(getServerWhoWeCallDirectory());
-		folders.add(getMirrorServerWhoCallUsDirectory());
-		folders.add(getMirrorServerWhoWeCallDirectory());
-		folders.add(getAmpsWhoCallUsDirectory());
-		folders.add(getAvailableServerDirectory());
-		folders.add(getMartusServerDataBackupDirectory());
-		folders.add(getTriggerDirectory());
-		folders.add(new File(getMartusServerDataDirectory(), "ampIndex"));
-		folders.add(new File(getMartusServerDataDirectory(), "ampPackets"));
-		folders.add(new File(getMartusServerDataDirectory(), "signatures"));
-		folders.add(getMartusServerDeleteOnStartup());
-		folders.add(getPacketDirectory());
 		
 		return folders;
 	}
 	
-	private Vector getCurrentFilesAndFolders()
+	private File[] getCurrentStartupFilesAndFolders()
 	{
-		File[] deleteOnStartUp = DirectoryUtils.listFiles(getMSPADeleteOnStartup());
-		File[] martusServerData = DirectoryUtils.listFiles(getMartusServerDataDirectory());
-		
-		Vector currentList = new Vector(Arrays.asList(deleteOnStartUp));
-		currentList.addAll(Arrays.asList(martusServerData));			
-		return currentList;
+		return DirectoryUtils.listFiles(getMSPADeleteOnStartup());
 	}
 	
 	private boolean anyUnexpectedFilesOrFoldersInStartupDirectory()
 	{
 		Vector startupFilesWeExpect = getStartupFiles();
 		Vector startupFoldersWeExpect = getStartupFolders();
-		Vector allFilesAndFoldersInStartupDirectory = getCurrentFilesAndFolders();
-		for(int i = 0; i<allFilesAndFoldersInStartupDirectory.size(); ++i)
+		File[] allFilesAndFoldersInStartupDirectory = getCurrentStartupFilesAndFolders();
+		for(int i = 0; i<allFilesAndFoldersInStartupDirectory.length; ++i)
 		{
-			File file = (File) allFilesAndFoldersInStartupDirectory.get(i);
+			File file = allFilesAndFoldersInStartupDirectory[i];
 			if(file.isFile()&&!startupFilesWeExpect.contains(file))
 			{	
 				log("Startup File not expected: " + file.getAbsolutePath());
