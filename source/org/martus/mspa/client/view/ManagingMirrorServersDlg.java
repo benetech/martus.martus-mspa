@@ -258,21 +258,28 @@ public class ManagingMirrorServersDlg extends JDialog
 	{
 		public void actionPerformed(ActionEvent ae)
 		{
-			if (ae.getSource().equals(cancelButton))				
-				dispose();
-			else if (ae.getSource().equals(addButton))
-				handleAddToAllowedList();
-			else if (ae.getSource().equals(updateButton))
-				handleUpdateMirrorServerInfo();
-			else if (ae.getSource().equals(removeButton))
-				handleRemoveFromAllowedList();
-			else if (ae.getSource().equals(addNewMirrorServer))
-				handleRequestAddNewMirrorServer();	
-			else if (ae.getSource().equals(viewComplainButton))
-				handleRequestViewCompliant();			
+			try
+			{
+				if (ae.getSource().equals(cancelButton))				
+					dispose();
+				else if (ae.getSource().equals(addButton))
+					handleAddToAllowedList();
+				else if (ae.getSource().equals(updateButton))
+					handleUpdateMirrorServerInfo();
+				else if (ae.getSource().equals(removeButton))
+					handleRemoveFromAllowedList();
+				else if (ae.getSource().equals(addNewMirrorServer))
+					handleRequestAddNewMirrorServer();	
+				else if (ae.getSource().equals(viewComplainButton))
+					handleRequestViewCompliant();
+			} 
+			catch (Exception e)
+			{
+				parent.exceptionDialog(e);
+			}			
 		}
 		
-		private void handleRequestAddNewMirrorServer()
+		private void handleRequestAddNewMirrorServer() throws Exception
 		{
 			Vector mirrorServerInfo = new Vector();
 			String mirrorIP = manageIPAddr.getText();
@@ -332,7 +339,7 @@ public class ManagingMirrorServersDlg extends JDialog
 			}
 		}
 		
-		private void handleUpdateMirrorServerInfo()
+		private void handleUpdateMirrorServerInfo() throws Exception
 		{
 			Object[] items = allowedListModel.toArray();
 			Vector itemCollection = new Vector();			
@@ -358,7 +365,7 @@ public class ManagingMirrorServersDlg extends JDialog
 			}							
 		}		
 		
-		private void handleRequestViewCompliant()
+		private void handleRequestViewCompliant() throws Exception
 		{			
 			String compliants = parent.getMSPAApp().getServerCompliant();
 			postStatus("Request Serve Compliant: ");

@@ -46,47 +46,54 @@ public class MenuItemServerCommands extends AbstractAction
 
 	public void actionPerformed(ActionEvent arg0) 
 	{
-		if (menuType.equals(UiMainWindow.STATUS_MARTUS_SERVER))
+		try
 		{
-			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.GET_STATUS,"");			
-			handleResults(results, "Status");			
-		}
-		if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
-		{	
-			String msg = "This will start the MartusServer services";
-			parent.setStatusText(msg);
-			int confirmation = JOptionPane.showConfirmDialog(parent, msg, "Start Server", JOptionPane.OK_CANCEL_OPTION);
-			if(confirmation != JOptionPane.OK_OPTION)
-				return;
-			Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");			
-			handleResults(results, "Start");			
-		}
-		
-		if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
-		{	
-			int answer = JOptionPane.showConfirmDialog(parent, 
-				"This command will stop the server, preventing any users from accessing it until it is started again.\n\n Are you sure you want to do this?",
-				"Stop Server", JOptionPane.YES_NO_OPTION);
-			if (answer == JOptionPane.YES_OPTION) 
+			if (menuType.equals(UiMainWindow.STATUS_MARTUS_SERVER))
 			{
-				parent.setStatusText("Starting Server ...");
-				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
-				handleResults(results, "Stop");						
-			} 	
-		}	
-		if (menuType.equals(UiMainWindow.RESTART_MARTUS_SERVER))
-		{	
-			int answer = JOptionPane.showConfirmDialog(parent, 
-				"This command will stop and then restart the server, " +
-				"preventing any users from accessing it until the restart is complete.\n\n " +
-				"Are you sure you want to do this?",
-				"Restart Server", JOptionPane.YES_NO_OPTION);
-			if (answer == JOptionPane.YES_OPTION) 
-			{
-				parent.setStatusText("Stopping and Restarting Server ...");
-				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.RESTART_SERVER,"");
-				handleResults(results, "Restart");
-			} 	
+				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.GET_STATUS,"");			
+				handleResults(results, "Status");			
+			}
+			if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
+			{	
+				String msg = "This will start the MartusServer services";
+				parent.setStatusText(msg);
+				int confirmation = JOptionPane.showConfirmDialog(parent, msg, "Start Server", JOptionPane.OK_CANCEL_OPTION);
+				if(confirmation != JOptionPane.OK_OPTION)
+					return;
+				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");			
+				handleResults(results, "Start");			
+			}
+			
+			if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
+			{	
+				int answer = JOptionPane.showConfirmDialog(parent, 
+					"This command will stop the server, preventing any users from accessing it until it is started again.\n\n Are you sure you want to do this?",
+					"Stop Server", JOptionPane.YES_NO_OPTION);
+				if (answer == JOptionPane.YES_OPTION) 
+				{
+					parent.setStatusText("Starting Server ...");
+					Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
+					handleResults(results, "Stop");						
+				} 	
+			}	
+			if (menuType.equals(UiMainWindow.RESTART_MARTUS_SERVER))
+			{	
+				int answer = JOptionPane.showConfirmDialog(parent, 
+					"This command will stop and then restart the server, " +
+					"preventing any users from accessing it until the restart is complete.\n\n " +
+					"Are you sure you want to do this?",
+					"Restart Server", JOptionPane.YES_NO_OPTION);
+				if (answer == JOptionPane.YES_OPTION) 
+				{
+					parent.setStatusText("Stopping and Restarting Server ...");
+					Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.RESTART_SERVER,"");
+					handleResults(results, "Restart");
+				} 	
+			}
+		}
+		catch (Exception e)
+		{
+			parent.exceptionDialog(e);
 		}	
 	}
 	

@@ -102,13 +102,20 @@ public class AccountsTree
 		public void valueChanged(TreeSelectionEvent e)
 		{				
 			DefaultMutableTreeNode node = getTreeNode(e.getPath());
-			if (node != null)
+			if (node == null)
+				return;
+			
+			try
 			{
 				AccountNode selectedAccountNode = (AccountNode) node.getUserObject();
 				if (node.isRoot())
-				 parentWindow.loadEmptyAccountDetailPanel();
+					parentWindow.loadEmptyAccountDetailPanel();
 				else	
-				 parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());		
+					parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());
+			} 
+			catch (Exception e1)
+			{
+				parentWindow.exceptionDialog(e1);
 			}		
 		}
 	}

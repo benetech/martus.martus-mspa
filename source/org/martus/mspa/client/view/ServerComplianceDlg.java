@@ -109,14 +109,21 @@ public class ServerComplianceDlg extends JDialog
 	{
 		public void actionPerformed(ActionEvent ae)
 		{
-			if (ae.getSource().equals(closeButton))				
-				dispose();
-			else if (ae.getSource().equals(saveButton))
-				handleSave();
+			try
+			{
+				if (ae.getSource().equals(closeButton))				
+					dispose();
+				else if (ae.getSource().equals(saveButton))
+					handleSave();
+			} 
+			catch (Exception e)
+			{
+				parent.exceptionDialog(e);
+			}
 			
 		}
 
-		private void handleSave()
+		private void handleSave() throws Exception
 		{					
 			parent.setStatusText("Update compliance to Martus server ...");
 			Vector results = parent.getMSPAApp().updateServerCompliant(complianceEditor.getText().trim());

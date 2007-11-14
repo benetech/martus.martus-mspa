@@ -309,7 +309,7 @@ public class UiMainWindow extends JFrame
 		return tabPane;
 	}
 	
-	public void loadAccountDetailPanel(String accountId, String publicId)
+	public void loadAccountDetailPanel(String accountId, String publicId) throws Exception
 	{
 		Vector contactInfo = mspaApp.getContactInfo(accountId);
 		Vector packetDir = mspaApp.getPacketDirNames(accountId);
@@ -358,6 +358,12 @@ public class UiMainWindow extends JFrame
 				null);
 
 		return (result == JOptionPane.YES_OPTION);
+	}
+	
+	public void exceptionDialog(Exception e)
+	{
+		notifyDialog("ERROR", "<html>An unexpected error has occurred. Check the console for details.<br>" +
+				"<em>" + e.getMessage());
 	}
 	
 
@@ -469,5 +475,4 @@ public class UiMainWindow extends JFrame
 	MSPALocalization localization;
 	CurrentUiState 	uiState;
 	String serverName;
-	
 }

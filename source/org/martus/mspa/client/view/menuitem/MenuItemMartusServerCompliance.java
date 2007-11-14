@@ -44,10 +44,17 @@ public class MenuItemMartusServerCompliance extends AbstractAction
 
 	public void actionPerformed(ActionEvent arg0) 
 	{								
-		String compliants = parent.getMSPAApp().getServerCompliant();
-		parent.setStatusText(parent.getMSPAApp().getStatus());		
-		ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
-		dlg.setVisible(true);			
+		try
+		{
+			String compliants = parent.getMSPAApp().getServerCompliant();
+			parent.setStatusText(parent.getMSPAApp().getStatus());		
+			ServerComplianceDlg dlg = new ServerComplianceDlg(parent, compliants);
+			dlg.setVisible(true);
+		} 
+		catch (Exception e)
+		{
+			parent.exceptionDialog(e);
+		}			
 	}
 	
 	UiMainWindow parent;	

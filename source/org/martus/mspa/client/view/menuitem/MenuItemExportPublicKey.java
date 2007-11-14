@@ -44,11 +44,18 @@ public class MenuItemExportPublicKey extends AbstractAction
 
 	public void actionPerformed(ActionEvent arg0) 
 	{								
-		File keypair = parent.getMSPAApp().getKeypairFile();
-		exportPublicKey(parent, keypair);
+		try
+		{
+			File keypair = parent.getMSPAApp().getKeypairFile();
+			exportPublicKey(parent, keypair);
+		} 
+		catch (Exception e)
+		{
+			parent.exceptionDialog(e);
+		}
 	}
 
-	public static void exportPublicKey(UiMainWindow parent, File keypair)
+	public static void exportPublicKey(UiMainWindow parent, File keypair) throws Exception
 	{
 		if (!keypair.exists())
 		{

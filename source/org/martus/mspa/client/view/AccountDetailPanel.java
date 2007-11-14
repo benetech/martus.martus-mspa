@@ -369,20 +369,27 @@ public class AccountDetailPanel extends JPanel
 	{
 		public void actionPerformed(ActionEvent ae)
 		{
-			if (ae.getSource().equals(saveButton))				
-				handleConfigurationAccountInfo();
-			else if (ae.getSource().equals(delBulletins))				
-				handleHideBulletin();		
-			else if (ae.getSource().equals(recoverHiddenButton))				
-				handleUnhideBulletin();					
+			try
+			{
+				if (ae.getSource().equals(saveButton))				
+					handleConfigurationAccountInfo();
+				else if (ae.getSource().equals(delBulletins))				
+					handleHideBulletin();		
+				else if (ae.getSource().equals(recoverHiddenButton))				
+					handleUnhideBulletin();
+			}
+			catch (Exception e)
+			{
+				parent.exceptionDialog(e);
+			}					
 		}
 
-		private void handleConfigurationAccountInfo()
+		private void handleConfigurationAccountInfo() throws Exception
 		{								
 			app.updateAccountManageInfo(accountId, admOptions.getOptions());			
 		}
 
-		private void handleUnhideBulletin()
+		private void handleUnhideBulletin() throws Exception
 		{
 											
 			if (!hiddenList.isSelectionEmpty())
@@ -414,7 +421,7 @@ public class AccountDetailPanel extends JPanel
 			}			
 		}
 
-		private void handleHideBulletin()
+		private void handleHideBulletin() throws Exception
 		{
 											
 			if (!bulletinList.isSelectionEmpty())

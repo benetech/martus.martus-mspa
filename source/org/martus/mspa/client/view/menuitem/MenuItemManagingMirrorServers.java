@@ -45,14 +45,21 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 
 	public void actionPerformed(ActionEvent arg0) 
 	{							
-		getMirrorServers(parent.getMSPAApp().getAvailableAccounts());					
-			
-		ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, 
-					serverManageType, "", "", availableList, assignedList);
-		serverManagementDlg.setVisible(true);
+		try
+		{
+			getMirrorServers(parent.getMSPAApp().getAvailableAccounts());					
+				
+			ManagingMirrorServersDlg serverManagementDlg = new ManagingMirrorServersDlg(parent, 
+						serverManageType, "", "", availableList, assignedList);
+			serverManagementDlg.setVisible(true);
+		} 
+		catch (Exception e)
+		{
+			parent.exceptionDialog(e);
+		}
 	}	
 
-	void getMirrorServers(Vector orginalList)
+	void getMirrorServers(Vector orginalList) throws Exception
 	{
 		availableList = new Vector();
 		assignedList  = parent.getMSPAApp().getListOfAssignedAccounts(serverManageType);	

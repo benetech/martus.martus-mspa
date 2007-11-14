@@ -41,11 +41,10 @@ import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
-import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.common.network.ClientSideXmlRpcHandler;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
+import org.martus.mspa.main.UiMainWindow;
 import org.martus.mspa.server.LoadMartusServerArguments;
 import org.martus.util.DirectoryUtils;
 import org.martus.util.StreamableBase64.InvalidBase64Exception;
@@ -57,7 +56,7 @@ public class MSPAClient
 		security = new MartusSecurity();	
 	}
 	
-	public void setXMLRpcEnviornments()
+	public void setXMLRpcEnviornments() throws Exception
 	{
 		handler = createXmlRpcNetworkInterfaceHandler();					
 		setServerPublicCode(serverPublicCode);	
@@ -80,22 +79,9 @@ public class MSPAClient
 		handler.getSimpleX509TrustManager().setExpectedPublicCode(strippedServerPublicCode);	
 	}
 				
-	private ClientSideXmlRpcHandler createXmlRpcNetworkInterfaceHandler()
+	private ClientSideXmlRpcHandler createXmlRpcNetworkInterfaceHandler() throws Exception
 	{		
-		try 
-		{					
-			return handler =  new ClientSideXmlRpcHandler(ipToUse, portToUse);			
-		} 
-		catch (SSLSocketSetupException e) 
-		{
-			e.printStackTrace();			
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();			
-		}
-		return null;
+		return handler =  new ClientSideXmlRpcHandler(ipToUse, portToUse);			
 	}	
 	
 	public File getUiStateFile()
@@ -204,408 +190,204 @@ public class MSPAClient
 		return handler.getAccountIds(myAccountId, parameters, signature);
 	}	
 	
-	public Vector displayAccounts()
+	public Vector displayAccounts() throws Exception
 	{			
-		try
-		{			
-			Vector parameters = new Vector();							
-			String signature = security.createSignatureOfVectorOfStrings(parameters);	
-			Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);					
-			currentStatus = (String) results.get(0);
-			
+		Vector parameters = new Vector();							
+		String signature = security.createSignatureOfVectorOfStrings(parameters);	
+		Vector results = getAccountIds(security.getPublicKeyString(), parameters, signature);					
+		currentStatus = (String) results.get(0);
+		
+		if (currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
+
+		return new Vector();
+	}
+	
+	public Vector getContactInfo(String accountId) throws Exception
+	{	
+		Vector parameters = new Vector();
+		parameters.add(accountId);			
+		String signature = security.createSignatureOfVectorOfStrings(parameters);				
+		Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
+		currentStatus = (String) results.get(0);				
+		Vector decodedContactInfoResult = ContactInfo.decodeContactInfoVectorIfNecessary(results);
+		
+		if (decodedContactInfoResult != null && !decodedContactInfoResult.isEmpty())
+		{				
 			if (currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
-
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-
+				return (Vector) decodedContactInfoResult.get(1);
+		}	 
 		return new Vector();
 	}
 	
-	public Vector getContactInfo(String accountId)
+	public Vector getAccountManageInfo(String manageAccountId) throws Exception
 	{	
-		try
-		{			
-			Vector parameters = new Vector();
-			parameters.add(accountId);			
-			String signature = security.createSignatureOfVectorOfStrings(parameters);				
-			Vector results = handler.getContactInfo(security.getPublicKeyString(), parameters, signature, accountId);
-			currentStatus = (String) results.get(0);				
-			Vector decodedContactInfoResult = ContactInfo.decodeContactInfoVectorIfNecessary(results);
-			
-			if (decodedContactInfoResult != null && !decodedContactInfoResult.isEmpty())
-			{				
-				if (currentStatus.equals(NetworkInterfaceConstants.OK))
-					return (Vector) decodedContactInfoResult.get(1);
-			}	 
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
-		return new Vector();
-	}
-	
-	public Vector getAccountManageInfo(String manageAccountId)
-	{	
-		try
-		{						
-			Vector results = handler.getAccountManageInfo(security.getPublicKeyString(), manageAccountId);
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getAccountManageInfo(security.getPublicKeyString(), manageAccountId);
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
 		return new Vector();
 	}	
 	
-	public String getServerCompliant()
+	public String getServerCompliant() throws Exception
 	{
 		StringBuffer msg = new StringBuffer();
-		try
+		Vector results = handler.getServerCompliance(security.getPublicKeyString());
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
 		{
-			Vector results = handler.getServerCompliance(security.getPublicKeyString());
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-			{
-				Vector compliants = (Vector) results.get(1);				
-				for (int i=0; i< compliants.size();++i)
-					msg.append((String) compliants.get(i)).append("\n");
-			}				
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			Vector compliants = (Vector) results.get(1);				
+			for (int i=0; i< compliants.size();++i)
+				msg.append((String) compliants.get(i)).append("\n");
+		}				
 		return msg.toString();
 	}
 	
-	public Vector updateServerCompliant(String msg)
+	public Vector updateServerCompliant(String msg) throws Exception
 	{
-		try
-		{
-			Vector results =  handler.updateServerCompliance(security.getPublicKeyString(), msg);
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return results;
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Vector results =  handler.updateServerCompliance(security.getPublicKeyString(), msg);
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return results;
 		return new Vector();
 	}
 	
-	public Vector sendCommandToServer(String cmdType, String cmd)
+	public Vector sendCommandToServer(String cmdType, String cmd) throws Exception
 	{		
-		try
-		{												
-			return handler.sendCommandToServer(security.getPublicKeyString(), cmdType, cmd);						
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
-		return new Vector();
+		return handler.sendCommandToServer(security.getPublicKeyString(), cmdType, cmd);						
 	}
 	
-	public void updateAccountManageInfo(String manageAccountId, Vector manageOptions)
+	public void updateAccountManageInfo(String manageAccountId, Vector manageOptions) throws Exception
 	{		
-		try
-		{									
-			handler.updateAccountManageInfo(security.getPublicKeyString(),
-					manageAccountId, manageOptions);				
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		handler.updateAccountManageInfo(security.getPublicKeyString(),
+				manageAccountId, manageOptions);				
 	}		
 	
-	public  LoadMartusServerArguments getMartusServerArguments()
+	public  LoadMartusServerArguments getMartusServerArguments() throws Exception
 	{			
-		try
-		{						
-			Vector results = handler.getMartusServerArguments(security.getPublicKeyString());
-			currentStatus = (String) results.get(0);		
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))	
-			{	
-				Vector args = (Vector) results.get(1);
-				LoadMartusServerArguments arguments = new LoadMartusServerArguments();
-				arguments.convertFromVector(args);
+		Vector results = handler.getMartusServerArguments(security.getPublicKeyString());
+		currentStatus = (String) results.get(0);		
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))	
+		{	
+			Vector args = (Vector) results.get(1);
+			LoadMartusServerArguments arguments = new LoadMartusServerArguments();
+			arguments.convertFromVector(args);
 
-				return arguments;				
-			}
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+			return arguments;				
+		}
 		return null;
 	}	
 	
-	public void updateMartusServerArguments(LoadMartusServerArguments args)
+	public void updateMartusServerArguments(LoadMartusServerArguments args) throws Exception
 	{		
-		try
-		{									
-			handler.updateMartusServerArguments(security.getPublicKeyString(), args.convertToVector());				
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		handler.updateMartusServerArguments(security.getPublicKeyString(), args.convertToVector());				
 	}	
 	
-	public Vector getListOfHiddenBulletins(String accountId)
+	public Vector getListOfHiddenBulletins(String accountId) throws Exception
 	{	
-		try
-		{						
-			Vector results = handler.getListOfHiddenBulletinIds(security.getPublicKeyString(), accountId);
-			currentStatus = (String) results.get(0);		
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))	
-				return (Vector) results.get(1);
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getListOfHiddenBulletinIds(security.getPublicKeyString(), accountId);
+		currentStatus = (String) results.get(0);		
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))	
+			return (Vector) results.get(1);
 		return new Vector();
 	}	
 	
-	public String removeBulletin(String accountId, Vector localIds)
+	public String removeBulletin(String accountId, Vector localIds) throws Exception
 	{		
-		try
-		{												
-			Vector results = handler.hideBulletins(security.getPublicKeyString(), accountId, localIds);
-			currentStatus = (String) results.get(0);			
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.hideBulletins(security.getPublicKeyString(), accountId, localIds);
+		currentStatus = (String) results.get(0);			
 		return currentStatus;
 	}
 	
-	public String recoverHiddenBulletin(String accountId, Vector localIds)
+	public String recoverHiddenBulletin(String accountId, Vector localIds) throws Exception
 	{		
-		try
-		{												
-			Vector results = handler.unhideBulletins(security.getPublicKeyString(), accountId, localIds);
-			currentStatus = (String) results.get(0);				
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.unhideBulletins(security.getPublicKeyString(), accountId, localIds);
+		currentStatus = (String) results.get(0);				
 		return currentStatus;
 	}
 	
-	public Vector getPacketDirNames(String accountId)
+	public Vector getPacketDirNames(String accountId) throws Exception
 	{	
-		try
-		{						
-			Vector results = handler.getListOfBulletinIds(accountId);		
-			currentStatus = (String) results.get(0);	
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
+		Vector results = handler.getListOfBulletinIds(accountId);		
+		currentStatus = (String) results.get(0);	
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
 							
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
 		return new Vector();
 	}	
 	
-	public Vector getInactiveMagicWords()
+	public Vector getInactiveMagicWords() throws Exception
 	{	
-		try
-		{						
-			Vector results = handler.getInactiveMagicWords(security.getPublicKeyString());
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getInactiveMagicWords(security.getPublicKeyString());
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
 		return new Vector();
 	}	
 	
-	public Vector getActiveMagicWords()
+	public Vector getActiveMagicWords() throws Exception
 	{	
-		try
-		{						
-			Vector results = handler.getActiveMagicWords(security.getPublicKeyString());
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);			
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getActiveMagicWords(security.getPublicKeyString());
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);			
 		return new Vector();
 	}	
 	
-	public Vector getAllMagicWords()
+	public Vector getAllMagicWords() throws Exception
 	{	
-		try
-		{					
-			Vector results = handler.getAllMagicWords(security.getPublicKeyString());
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getAllMagicWords(security.getPublicKeyString());
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
 		return new Vector();
 	}		
 	
-	public void updateMagicWords(Vector magicWords)	
+	public void updateMagicWords(Vector magicWords)	throws Exception
 	{	
-		try
-		{			
-			handler.updateMagicWords(security.getPublicKeyString(), magicWords);			
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}				
+		handler.updateMagicWords(security.getPublicKeyString(), magicWords);			
 	}	
 	
-	public Vector getAvailableAccounts()
+	public Vector getAvailableAccounts() throws Exception
 	{	
-		try
-		{					
-			Vector results = handler.getListOfAvailableServers(security.getPublicKeyString());
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getListOfAvailableServers(security.getPublicKeyString());
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
 		return new Vector();
 	}	
 	
-	public Vector getListOfAssignedAccounts(int mirrorType)
+	public Vector getListOfAssignedAccounts(int mirrorType) throws Exception
 	{	
-		try
-		{					
-			Vector results = handler.getListOfAssignedServers(security.getPublicKeyString(), mirrorType);
-			currentStatus = (String) results.get(0);
-			if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
-				return (Vector) results.get(1);
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+		Vector results = handler.getListOfAssignedServers(security.getPublicKeyString(), mirrorType);
+		currentStatus = (String) results.get(0);
+		if (results != null && currentStatus.equals(NetworkInterfaceConstants.OK))
+			return (Vector) results.get(1);
 		return new Vector();
 	}	
 	
-	public boolean addMirrorServer(Vector serverInfo)	
+	public boolean addMirrorServer(Vector serverInfo) throws Exception
 	{	
-		try
-		{						
-			Vector results = handler.addAvailableServer(security.getPublicKeyString(), serverInfo);
-			currentStatus = (String) results.get(0);
-			if (results != null)
-			{
-				String returnCode = (String) results.get(0);		
-				if (returnCode.equals(NetworkInterfaceConstants.OK))
-					return true;
-			}	 
-		}		
-		catch (Exception e)
+		Vector results = handler.addAvailableServer(security.getPublicKeyString(), serverInfo);
+		currentStatus = (String) results.get(0);
+		if (results != null)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			
+			String returnCode = (String) results.get(0);		
+			if (returnCode.equals(NetworkInterfaceConstants.OK))
+				return true;
+		}	 
 		return false;
 	}	
 	
-	public void updateManageMirrorAccounts(Vector mirrorInfo, int manageType)	
+	public void updateManageMirrorAccounts(Vector mirrorInfo, int manageType) throws Exception
 	{	
-		try
-		{			
-			handler.updateAssignedServers(security.getPublicKeyString(), mirrorInfo, manageType);			
-		}		
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}				
+		handler.updateAssignedServers(security.getPublicKeyString(), mirrorInfo, manageType);			
 	}		
 		
 
-	public String getPublicCode(String accountId)
+	public void exportServerPublicKeyFile(File outputFile) throws Exception
 	{
-		String publicCode = null;
-		try
-		{																		
-			publicCode = MartusCrypto.getFormattedPublicCode(accountId);
-		}
-		catch (InvalidBase64Exception e)
-		{						
-			e.printStackTrace();					
-		}
-		
-		return publicCode;
-	}
-	
-	public void exportServerPublicKeyFile(File outputFile)
-	{
-		
-		try
-		{
-			MartusUtilities.exportServerPublicKey(security, outputFile);			
-		}
-		catch (MartusSignatureException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvalidBase64Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		MartusUtilities.exportServerPublicKey(security, outputFile);			
 	}
 	
 	public void warningMessageDlg(String message)

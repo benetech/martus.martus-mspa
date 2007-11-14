@@ -54,7 +54,7 @@ import org.martus.swing.Utilities;
 
 public class ServerArgumentsConfigDlg extends JDialog
 {
-	public ServerArgumentsConfigDlg(UiMainWindow owner)
+	public ServerArgumentsConfigDlg(UiMainWindow owner) throws Exception
 	{
 		super(owner, "Martus Server Arguments Configuration", true);		
 		parent = owner;				
@@ -70,7 +70,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 		setResizable(true);
 	}
 	
-	private JPanel buildArgumentsConfig()
+	private JPanel buildArgumentsConfig() throws Exception
 	{
 		LoadMartusServerArguments arguments = parent.getMSPAApp().getMartusServerArguments();
 
@@ -187,19 +187,26 @@ public class ServerArgumentsConfigDlg extends JDialog
 	{
 		public void actionPerformed(ActionEvent ae)
 		{
-			if (ae.getSource().equals(cancelButton))				
-				dispose();
-			else if (ae.getSource().equals(saveButton))
-				handleSendCommand();
-			else if (ae.getSource().equals(previewButton))
-			{	
-				LoadMartusServerArguments args = populateData();
-				previewArea.setText(args.toString());
+			try
+			{
+				if (ae.getSource().equals(cancelButton))				
+					dispose();
+				else if (ae.getSource().equals(saveButton))
+					handleSendCommand();
+				else if (ae.getSource().equals(previewButton))
+				{	
+					LoadMartusServerArguments args = populateData();
+					previewArea.setText(args.toString());
+				}
+			} 
+			catch (Exception e)
+			{
+				parent.exceptionDialog(e);
 			}
 			
 		}
 
-		private void handleSendCommand()
+		private void handleSendCommand() throws Exception
 		{								
 			parent.getMSPAApp().updateMartusServerArguments(populateData());
 			dispose();			
