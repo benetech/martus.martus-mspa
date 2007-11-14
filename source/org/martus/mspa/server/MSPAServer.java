@@ -45,6 +45,7 @@ import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
 import org.martus.common.MartusUtilities.PublicInformationInvalidException;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
@@ -314,7 +315,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{
 			security = MartusServerUtilities.loadCurrentMartusSecurity(getMSPAServerKeyPairFile(), passphrase);
-			System.out.println("Passphrase correct.");		
+			System.out.println("Passphrase correct.");
+			System.out.println("Public code: " + MartusSecurity.computeFormattedPublicCode(security.getPublicKeyString()));
 		}
 		catch (MartusCrypto.AuthorizationFailedException e)
 		{
