@@ -109,12 +109,7 @@ public class UiMainWindow extends JFrame
 			File keypairFile = mspaApp.getKeypairFile();
 			if(!keypairFile.exists())
 			{
-				if(!confirmDialog("Create Keypair", "No keypair was found. Create a new one?", "Create"))
-					return false;
-				
-				MartusLogger.log("Missing keypair file: " + keypairFile);
-				if(!createKeyPair(keypairFile))
-					return false;
+				createInitialKeyPair(keypairFile);
 			}
 			
 			int result = signIn(UiBasicSigninDlg.INITIAL); 
@@ -196,6 +191,24 @@ public class UiMainWindow extends JFrame
 			initializationErrorDlg("Exiting due to an unexpected error");
 			return false;
 		}
+	}
+
+	private void createInitialKeyPair(File keypairFile) throws Exception
+	{
+		if(!confirmDialog("Create Keypair", "No keypair was found. Create a new one?", "Create"))
+			return;
+		
+		MartusLogger.log("Missing keypair file: " + keypairFile);
+		if(!createKeyPair(keypairFile))
+			return;
+		
+		notifyDialog("Create Keypair", 
+				"<html>The Keypair has been created.<br>" +
+				"Next steps:<ul>" +
+				"<li>Sign in, and export your public key" +
+				"<li>Install this client public key on the server(s)" +
+				"<li>Install server public key(s) on this client" +
+				"</ul>");
 	}
 	
 	private boolean createKeyPair(File keyPairFile) throws Exception
@@ -332,6 +345,11 @@ public class UiMainWindow extends JFrame
 				 JOptionPane.DEFAULT_OPTION, null, buttons);
 		JDialog dialog = pane.createDialog(null, title);
 		dialog.setVisible(true);
+	}
+	
+	private void notifyDialog(String title, String message)
+	{
+		JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private boolean confirmDialog(String title, String message, String okButton)
