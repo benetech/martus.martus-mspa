@@ -300,6 +300,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{
 			security = MartusServerUtilities.loadCurrentMartusSecurity(getMSPAServerKeyPairFile(), passphrase);
+			martusServicePassword = new String(passphrase);
 			System.out.println("Passphrase correct.");
 			System.out.println("Public code: " + MartusSecurity.computeFormattedPublicCode(security.getPublicKeyString()));
 		}
@@ -1079,36 +1080,49 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		System.out.println("");
 	}
 
-	public Status getServerStatus()
-	{
-		logger.logDebug("getServerStatus");
-		return executeRootHelperCommand(RootHelperHandler.RootHelperGetStatusCommand);
-	}
-
 	public Status startServer()
 	{
 		logger.logDebug("startServer");
-		return executeRootHelperCommand(RootHelperHandler.RootHelperStartServicesCommand);
+		return executeRootHelperCommand(RootHelperHandler.RootHelperStartServicesCommand, martusServicePassword);
 	}
 
+	public Status restartServer()
+	{
+		logger.logDebug("restartServer");
+		return executeRootHelperCommand(RootHelperHandler.RootHelperRestartServicesCommand, martusServicePassword);
+	}
+	
 	public Status stopServer()
 	{
 		logger.logDebug("stopServer");
 		return executeRootHelperCommand(RootHelperHandler.RootHelperStopServicesCommand);
 	}
 	
-	public Status restartServer()
+	public Status getServerStatus()
 	{
-		logger.logDebug("restartServer");
-		return executeRootHelperCommand(RootHelperHandler.RootHelperRestartServicesCommand);
+		logger.logDebug("getServerStatus");
+		return executeRootHelperCommand(RootHelperHandler.RootHelperGetStatusCommand);
 	}
-	
+
 	private Status executeRootHelperCommand(String command)
+	{
+		Vector parameters = new Vector();
+		return executeRootHelperCommand(command, parameters);
+	}
+
+	private Status executeRootHelperCommand(String command, String password)
+	{
+		Vector parameters = new Vector();
+		parameters.add(password);
+		return executeRootHelperCommand(command, parameters);
+	}
+
+	private Status executeRootHelperCommand(String command, Vector parameters)
 	{
 		try
 		{
 			MartusNonSSLXmlrpcClient rootHelper = new MartusNonSSLXmlrpcClient(LOCALHOST, rootHelperPort);
-			String result = (String)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, new Vector());
+			String result = (String)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, parameters);
 			Status status = new Status(result);
 			return status;
 		} 
@@ -1251,6 +1265,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector clientNotSendToAmplifier;
 	HiddenBulletins hiddenBulletins;
 	Vector availabelMirrorServerPublicKeys;	
+	private String martusServicePassword;
 	
 	private int rootHelperPort = ROOTHELPER_DEFAULT_PORT;
 		

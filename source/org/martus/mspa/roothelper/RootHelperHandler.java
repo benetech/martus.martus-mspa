@@ -35,15 +35,15 @@ public class RootHelperHandler
 		logger = loggerToUse;
 	}
 	
-	public String getStatus()
-	{
-		logger.logDebug("RootHelper.getStatus");
-		return "StatusUnknown";		
-	}
-	
-	public String startServices()
+	public String startServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.startServices");
+		return NetworkInterfaceConstants.EXEC_ERROR;		
+	}
+	
+	public String restartServices(String martusServicePassword)
+	{
+		logger.logDebug("RootHelper.restartServices");
 		return NetworkInterfaceConstants.EXEC_ERROR;		
 	}
 	
@@ -53,17 +53,17 @@ public class RootHelperHandler
 		return NetworkInterfaceConstants.EXEC_ERROR;		
 	}
 	
-	public String restartServices()
+	public String getStatus()
 	{
-		logger.logDebug("RootHelper.restartServices");
-		return NetworkInterfaceConstants.EXEC_ERROR;		
+		logger.logDebug("RootHelper.getStatus");
+		return "StatusUnknown";		
 	}
 	
 	public static String RootHelperObjectName = "RootHelper";
-	public static String RootHelperGetStatusCommand = "getStatus";
 	public static String RootHelperStartServicesCommand = "startServices";
-	public static String RootHelperStopServicesCommand = "stopServices";
 	public static String RootHelperRestartServicesCommand = "restartServices";
+	public static String RootHelperStopServicesCommand = "stopServices";
+	public static String RootHelperGetStatusCommand = "getStatus";
 
 	LoggerInterface logger;
 }

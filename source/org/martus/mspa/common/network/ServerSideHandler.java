@@ -197,21 +197,21 @@ public class ServerSideHandler implements NetworkInterface
 		}
 		
 		Status status = new Status();
-		if (cmdType.equals(NetworkInterfaceConstants.GET_STATUS))
-		{
-			status = server.getServerStatus();
-		}
-		else if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
+		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
 		{
 			status = server.startServer();
+		}
+		else if (cmdType.equals(NetworkInterfaceConstants.RESTART_SERVER))
+		{
+			status = server.restartServer();
 		}
 		else if (cmdType.equals(NetworkInterfaceConstants.STOP_SERVER))
 		{
 			status = server.stopServer();
 		}
-		else if (cmdType.equals(NetworkInterfaceConstants.RESTART_SERVER))
+		else if (cmdType.equals(NetworkInterfaceConstants.GET_STATUS))
 		{
-			status = server.restartServer();
+			status = server.getServerStatus();
 		}
 		else
 		{
