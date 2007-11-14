@@ -340,7 +340,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getTriggerDirectory()
 	{
-		return new File(getMartusServerDataDirectory(), ADMINTRIGGERDIRECTORY);
+		return new File(getAppDirectoryPath(), ADMINTRIGGERDIRECTORY);
 	}
 
 	public static File getAuthorizedClientsDir()
