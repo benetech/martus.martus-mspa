@@ -32,9 +32,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -48,10 +50,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import org.martus.clientside.CurrentUiState;
+import org.martus.clientside.PasswordHelper;
 import org.martus.clientside.UiBasicSigninDlg;
 import org.martus.clientside.UiLocalization;
 import org.martus.common.MartusLogger;
 import org.martus.common.Version;
+import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusSecurity;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.client.view.AccountDetailPanel;
 import org.martus.mspa.client.view.AccountsTree;
@@ -101,10 +106,15 @@ public class UiMainWindow extends JFrame
 		
 		try
 		{
-			if(!mspaApp.getKeypairFile().exists())
+			File keypairFile = mspaApp.getKeypairFile();
+			if(!keypairFile.exists())
 			{
-				initializationErrorDlg("Missing keypair file: " + mspaApp.getKeypairFile());
-				return false;
+				if(!confirmDialog("Create Keypair", "No keypair was found. Create a new one?", "Create"))
+					return false;
+				
+				MartusLogger.log("Missing keypair file: " + keypairFile);
+				if(!createKeyPair(keypairFile))
+					return false;
 			}
 			
 			int result = signIn(UiBasicSigninDlg.INITIAL); 
@@ -185,6 +195,33 @@ public class UiMainWindow extends JFrame
 			MartusLogger.logException(e);
 			initializationErrorDlg("Exiting due to an unexpected error");
 			return false;
+		}
+	}
+	
+	private boolean createKeyPair(File keyPairFile) throws Exception
+	{
+		int mode = UiBasicSigninDlg.CREATE_NEW;
+		UiBasicSigninDlg signinDlg = new UiBasicSigninDlg(localization, uiState, currentActiveFrame, mode, "", new char[0]);
+		if(signinDlg.getUserChoice() != UiBasicSigninDlg.SIGN_IN)
+			return false;
+
+		char[] password = signinDlg.getPassword();
+		char[] passphrase = PasswordHelper.getCombinedPassPhrase(signinDlg.getNameText(), password);
+		try
+		{
+			MartusSecurity security = new MartusSecurity();
+			security.createKeyPair();
+			FileOutputStream out = new FileOutputStream(keyPairFile);
+			security.writeKeyPair(out, passphrase);
+			out.close();
+		
+			System.out.println("Public Code: " + MartusCrypto.computeFormattedPublicCode(security.getPublicKeyString()));
+			return true;
+		}
+		finally
+		{
+			Arrays.fill(password, 'x');
+			Arrays.fill(passphrase, 'x');
 		}
 	}
 	
@@ -295,6 +332,19 @@ public class UiMainWindow extends JFrame
 				 JOptionPane.DEFAULT_OPTION, null, buttons);
 		JDialog dialog = pane.createDialog(null, title);
 		dialog.setVisible(true);
+	}
+	
+	private boolean confirmDialog(String title, String message, String okButton)
+	{
+		String[] buttons = { okButton, "Cancel", };
+		int result = JOptionPane.showOptionDialog(this, message, title, 
+				JOptionPane.YES_NO_OPTION, 
+				JOptionPane.QUESTION_MESSAGE, 
+				null, 
+				buttons, 
+				null);
+
+		return (result == JOptionPane.YES_OPTION);
 	}
 	
 
