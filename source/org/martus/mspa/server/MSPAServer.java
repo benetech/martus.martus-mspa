@@ -42,8 +42,6 @@ import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
 import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
-import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
-import org.martus.common.MartusUtilities.PublicInformationInvalidException;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
@@ -95,26 +93,25 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		Vector assignedServer = loadAssignedMirrorServerInfo();	
 		File destDirectory = MSPAServer.getAvailableServerDirectory();		
 		
-		try
+		System.out.println("\nVerify mirror/backup server(s) environments ...");
+		for (int i=0; i< assignedServer.size();i++)
 		{
-			System.out.println("\nVerify mirror/backup server(s) environments ...");
-			for (int i=0; i< assignedServer.size();i++)
+			File file = (File) assignedServer.get(i);
+			try
 			{
-				File file = (File) assignedServer.get(i);			
 				String assignedPublicKey = retrievePublickey(file);
 				if (!isPublicKeyMatched(assignedPublicKey))
 				{
 					FileTransfer.copyFile(file, new File(destDirectory, file.getName()));
 					logAction("Warning: FileTransfer()", "The file ("+file.getPath()+") is not existing in AvailableServers/.");
 				}
-			}		
-			System.out.println("Completed mirror/backup server(s) checking ...\n");
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}				
+			}
+			catch(Exception e)
+			{
+				MartusLogger.logWarning("Skipping key file with bad name: " + file);
+			}
+		}		
+		System.out.println("Completed mirror/backup server(s) checking ...\n");
 	}	
 	
 	private boolean isPublicKeyMatched(String key)
@@ -152,36 +149,24 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		File[] keyFiles = availableServerDir.listFiles();
 
 		for (int i=0;i< keyFiles.length;i++)
-		{	
-			String serverPublicKey = retrievePublickey(keyFiles[i]);
-			if (serverPublicKey != "")
-				availabelMirrorServerPublicKeys.add(serverPublicKey);
+		{
+			try
+			{
+				String serverPublicKey = retrievePublickey(keyFiles[i]);
+				if (serverPublicKey != "")
+					availabelMirrorServerPublicKeys.add(serverPublicKey);
+			}
+			catch(Exception e)
+			{
+				MartusLogger.logWarning("Skipping key file with bad name: " + keyFiles[i]);
+			}
 		}	
 	}
 	
-	private String retrievePublickey(File publicKey)
+	private String retrievePublickey(File publicKey) throws Exception
 	{				
-		String serverPublicKey ="";						
-		try
-		{
-			Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(publicKey, security);		
-			serverPublicKey = (String)publicInfo.get(0);				
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvalidPublicKeyFileException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (PublicInformationInvalidException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(publicKey, security);		
+		String serverPublicKey = (String)publicInfo.get(0);				
 		return serverPublicKey;
 	}
 	
