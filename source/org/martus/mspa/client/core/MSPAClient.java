@@ -134,9 +134,9 @@ public class MSPAClient
 			File toCallFile = toCallFiles[i];
 			if(!toCallFile.isDirectory())
 			{
-				String ipToCall = MartusUtilities.extractIpFromFileName(toCallFile.getName());
 				try
 				{
+					String ipToCall = MartusUtilities.extractIpFromFileName(toCallFile.getName());
 					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
 					String serverPublicKey = (String)publicInfo.get(0);	
 					if (serverPublicKey != null)
