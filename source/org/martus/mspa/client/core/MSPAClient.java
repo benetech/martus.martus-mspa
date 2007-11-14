@@ -112,13 +112,12 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
-	public boolean loadListOfConfiguredServers() throws Exception
+	public void loadListOfConfiguredServers() throws Exception
 	{
 		portToUse = DEFAULT_PORT;					
 		File serverToCallDirectory = getServerToCallDirectory();
 		serverToCallDirectory.mkdirs();
 		toCallFiles = DirectoryUtils.listFiles(serverToCallDirectory);
-		return (toCallFiles.length > 0);
 	}
 	
 	public Vector getLineOfServerIpAndPublicCode() throws

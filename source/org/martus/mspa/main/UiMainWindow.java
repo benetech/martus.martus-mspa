@@ -123,11 +123,7 @@ public class UiMainWindow extends JFrame
 				return false;
 			}
 
-			if(!mspaApp.loadListOfConfiguredServers())
-			{
-				initializationErrorDlg("Exiting because no servers configured in " + mspaApp.getServerToCallDirectory());	
-				return false;
-			}
+			mspaApp.loadListOfConfiguredServers();
 		
 			if (!selectServer())
 			{
@@ -390,7 +386,7 @@ public class UiMainWindow extends JFrame
 	
 		JMenu mFile = new JMenu("File");
 		mFile.setMnemonic('f');
-		mFile.add(new MenuItemExportPublicKey(this, "Export Public Key", getDefaultDirectoryPath()));
+		mFile.add(new MenuItemExportPublicKey(this, "Export Public Key"));
 		mFile.addSeparator();			
 		mFile.add(new MenuItemExitApplication(this));
 		menuBar.add(mFile);

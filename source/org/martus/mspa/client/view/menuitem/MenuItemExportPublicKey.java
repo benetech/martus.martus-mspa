@@ -36,23 +36,27 @@ import org.martus.mspa.main.UiMainWindow;
 
 public class MenuItemExportPublicKey extends AbstractAction
 {
-	public MenuItemExportPublicKey(UiMainWindow mainWindow, String label, File dir)
+	public MenuItemExportPublicKey(UiMainWindow mainWindow, String label)
 	{
 		super(label);	
 		parent = mainWindow;
-		currentDir = dir;
 	}
 
 	public void actionPerformed(ActionEvent arg0) 
 	{								
 		File keypair = parent.getMSPAApp().getKeypairFile();
+		exportPublicKey(parent, keypair);
+	}
+
+	public static void exportPublicKey(UiMainWindow parent, File keypair)
+	{
 		if (!keypair.exists())
 		{
 			JOptionPane.showMessageDialog(parent, keypair.getParent()+"Keypair not found.",
 				 "MSPA Error Message", JOptionPane.ERROR_MESSAGE);
 		}	
 				
-		File outputFile = new File(currentDir, "publicKey.txt");
+		File outputFile = new File(keypair.getParentFile(), "publicKey.txt");
 		
 		parent.getMSPAApp().exportServerPublicKeyFile(outputFile);		
 		if (outputFile.exists())				
@@ -64,5 +68,4 @@ public class MenuItemExportPublicKey extends AbstractAction
 	}
 	
 	UiMainWindow parent;
-	File currentDir;	
 }

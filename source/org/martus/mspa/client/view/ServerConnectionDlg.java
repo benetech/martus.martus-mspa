@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
+import org.martus.mspa.client.view.menuitem.MenuItemExportPublicKey;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
@@ -115,6 +116,7 @@ public class ServerConnectionDlg extends JDialog
 							
 		connect = new UiButton("Connect");
 		connect.addActionListener(new CommitButtonHandler());	
+		panel.add(new UiButton(new MenuItemExportPublicKey(parent, "Export Public Key")));
 		panel.add(connect);					
 
 		return panel;
