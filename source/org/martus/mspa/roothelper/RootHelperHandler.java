@@ -26,10 +26,11 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.roothelper;
 
 import org.martus.common.LoggerInterface;
-import org.martus.mspa.common.network.NetworkInterfaceConstants;
+import org.martus.common.MartusLogger;
 
 public class RootHelperHandler
 {
+
 	public RootHelperHandler(LoggerInterface loggerToUse)
 	{
 		logger = loggerToUse;
@@ -38,25 +39,50 @@ public class RootHelperHandler
 	public String startServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.startServices");
-		return NetworkInterfaceConstants.EXEC_ERROR;		
+		return RESULT_ERROR;		
 	}
 	
 	public String restartServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.restartServices");
-		return NetworkInterfaceConstants.EXEC_ERROR;		
+		return RESULT_ERROR;		
 	}
 	
 	public String stopServices()
 	{
 		logger.logDebug("RootHelper.stopServices");
-		return NetworkInterfaceConstants.EXEC_ERROR;		
+		int result = executeAndWait(SERVICE_STOP);		
+		if(result == 0)
+			return RESULT_OK;
+		
+		MartusLogger.logError("Error stopping service, exit code: " + result);
+		return RESULT_ERROR;		
 	}
-	
+
 	public String getStatus()
 	{
 		logger.logDebug("RootHelper.getStatus");
-		return "StatusUnknown";		
+		int result = executeAndWait(SERVICE_STATE);
+		if(result == 0)
+			return RESULT_OK;
+		
+		MartusLogger.logError("Error stopping service, exit code: " + result);
+		return RESULT_ERROR;		
+	}
+	
+	private int executeAndWait(String command)
+	{
+		try
+		{
+			Process p = Runtime.getRuntime().exec(MARTUS_SERVICE + " " + command);
+			return p.waitFor();
+		} 
+		catch (Exception e)
+		{
+			MartusLogger.logException(e);
+			return -1;
+		}
+		
 	}
 	
 	public static String RootHelperObjectName = "RootHelper";
@@ -64,6 +90,13 @@ public class RootHelperHandler
 	public static String RootHelperRestartServicesCommand = "restartServices";
 	public static String RootHelperStopServicesCommand = "stopServices";
 	public static String RootHelperGetStatusCommand = "getStatus";
+	
+	private static final String MARTUS_SERVICE = "/etc/init.d/martus";
+	private static final String SERVICE_STOP = "stop";
+	private static final String SERVICE_STATE = "state";
+	
+	public static final String RESULT_OK = "OK";
+	public static final String RESULT_ERROR = "ERROR";
 
 	LoggerInterface logger;
 }

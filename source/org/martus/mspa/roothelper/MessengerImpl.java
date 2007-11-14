@@ -26,13 +26,9 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.roothelper;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
@@ -40,7 +36,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.martus.common.LoggerInterface;
 import org.martus.common.LoggerToConsole;
-import org.martus.util.FileTransfer;
 
 
 public class MessengerImpl extends UnicastRemoteObject implements Messenger, MessageType 
@@ -48,7 +43,7 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	public MessengerImpl(final String _passphrase) throws RemoteException 
 	{
 		super();
-		passphrase = _passphrase;
+//		passphrase = _passphrase;
 		logger = new LoggerToConsole();	
 	}
 	
@@ -79,78 +74,80 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	
 	private Status callScript(int scriptType)
 	{					
-		switch (scriptType)
-		{
-			case SERVER_START:
-				return runExec("martus -p restart");
-			case SERVER_STOP:
-				return runExec("martus -p stop");
-			case READONLY:
-				return runExec("remountmartusdata ro");
-			case READ_WRITE:
-				return runExec("remountmartusdata rw");
-			case SERVER_STATE:
-				return runExec("martus -p serverstate");
-			default:
-			{
-				Status status = new Status(Status.FAILED);
-				status.setStdErrorMsg("Unkown script");
-				return status;
-			}		
-		}		
+		return null;
+//		switch (scriptType)
+//		{
+//			case SERVER_START:
+//				return runExec("martus -p restart");
+//			case SERVER_STOP:
+//				return runExec("martus -p stop");
+//			case READONLY:
+//				return runExec("remountmartusdata ro");
+//			case READ_WRITE:
+//				return runExec("remountmartusdata rw");
+//			case SERVER_STATE:
+//				return runExec("martus -p serverstate");
+//			default:
+//			{
+//				Status status = new Status(Status.FAILED);
+//				status.setStdErrorMsg("Unkown script");
+//				return status;
+//			}		
+//		}		
 	}	
 	
-	private Status runExec(String callScript)
-	{
-		Status status = new Status();	
-		try
-		{
-			logWhoCallThisScript(callScript);							
-			Process process = Runtime.getRuntime().exec(callScript);		
-	
-			StringBuffer errorStream = new StringBuffer();			
-			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),errorStream);
-			
-			StringBuffer outputStream = new StringBuffer(); 
-			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputStream);
-			errorGobbler.start();
-			outputGobbler.start();
-			
-			if (callScript.endsWith("restart"))
-			{	
-				BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-				buffStdin.write(passphrase+"\r");
-				buffStdin.flush(); 
-			}
-			
-			if (process.waitFor() != 0)
-			{															
-				status.setStdErrorMsg(errorStream.toString());			
-				status.setStatus(Status.FAILED);
-				log(errorStream.toString());
-			}
-			
-			process.getInputStream().close();
-			process.getOutputStream().close();
-			process.getErrorStream().close(); 
-							
-			status.setStdOutMsg(outputStream.toString());
-			log(outputStream.toString());
-		}
-		catch (IOException e)
-		{
-			status.setStdErrorMsg(e.toString());
-			status.setStatus(Status.FAILED);
-			log("["+callScript+"] "+status.getAllMessages());
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-			log("["+callScript+"] "+e.toString());
-		}
-
-		return status;
-	}
+//	private Status runExec(String callScript)
+//	{
+//		return null;
+//		Status status = new Status();	
+//		try
+//		{
+//			logWhoCallThisScript(callScript);							
+//			Process process = Runtime.getRuntime().exec(callScript);		
+//	
+//			StringBuffer errorStream = new StringBuffer();			
+//			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),errorStream);
+//			
+//			StringBuffer outputStream = new StringBuffer(); 
+//			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputStream);
+//			errorGobbler.start();
+//			outputGobbler.start();
+//			
+//			if (callScript.endsWith("restart"))
+//			{	
+//				BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+//				buffStdin.write(passphrase+"\r");
+//				buffStdin.flush(); 
+//			}
+//			
+//			if (process.waitFor() != 0)
+//			{															
+//				status.setStdErrorMsg(errorStream.toString());			
+//				status.setStatus(Status.FAILED);
+//				log(errorStream.toString());
+//			}
+//			
+//			process.getInputStream().close();
+//			process.getOutputStream().close();
+//			process.getErrorStream().close(); 
+//							
+//			status.setStdOutMsg(outputStream.toString());
+//			log(outputStream.toString());
+//		}
+//		catch (IOException e)
+//		{
+//			status.setStdErrorMsg(e.toString());
+//			status.setStatus(Status.FAILED);
+//			log("["+callScript+"] "+status.getAllMessages());
+//		}
+//		catch (InterruptedException e)
+//		{
+//			e.printStackTrace();
+//			log("["+callScript+"] "+e.toString());
+//		}
+//
+//		return status;
+//	}
 	
 	private void logWhoCallThisScript(String scriptType)
 	{
@@ -172,26 +169,27 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 
 	public Status getAdminFile(String key, String fileFrom, String fileTo) throws RemoteException 
 	{
-		Status status = new Status();		
-								
-		try
-		{
-			FileTransfer.copyFile(new File(fileFrom), new File(fileTo));			
-			status.setStatus(Status.SUCCESS);		
-		}
-		catch(FileNotFoundException nothingToWorryAbout)
-		{
-			status.setStatus(Status.FAILED);			
-			status.setStdErrorMsg(fileFrom+" not found: ");				
-		}
-		catch (IOException e)
-		{
-			status.setStatus(Status.FAILED);			
-			status.setStdOutMsg("Error loading ("+fileFrom+")file.\n"+e.toString());				
-			e.printStackTrace();			
-		}		
-				
-		return status;
+		return null;
+//		Status status = new Status();		
+//								
+//		try
+//		{
+//			FileTransfer.copyFile(new File(fileFrom), new File(fileTo));			
+//			status.setStatus(Status.SUCCESS);		
+//		}
+//		catch(FileNotFoundException nothingToWorryAbout)
+//		{
+//			status.setStatus(Status.FAILED);			
+//			status.setStdErrorMsg(fileFrom+" not found: ");				
+//		}
+//		catch (IOException e)
+//		{
+//			status.setStatus(Status.FAILED);			
+//			status.setStdOutMsg("Error loading ("+fileFrom+")file.\n"+e.toString());				
+//			e.printStackTrace();			
+//		}		
+//				
+//		return status;
 	}
 	
 	private synchronized void log(String message)
@@ -228,6 +226,6 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	}
 	
 	private LoggerInterface logger;
-	private String passphrase;	
+//	private String passphrase;	
 	public static final String CONNET_MSG = "[MessengerImpl] Connected: Ready to invoke ...\n";
 }

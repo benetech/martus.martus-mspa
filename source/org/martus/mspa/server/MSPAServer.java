@@ -1123,14 +1123,18 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{
 			MartusNonSSLXmlrpcClient rootHelper = new MartusNonSSLXmlrpcClient(LOCALHOST, rootHelperPort);
 			String result = (String)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, parameters);
-			Status status = new Status(result);
+			if(result.equals(RootHelperHandler.RESULT_OK))
+				return Status.createSuccess();
+			
+			Status status = Status.createFailure();
+			status.setStdErrorMsg(result);
 			return status;
 		} 
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Status status = new Status(NetworkInterfaceConstants.EXEC_ERROR);
+			MartusLogger.logException(e);
+			Status status = Status.createFailure();
+			status.setStdErrorMsg(NetworkInterfaceConstants.EXEC_ERROR);
 			return status;
 		}
 	}

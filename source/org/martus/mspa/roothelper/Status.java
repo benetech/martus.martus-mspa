@@ -29,16 +29,17 @@ package org.martus.mspa.roothelper;
 
 public class Status
 {
-	public String stdErrorMsg="";
-	public String stdOutMsg="";
-	public String status="";
-	
-	public Status()
+	public static Status createSuccess()
 	{
-		this(SUCCESS);
+		return new Status(SUCCESS);
 	}
 	
-	public Status(String msgStatus) 
+	public static Status createFailure()
+	{
+		return new Status(FAILED); 
+	}
+	
+	private Status(String msgStatus) 
 	{		
 		status = msgStatus;
 	}	
@@ -60,7 +61,7 @@ public class Status
 	
 	public boolean isSuccess()
 	{
-		return (status.equals(SUCCESS))?true:false;
+		return (status.equals(SUCCESS));
 	}
 		
 	public String getAllMessages()
@@ -83,4 +84,9 @@ public class Status
 
 	public static final String SUCCESS = "success";
 	public static final String FAILED = "failed";
+
+	private String stdErrorMsg="";
+	private String stdOutMsg="";
+	private String status="";
+	
 }

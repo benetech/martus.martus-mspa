@@ -195,43 +195,41 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return results;
 		}
-		
-		Status status = new Status();
-		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
-		{
-			status = server.startServer();
-		}
-		else if (cmdType.equals(NetworkInterfaceConstants.RESTART_SERVER))
-		{
-			status = server.restartServer();
-		}
-		else if (cmdType.equals(NetworkInterfaceConstants.STOP_SERVER))
-		{
-			status = server.stopServer();
-		}
-		else if (cmdType.equals(NetworkInterfaceConstants.GET_STATUS))
-		{
-			status = server.getServerStatus();
-		}
-		else
+
+		Status status = executeCommand(cmdType);													
+		if(status == null)
 		{
 			results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
 			return results;
-		}													
-						
+		}
 								
 		if (status.isSuccess())
 		{	
 			results.add(NetworkInterfaceConstants.OK);
 			results.add(status.getStdOutMsg());
+			return results;
 		}
-		else
-		{	
-			results.add(NetworkInterfaceConstants.EXEC_ERROR);		
-			results.add(status.getAllMessages());
-		}	
-				
+
+		results.add(NetworkInterfaceConstants.EXEC_ERROR);		
+		results.add(status.getAllMessages());
 		return results;	
+	}
+
+	private Status executeCommand(String cmdType)
+	{
+		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
+			return server.startServer();
+		
+		if (cmdType.equals(NetworkInterfaceConstants.RESTART_SERVER))
+			return server.restartServer();
+		
+		if (cmdType.equals(NetworkInterfaceConstants.STOP_SERVER))
+			return server.stopServer();
+		
+		if (cmdType.equals(NetworkInterfaceConstants.GET_STATUS))
+			return server.getServerStatus();
+		
+		return null;
 	}
 	
 	public Vector hideBulletins(String myAccountId, String manageAccountId, Vector localIds)
