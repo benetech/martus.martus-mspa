@@ -236,8 +236,7 @@ public class UiMainWindow extends JFrame
 	
 	private boolean selectServer() throws Exception
 	{
-		Vector listOfServers = mspaApp.getLineOfServerIpAndPublicCode();	
-		ServerConnectionDlg dlg = new ServerConnectionDlg(this, listOfServers);
+		ServerConnectionDlg dlg = new ServerConnectionDlg(this);
 		dlg.setVisible(true);
 		
 		if (mspaApp.getCurrentServerPublicCode().length() <=0)
@@ -343,12 +342,12 @@ public class UiMainWindow extends JFrame
 		dialog.setVisible(true);
 	}
 	
-	private void notifyDialog(String title, String message)
+	public void notifyDialog(String title, String message)
 	{
 		JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	private boolean confirmDialog(String title, String message, String okButton)
+	public boolean confirmDialog(String title, String message, String okButton)
 	{
 		String[] buttons = { okButton, "Cancel", };
 		int result = JOptionPane.showOptionDialog(this, message, title, 

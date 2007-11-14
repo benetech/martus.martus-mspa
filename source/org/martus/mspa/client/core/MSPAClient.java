@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 import org.martus.clientside.PasswordHelper;
 import org.martus.clientside.UiLocalization;
 import org.martus.common.ContactInfo;
+import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
@@ -112,15 +113,15 @@ public class MSPAClient
 		return new File(UiMainWindow.getDefaultDirectoryPath(), KEYPAIR_FILE);
 	}
 	
-	public void loadListOfConfiguredServers() throws Exception
+	public File[] loadListOfConfiguredServers() throws Exception
 	{
 		portToUse = DEFAULT_PORT;					
 		File serverToCallDirectory = getServerToCallDirectory();
 		serverToCallDirectory.mkdirs();
-		toCallFiles = DirectoryUtils.listFiles(serverToCallDirectory);
+		return DirectoryUtils.listFiles(serverToCallDirectory);
 	}
 	
-	public Vector getLineOfServerIpAndPublicCode() throws
+	public Vector getLinesOfServerIpAndPublicCode(File[] toCallFiles) throws
 			IOException, 
 			MartusUtilities.InvalidPublicKeyFileException, 
 			MartusUtilities.PublicInformationInvalidException, 
@@ -133,14 +134,22 @@ public class MSPAClient
 			File toCallFile = toCallFiles[i];
 			if(!toCallFile.isDirectory())
 			{
-				String ipToCall = MartusUtilities.extractIpFromFileName(toCallFile.getName());				
-				Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
-				String serverPublicKey = (String)publicInfo.get(0);	
-				if (serverPublicKey != null)
-				{				
-					String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
-					String serverPublicCall = MartusCrypto.formatPublicCode(nonFormatPublicCode);
-					listOfServers.add(ipToCall+"\t"+serverPublicCall);		
+				String ipToCall = MartusUtilities.extractIpFromFileName(toCallFile.getName());
+				try
+				{
+					Vector publicInfo = MartusUtilities.importServerPublicKeyFromFile(toCallFile, security);
+					String serverPublicKey = (String)publicInfo.get(0);	
+					if (serverPublicKey != null)
+					{				
+						String nonFormatPublicCode = MartusCrypto.computePublicCode(serverPublicKey);
+						String serverPublicCall = MartusCrypto.formatPublicCode(nonFormatPublicCode);
+						listOfServers.add(ipToCall+"\t"+serverPublicCall);		
+					}
+				}
+				catch(Exception e)
+				{
+					MartusLogger.logException(e);
+					JOptionPane.showMessageDialog(null, "Skipping invalid server public key file: " + toCallFile);
 				}
 			}
 		}
@@ -619,7 +628,6 @@ public class MSPAClient
 	UiLocalization localization;
 	MartusCrypto security;
 	File keyPairFile;	
-	File[] toCallFiles;
 	String currentStatus;
 	
 	public static int DEFAULT_PORT = 984;

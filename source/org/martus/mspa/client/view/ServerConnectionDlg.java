@@ -26,10 +26,11 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.client.view;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -42,39 +43,63 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
+import org.martus.common.MartusUtilities.InvalidPublicKeyFileException;
+import org.martus.common.MartusUtilities.PublicInformationInvalidException;
+import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
+import org.martus.mspa.client.core.MSPAClient;
+import org.martus.mspa.client.view.menuitem.ImportServerPublicKeyAction;
 import org.martus.mspa.client.view.menuitem.MenuItemExportPublicKey;
 import org.martus.mspa.main.UiMainWindow;
 import org.martus.swing.UiButton;
 import org.martus.swing.UiLabel;
 import org.martus.swing.Utilities;
+import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 
 public class ServerConnectionDlg extends JDialog
 {
-	public ServerConnectionDlg(UiMainWindow owner, Vector availableServers) 
+	public ServerConnectionDlg(UiMainWindow owner) throws Exception
 	{				
 		super(owner, "Connect to Server: ", true);
 		parent = owner;		
+		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());		
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		mainPanel.add(new UiLabel("Select a server: "), BorderLayout.NORTH);	
-		mainPanel.add(createDisplayServerListPane(availableServers), BorderLayout.CENTER);
+		mainPanel.add(createDisplayServerListPane(), BorderLayout.CENTER);
 		mainPanel.add(buildButtonsPanel(), BorderLayout.SOUTH);						
-		mainPanel.setPreferredSize(new Dimension(300,250));		
 		
+		refreshAvailableServerList();
+
 		getContentPane().add(mainPanel);
 		getRootPane().setDefaultButton(connect);
+		pack();
 		Utilities.centerDlg(this);
+	}
+	
+	public UiMainWindow getMainWindow()
+	{
+		return parent;
+	}
+
+	private Vector getAvailableServers() throws Exception, IOException, InvalidPublicKeyFileException, PublicInformationInvalidException, SSLSocketSetupException, InvalidBase64Exception
+	{
+		File[] serverKeyFiles = getApp().loadListOfConfiguredServers();
+		Vector listOfServers = getApp().getLinesOfServerIpAndPublicCode(serverKeyFiles);
+		return listOfServers;
+	}
+
+	private MSPAClient getApp()
+	{
+		return parent.getMSPAApp();
 	}	
 	
-	private JScrollPane createDisplayServerListPane(Vector availableServers)
+	private JScrollPane createDisplayServerListPane() throws Exception
 	{
-		availabelServerListModel = loadElementsToList(availableServers);
+		availabelServerListModel = new DefaultListModel();
 		availabelServerList = createServerList(availabelServerListModel);
 		availabelServerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		if(availableServers.size() == 1)
-			availabelServerList.setSelectedIndex(0);
 
 		return new JScrollPane(availabelServerList);
 	}
@@ -88,14 +113,15 @@ public class ServerConnectionDlg extends JDialog
 		return list;
 	}
 	
-	private DefaultListModel loadElementsToList(Vector items)
+	public void refreshAvailableServerList() throws Exception, IOException, InvalidPublicKeyFileException, PublicInformationInvalidException, SSLSocketSetupException, InvalidBase64Exception
 	{
-		DefaultListModel listModel = new DefaultListModel();
-		
+		availabelServerListModel.clear();
+		Vector items = getAvailableServers();
 		for (int i=0; i<items.size();i++)
-			listModel.add(i, items.get(i));
-			
-		return listModel;
+			availabelServerListModel.add(i, items.get(i));
+
+		if(availabelServerListModel.size() == 1)
+			availabelServerList.setSelectedIndex(0);
 	}
 
 	private void configureTabList(JList list)
@@ -113,10 +139,12 @@ public class ServerConnectionDlg extends JDialog
 	{
 		JPanel panel = new JPanel();		
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		File serverKeyDirectory = getApp().getServerToCallDirectory();
 							
 		connect = new UiButton("Connect");
 		connect.addActionListener(new CommitButtonHandler());	
 		panel.add(new UiButton(new MenuItemExportPublicKey(parent, "Export Public Key")));
+		panel.add(new UiButton(new ImportServerPublicKeyAction(this, serverKeyDirectory)));
 		panel.add(connect);					
 
 		return panel;
