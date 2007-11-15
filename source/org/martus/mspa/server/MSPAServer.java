@@ -1127,19 +1127,19 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			if(resultCode.equals(RootHelperHandler.RESULT_OK))
 			{
 				Status status = Status.createSuccess();
-				status.setStdOutMsg((String)result.get(1));
+				status.setDetailText((String)result.get(1));
 				return status;
 			}
 			
 			Status status = Status.createFailure();
-			status.setStdErrorMsg((String)result.get(1));
+			status.setDetailText((String)result.get(1));
 			return status;
 		} 
 		catch (Exception e)
 		{
 			MartusLogger.logException(e);
 			Status status = Status.createFailure();
-			status.setStdErrorMsg(e.getMessage());
+			status.setDetailText(e.getMessage());
 			return status;
 		}
 	}

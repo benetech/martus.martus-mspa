@@ -42,6 +42,7 @@ public class Status
 	private Status(String msgStatus) 
 	{		
 		status = msgStatus;
+		detailText = "";
 	}	
 	
 	public void setStatus(String returnStatus)
@@ -49,14 +50,9 @@ public class Status
 		status = returnStatus;	
 	}	
 	
-	public void setStdErrorMsg(String msg)
+	public void setDetailText(String msg)
 	{
-		stdErrorMsg = msg;
-	}
-	
-	public void setStdOutMsg(String msg)
-	{
-		stdOutMsg = msg;
+		detailText = msg;
 	}
 	
 	public boolean isSuccess()
@@ -64,29 +60,20 @@ public class Status
 		return (status.equals(SUCCESS));
 	}
 		
-	public String getAllMessages()
+	public String getDetailText()
 	{
-		String newLine = System.getProperty("line.separator");
-		StringBuffer message = new StringBuffer();
-		message.append(getStatus());
-		if (stdErrorMsg != "")
-			message.append(newLine).append("stderr: ").append(stdErrorMsg);
-			
-		if (stdOutMsg != "")	
-			message.append(newLine).append("stdout: ").append(stdOutMsg);
-			
-		return message.toString();	
+		return detailText;
 	}
 	
-	public String getStdErrorMsg() {return stdErrorMsg;}
-	public String getStdOutMsg() {return stdOutMsg;}	
-	public String getStatus() {return status;}
+	public String getStatus() 
+	{
+		return status;
+	}
 
 	public static final String SUCCESS = "success";
 	public static final String FAILED = "failed";
 
-	private String stdErrorMsg="";
-	private String stdOutMsg="";
-	private String status="";
+	private String status;
+	private String detailText;
 	
 }

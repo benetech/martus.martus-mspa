@@ -206,12 +206,12 @@ public class ServerSideHandler implements NetworkInterface
 		if (status.isSuccess())
 		{	
 			results.add(NetworkInterfaceConstants.OK);
-			results.add(status.getStdOutMsg());
+			results.add(status.getDetailText());
 			return results;
 		}
 
 		results.add(NetworkInterfaceConstants.EXEC_ERROR);		
-		results.add(status.getAllMessages());
+		results.add(status.getDetailText());
 		return results;	
 	}
 
