@@ -26,12 +26,12 @@ Boston, MA 02111-1307, USA.
 package org.martus.mspa.roothelper;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Vector;
 
 import org.martus.common.LoggerInterface;
 import org.martus.common.MartusLogger;
-import org.martus.mspa.common.network.NetworkInterfaceConstants;
 
 public class RootHelperHandler
 {
@@ -44,21 +44,13 @@ public class RootHelperHandler
 	public Vector startServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.startServices");
-
-		Vector result = new Vector();
-		result.add(NetworkInterfaceConstants.EXEC_ERROR);
-		result.add(ERROR_DETAIL_NOT_IMPLEMENTED_YET);
-		return result;		
+		return executeWithoutWaiting(SERVICE_START, martusServicePassword).toVector();
 	}
 	
 	public Vector restartServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.restartServices");
-
-		Vector result = new Vector();
-		result.add(NetworkInterfaceConstants.EXEC_ERROR);
-		result.add(ERROR_DETAIL_NOT_IMPLEMENTED_YET);
-		return result;		
+		return executeWithoutWaiting(SERVICE_RESTART, martusServicePassword).toVector();
 	}
 	
 	public Vector stopServices()
@@ -75,26 +67,37 @@ public class RootHelperHandler
 		return result;
 	}
 	
-	private Status executeAndWait(String command, String password)
+	private Status executeWithoutWaiting(String command, String password)
 	{
-		String commandLine = MARTUS_SERVICE + " " + command;
 		try
 		{
-			MartusLogger.log("Executing: " + commandLine);							
-			Process process = Runtime.getRuntime().exec(commandLine);		
+			Process process = executeProcess(command, password);		
+			int exitCode = process.waitFor();
+	
+			if (exitCode == 0)
+				return Status.createSuccess("");
+			
+			return Status.createFailure(Integer.toString(exitCode));
+		}
+		catch (Exception e)
+		{
+			MartusLogger.logException(e);
+			return Status.createFailure(e.getMessage());
+		}
+		
+	}
+	
+	private Status executeAndWait(String command, String password)
+	{
+		try
+		{
+			Process process = executeProcess(command, password);		
 	
 			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "stderr");
 			
 			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "stdout");
 			errorGobbler.start();
 			outputGobbler.start();
-			
-			if (password != null)
-			{	
-				BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-				buffStdin.write(password + "\r");
-				buffStdin.flush(); 
-			}
 			
 			int exitCode = process.waitFor();
 			process.getOutputStream().close();
@@ -113,13 +116,31 @@ public class RootHelperHandler
 		}
 	}
 
+	private Process executeProcess(String command, String password) throws IOException
+	{
+		String commandLine = MARTUS_SERVICE + " " + command;
+		MartusLogger.log("Executing: " + commandLine);							
+		Process process = Runtime.getRuntime().exec(commandLine);
+
+		if (password != null)
+		{	
+			BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+			buffStdin.write(password + "\r");
+			buffStdin.flush(); 
+		}
+		
+		return process;
+	}
+
 	public static String RootHelperObjectName = "RootHelper";
 	public static String RootHelperStartServicesCommand = "startServices";
 	public static String RootHelperRestartServicesCommand = "restartServices";
 	public static String RootHelperStopServicesCommand = "stopServices";
 	public static String RootHelperGetStatusCommand = "getStatus";
 	
-	private static final String MARTUS_SERVICE = "/etc/init.d/martus";
+	private static final String MARTUS_SERVICE = "/etc/init.d/martus -p";
+	private static final String SERVICE_START = "start";
+	private static final String SERVICE_RESTART = "restart";
 	private static final String SERVICE_STOP = "stop";
 	private static final String SERVICE_STATE = "state";
 	
