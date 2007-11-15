@@ -200,7 +200,7 @@ public class MSPAClient
 		if (currentStatus.equals(NetworkInterfaceConstants.OK))
 			return (Vector) results.get(1);
 
-		return new Vector();
+		throw new Exception("Error retrieving accounts: " + results.get(1));
 	}
 	
 	public Vector getContactInfo(String accountId) throws Exception
