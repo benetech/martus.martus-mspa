@@ -25,10 +25,6 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
@@ -199,30 +195,30 @@ public class MessengerImpl extends UnicastRemoteObject implements Messenger, Mes
 	
 	class StreamGobbler extends Thread
 	{
-		InputStream inputStream;
-		StringBuffer rtStatus;	
-
-		StreamGobbler(InputStream is,StringBuffer status)
-		{
-			inputStream = is;					
-			rtStatus = status;
-		}
-
-		public void run()
-		{
-			try
-			{
-				InputStreamReader isReader = new InputStreamReader(inputStream);
-				BufferedReader br = new BufferedReader(isReader);
-				String line=null;				
-				while ( (line = br.readLine()) != null)
-					rtStatus.append(line).append("\n");    
-			} 
-			catch (IOException ioe)
-			{
-				ioe.printStackTrace();  
-			}
-		}
+//		InputStream inputStream;
+//		StringBuffer rtStatus;	
+//
+//		StreamGobbler(InputStream is,StringBuffer status)
+//		{
+//			inputStream = is;					
+//			rtStatus = status;
+//		}
+//
+//		public void run()
+//		{
+//			try
+//			{
+//				InputStreamReader isReader = new InputStreamReader(inputStream);
+//				BufferedReader br = new BufferedReader(isReader);
+//				String line=null;				
+//				while ( (line = br.readLine()) != null)
+//					rtStatus.append(line).append("\n");    
+//			} 
+//			catch (IOException ioe)
+//			{
+//				ioe.printStackTrace();  
+//			}
+//		}
 	}
 	
 	private LoggerInterface logger;

@@ -25,6 +25,8 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.util.Vector;
 
 import org.martus.common.LoggerInterface;
@@ -62,45 +64,55 @@ public class RootHelperHandler
 	public Vector stopServices()
 	{
 		logger.logDebug("RootHelper.stopServices");
-		Vector result = executeAndWait(SERVICE_STOP);		
+		Vector result = executeAndWait(SERVICE_STOP, null).toVector();		
 		return result;
 	}
 
 	public Vector getStatus()
 	{
 		logger.logDebug("RootHelper.getStatus");
-		Vector result = executeAndWait(SERVICE_STATE);
+		Vector result = executeAndWait(SERVICE_STATE, null).toVector();
 		return result;
 	}
 	
-	private Vector executeAndWait(String command)
+	private Status executeAndWait(String command, String password)
 	{
-		Vector result = new Vector();
+		String commandLine = MARTUS_SERVICE + " " + command;
 		try
 		{
-			Process p = Runtime.getRuntime().exec(MARTUS_SERVICE + " " + command);
-			int exitCode = p.waitFor();
-			if(exitCode == 0)
-			{
-				result.add(RESULT_OK);
-				result.add("status output goes here");
+			MartusLogger.log("Executing: " + commandLine);							
+			Process process = Runtime.getRuntime().exec(commandLine);		
+	
+			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "stderr");
+			
+			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "stdout");
+			errorGobbler.start();
+			outputGobbler.start();
+			
+			if (password != null)
+			{	
+				BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+				buffStdin.write(password + "\r");
+				buffStdin.flush(); 
 			}
-			else
-			{
-				result.add(RESULT_ERROR);
-				result.add(Integer.toString(exitCode));
-			}
-		} 
+			
+			int exitCode = process.waitFor();
+			process.getOutputStream().close();
+			outputGobbler.close();
+			errorGobbler.close(); 
+
+			if (exitCode == 0)
+				return Status.createSuccess(outputGobbler.getTextBuffer());
+			
+			return Status.createFailure(Integer.toString(exitCode) + ": " + errorGobbler.getTextBuffer());
+		}
 		catch (Exception e)
 		{
 			MartusLogger.logException(e);
-			result.add(RESULT_ERROR);
-			result.add(e.getMessage());
+			return Status.createFailure(e.getMessage());
 		}
-		
-		return result;
 	}
-	
+
 	public static String RootHelperObjectName = "RootHelper";
 	public static String RootHelperStartServicesCommand = "startServices";
 	public static String RootHelperRestartServicesCommand = "restartServices";
