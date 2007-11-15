@@ -29,31 +29,21 @@ package org.martus.mspa.roothelper;
 
 public class Status
 {
-	public static Status createSuccess()
+	public static Status createSuccess(String details)
 	{
-		return new Status(SUCCESS);
+		return new Status(SUCCESS, details);
 	}
 	
-	public static Status createFailure()
+	public static Status createFailure(String details)
 	{
-		return new Status(FAILED); 
+		return new Status(FAILED, details); 
 	}
 	
-	private Status(String msgStatus) 
+	private Status(String msgStatus, String details) 
 	{		
 		status = msgStatus;
-		detailText = "";
+		detailText = details;
 	}	
-	
-	public void setStatus(String returnStatus)
-	{
-		status = returnStatus;	
-	}	
-	
-	public void setDetailText(String msg)
-	{
-		detailText = msg;
-	}
 	
 	public boolean isSuccess()
 	{
