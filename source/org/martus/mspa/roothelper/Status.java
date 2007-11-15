@@ -25,6 +25,8 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
+import java.util.Vector;
+
 
 
 public class Status
@@ -43,7 +45,13 @@ public class Status
 	{		
 		status = msgStatus;
 		detailText = details;
-	}	
+	}
+	
+	public Status(Vector statusAsVector)
+	{
+		status = (String)statusAsVector.get(0);
+		detailText = (String)statusAsVector.get(1);
+	}
 	
 	public boolean isSuccess()
 	{
@@ -58,6 +66,14 @@ public class Status
 	public String getStatus() 
 	{
 		return status;
+	}
+	
+	public Vector toVector()
+	{
+		Vector vector = new Vector();
+		vector.add(status);
+		vector.add(detailText);
+		return vector;
 	}
 
 	public static final String SUCCESS = "success";
