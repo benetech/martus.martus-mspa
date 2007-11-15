@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.martus.common.ContactInfo;
+import org.martus.common.MartusLogger;
 import org.martus.common.bulletin.BulletinConstants;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
@@ -97,6 +98,7 @@ public class ServerSideHandler implements NetworkInterface
 		server.getDatabase().visitAllAccounts(visitor);
 		result.add(NetworkInterfaceConstants.OK);
 	
+		MartusLogger.log("getAccountIds returning " + visitor.getAccounts().size());
 		result.add(visitor.getAccounts());	
 		return result;
 	}
