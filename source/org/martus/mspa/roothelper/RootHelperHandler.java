@@ -25,8 +25,11 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.mspa.roothelper;
 
+import java.util.Vector;
+
 import org.martus.common.LoggerInterface;
 import org.martus.common.MartusLogger;
+import org.martus.mspa.common.network.NetworkInterfaceConstants;
 
 public class RootHelperHandler
 {
@@ -36,53 +39,66 @@ public class RootHelperHandler
 		logger = loggerToUse;
 	}
 	
-	public String startServices(String martusServicePassword)
+	public Vector startServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.startServices");
-		return RESULT_ERROR;		
+
+		Vector result = new Vector();
+		result.add(NetworkInterfaceConstants.EXEC_ERROR);
+		result.add(ERROR_DETAIL_NOT_IMPLEMENTED_YET);
+		return result;		
 	}
 	
-	public String restartServices(String martusServicePassword)
+	public Vector restartServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.restartServices");
-		return RESULT_ERROR;		
+
+		Vector result = new Vector();
+		result.add(NetworkInterfaceConstants.EXEC_ERROR);
+		result.add(ERROR_DETAIL_NOT_IMPLEMENTED_YET);
+		return result;		
 	}
 	
-	public String stopServices()
+	public Vector stopServices()
 	{
 		logger.logDebug("RootHelper.stopServices");
-		int result = executeAndWait(SERVICE_STOP);		
-		if(result == 0)
-			return RESULT_OK;
-		
-		MartusLogger.logError("Error stopping service, exit code: " + result);
-		return RESULT_ERROR;		
+		Vector result = executeAndWait(SERVICE_STOP);		
+		return result;
 	}
 
-	public String getStatus()
+	public Vector getStatus()
 	{
 		logger.logDebug("RootHelper.getStatus");
-		int result = executeAndWait(SERVICE_STATE);
-		if(result == 0)
-			return RESULT_OK;
-		
-		MartusLogger.logError("Error stopping service, exit code: " + result);
-		return RESULT_ERROR;		
+		Vector result = executeAndWait(SERVICE_STATE);
+		return result;
 	}
 	
-	private int executeAndWait(String command)
+	private Vector executeAndWait(String command)
 	{
+		Vector result = new Vector();
 		try
 		{
 			Process p = Runtime.getRuntime().exec(MARTUS_SERVICE + " " + command);
-			return p.waitFor();
+			int exitCode = p.waitFor();
+			if(exitCode == 0)
+			{
+				result.add(RESULT_OK);
+				result.add("status output goes here");
+			}
+			else
+			{
+				result.add(RESULT_ERROR);
+				result.add(Integer.toString(exitCode));
+			}
 		} 
 		catch (Exception e)
 		{
 			MartusLogger.logException(e);
-			return -1;
+			result.add(RESULT_ERROR);
+			result.add(e.getMessage());
 		}
 		
+		return result;
 	}
 	
 	public static String RootHelperObjectName = "RootHelper";
@@ -97,6 +113,8 @@ public class RootHelperHandler
 	
 	public static final String RESULT_OK = "OK";
 	public static final String RESULT_ERROR = "ERROR";
+	
+	public static final String ERROR_DETAIL_NOT_IMPLEMENTED_YET = "Not Implemented Yet";
 
 	LoggerInterface logger;
 }

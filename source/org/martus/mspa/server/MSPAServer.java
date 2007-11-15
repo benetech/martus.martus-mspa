@@ -1122,19 +1122,24 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		try
 		{
 			MartusNonSSLXmlrpcClient rootHelper = new MartusNonSSLXmlrpcClient(LOCALHOST, rootHelperPort);
-			String result = (String)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, parameters);
-			if(result.equals(RootHelperHandler.RESULT_OK))
-				return Status.createSuccess();
+			Vector result = (Vector)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, parameters);
+			String resultCode = (String)result.get(0);
+			if(resultCode.equals(RootHelperHandler.RESULT_OK))
+			{
+				Status status = Status.createSuccess();
+				status.setStdOutMsg((String)result.get(1));
+				return status;
+			}
 			
 			Status status = Status.createFailure();
-			status.setStdErrorMsg(result);
+			status.setStdErrorMsg((String)result.get(1));
 			return status;
 		} 
 		catch (Exception e)
 		{
 			MartusLogger.logException(e);
 			Status status = Status.createFailure();
-			status.setStdErrorMsg(NetworkInterfaceConstants.EXEC_ERROR);
+			status.setStdErrorMsg(e.getMessage());
 			return status;
 		}
 	}
@@ -1209,8 +1214,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.loadMSPAKeypair(passphrase);
 			server.initalizeFileDatabase();			
 			server.setMagicWords();
-			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
 			server.initConfig();																						
+			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
 						
 			if(!server.deleteStartupFiles())
 				exitWithCause("Delete startup files failed", ServerSideUtilities.EXIT_UNEXPECTED_EXCEPTION);		

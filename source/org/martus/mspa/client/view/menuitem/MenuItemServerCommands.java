@@ -51,7 +51,7 @@ public class MenuItemServerCommands extends AbstractAction
 			if (menuType.equals(UiMainWindow.STATUS_MARTUS_SERVER))
 			{
 				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.GET_STATUS,"");			
-				handleResults(results, "Status");			
+				handleQueryResults(results, "Status");			
 			}
 			if (menuType.equals(UiMainWindow.START_MARTUS_SERVER))
 			{	
@@ -61,7 +61,7 @@ public class MenuItemServerCommands extends AbstractAction
 				if(confirmation != JOptionPane.OK_OPTION)
 					return;
 				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.START_SERVER,"");			
-				handleResults(results, "Start");			
+				handleCommandResults(results, "Start");			
 			}
 			
 			if (menuType.equals(UiMainWindow.STOP_MARTUS_SERVER))
@@ -73,7 +73,7 @@ public class MenuItemServerCommands extends AbstractAction
 				{
 					parent.setStatusText("Starting Server ...");
 					Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
-					handleResults(results, "Stop");						
+					handleCommandResults(results, "Stop");						
 				} 	
 			}	
 			if (menuType.equals(UiMainWindow.RESTART_MARTUS_SERVER))
@@ -87,7 +87,7 @@ public class MenuItemServerCommands extends AbstractAction
 				{
 					parent.setStatusText("Stopping and Restarting Server ...");
 					Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.RESTART_SERVER,"");
-					handleResults(results, "Restart");
+					handleCommandResults(results, "Restart");
 				} 	
 			}
 		}
@@ -97,17 +97,32 @@ public class MenuItemServerCommands extends AbstractAction
 		}	
 	}
 	
-	private void handleResults(Vector results, String type)
+	private void handleCommandResults(Vector results, String type)
 	{
 		String status = (String) results.get(0);
 		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
 		{	
-			parent.setStatusText(type+" Martus Server status: failed");
 			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
 			parent.setStatusText("");			
 		}
 		else
-			parent.setStatusText(type+" Martus Server status: "+status);
+		{
+			parent.setStatusText(type + " successful");
+		}
+	}
+	
+	private void handleQueryResults(Vector results, String type)
+	{
+		String status = (String) results.get(0);
+		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
+		{	
+			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
+			parent.setStatusText("");			
+		}
+		else
+		{
+			parent.setStatusText(type + ": " + (String)results.get(1));
+		}
 	}
 	
 	UiMainWindow parent;
