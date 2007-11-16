@@ -31,6 +31,7 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.martus.common.crypto.MartusCrypto;
 import org.martus.mspa.main.UiMainWindow;
 
 
@@ -65,12 +66,13 @@ public class MenuItemExportPublicKey extends AbstractAction
 				
 		File outputFile = new File(keypair.getParentFile(), "publicKey.txt");
 		
+		String publicCode = MartusCrypto.computeFormattedPublicCode(parent.getMSPAApp().getSecurity().getPublicKeyString());
 		parent.getMSPAApp().exportServerPublicKeyFile(outputFile);		
 		if (outputFile.exists())				
-			JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
+			JOptionPane.showMessageDialog(parent, "<html>Public key with public code <strong>" + publicCode + "</strong> has been exported at "+outputFile.getPath(),
 			 "Export Public Key", JOptionPane.INFORMATION_MESSAGE);
 		else
-			JOptionPane.showMessageDialog(parent, "Public key has been exported at "+outputFile.getPath(),
+			JOptionPane.showMessageDialog(parent, "Public export FAILED: "+outputFile.getPath(),
 			 "Export Error", JOptionPane.ERROR_MESSAGE);
 	}
 	

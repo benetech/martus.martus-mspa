@@ -151,7 +151,8 @@ public class MSPAClient
 	
 	public void signIn(String userName, char[] userPassPhrase) throws Exception
 	{
-		getSecurity().readKeyPair(getKeypairFile(), PasswordHelper.getCombinedPassPhrase(userName, userPassPhrase));		
+		getSecurity().readKeyPair(getKeypairFile(), PasswordHelper.getCombinedPassPhrase(userName, userPassPhrase));
+		MartusLogger.log("MSPA Client Public Code: " + MartusCrypto.computeFormattedPublicCode(getSecurity().getPublicKeyString()));
 	}
 	
 	public String getStatus()
