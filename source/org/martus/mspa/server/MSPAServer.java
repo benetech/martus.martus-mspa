@@ -368,7 +368,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getPacketDirectory()
 	{
-		return new File(getMartusServerDataDirectory(), "packets");
+		return new File(getLiveMartusServerDirectory(), "packets");
 	}
 	
 	public File getServerDirectory()
@@ -420,6 +420,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		return new File(getMartusServerDataDirectory(),MARTUSSERVER_BACKUP_DIRECTORY);
 	}	
+	
+	public static File getLiveMartusServerDirectory()
+	{
+		return new File(getMartusDefaultDataDirectoryPath());
+	}
 	
 	public MagicWords getMagicWordsInfo()
 	{
