@@ -60,7 +60,7 @@ public class ServerConnectionDlg extends JDialog
 {
 	public ServerConnectionDlg(UiMainWindow owner) throws Exception
 	{				
-		super(owner, "Connect to Server: ", true);
+		super(owner, "Connect to Server", true);
 		parent = owner;		
 		
 		JPanel mainPanel = new JPanel();
