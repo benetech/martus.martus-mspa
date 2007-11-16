@@ -100,28 +100,30 @@ public class MenuItemServerCommands extends AbstractAction
 	private void handleCommandResults(Vector results, String type)
 	{
 		String status = (String) results.get(0);
-		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
-		{	
-			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
-			parent.setStatusText("");			
+		if (status.equals(NetworkInterfaceConstants.OK))
+		{
+			JOptionPane.showMessageDialog(parent, results.get(1), type + " Success", JOptionPane.INFORMATION_MESSAGE);
+			parent.setStatusText(type + " successful");
 		}
 		else
-		{
-			parent.setStatusText(type + " successful");
+		{	
+			JOptionPane.showMessageDialog(parent, results.get(1), type + " Error", JOptionPane.ERROR_MESSAGE);
+			parent.setStatusText(type + " " + results.get(1));			
 		}
 	}
 	
 	private void handleQueryResults(Vector results, String type)
 	{
 		String status = (String) results.get(0);
-		if (status.equals(NetworkInterfaceConstants.EXEC_ERROR))
-		{	
-			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
-			parent.setStatusText("");			
+		if (status.equals(NetworkInterfaceConstants.OK))
+		{
+			JOptionPane.showMessageDialog(parent, results.get(1), type + " Success", JOptionPane.INFORMATION_MESSAGE);
+			parent.setStatusText(type + ": " + (String)results.get(1));
 		}
 		else
-		{
-			parent.setStatusText(type + ": " + (String)results.get(1));
+		{	
+			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
+			parent.setStatusText(type + " " + results.get(1));			
 		}
 	}
 	
