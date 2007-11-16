@@ -358,7 +358,7 @@ public class MSPAClient
 		return new Vector();
 	}	
 	
-	public Vector getListOfAssignedAccounts(int mirrorType) throws Exception
+	public Vector getListOfOtherServers(int mirrorType) throws Exception
 	{	
 		Vector results = handler.getListOfAssignedServers(security.getPublicKeyString(), mirrorType);
 		currentStatus = (String) results.get(0);

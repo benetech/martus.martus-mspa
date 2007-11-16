@@ -128,7 +128,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private Vector loadAssignedMirrorServerInfo()
 	{
 		Vector assignedServerFiles = new Vector();
-		addAssignedBackupServers (assignedServerFiles, getServerWhoWeCallDirectory().listFiles());
+		addAssignedBackupServers (assignedServerFiles, getServerWhoWeCallToAmplifyDirectory().listFiles());
 		addAssignedBackupServers (assignedServerFiles, getMirrorServerWhoCallUsDirectory().listFiles());
 		addAssignedBackupServers (assignedServerFiles, getMirrorServerWhoWeCallDirectory().listFiles());
 		addAssignedBackupServers (assignedServerFiles, getAmpsWhoCallUsDirectory().listFiles());
@@ -182,7 +182,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		{
 			System.out.println("Initialize environments ...");
 											
-			getServerWhoWeCallDirectory().mkdirs();
+			getServerWhoWeCallToAmplifyDirectory().mkdirs();
 			getMirrorServerWhoCallUsDirectory().mkdirs();
 			getMirrorServerWhoWeCallDirectory().mkdirs();
 			getAmpsWhoCallUsDirectory().mkdirs();
@@ -381,7 +381,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME);
 	}	
 	
-	public static File getServerWhoWeCallDirectory()
+	public static File getServerWhoWeCallToAmplifyDirectory()
 	{
 		return new File(getMartusServerDataDirectory(),"serversWhoWeCall");
 	}
@@ -564,7 +564,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 		try 
 		{				
-			logActions("Update Other Server configuration <dir>"+destDirectory.getName(), mirrorInfo);					 
+			logActions("Update Other Server configuration in "+destDirectory.getName(), mirrorInfo);					 
 			deleteAllFilesFromMirrorDirectory(destDirectory.listFiles());
 			
 			for (int i =0; i<mirrorInfo.size();i++)
@@ -1168,13 +1168,15 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public static File getMirrorDirectory(int type)
 	{		
 		if (type == ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP)
-			return getServerWhoWeCallDirectory();
+			return getMirrorServerWhoWeCallDirectory();
 		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA)
 			return getMirrorServerWhoCallUsDirectory();
 		else if (type == ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA)
-			return getAmpsWhoCallUsDirectory();	
+			return getAmpsWhoCallUsDirectory();
+		else if (type == ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY)
+			return getServerWhoWeCallToAmplifyDirectory();
 
-		return getMirrorServerWhoWeCallDirectory();		
+		throw new RuntimeException("Unknown server type: " + type);		
 	}	
 	
 	public static void main(String[] args)

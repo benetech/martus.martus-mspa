@@ -62,7 +62,7 @@ public class MenuItemManagingMirrorServers extends AbstractAction
 	void getMirrorServers(Vector orginalList) throws Exception
 	{
 		availableList = new Vector();
-		assignedList  = parent.getMSPAApp().getListOfAssignedAccounts(serverManageType);	
+		assignedList  = parent.getMSPAApp().getListOfOtherServers(serverManageType);	
 		
 		for (int i=0; i<orginalList.size();i++)
 		{
