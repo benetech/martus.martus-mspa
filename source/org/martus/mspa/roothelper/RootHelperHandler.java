@@ -44,18 +44,33 @@ public class RootHelperHandler
 	public Vector startServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.startServices");
+		Status currentState = new Status(getStatus());
+		if(!currentState.isSuccess())
+			return currentState.toVector();
+		if(!currentState.getDetailText().equals("down"))
+			return Status.createFailure("Service is already starting or up").toVector();
 		return executeWithoutWaiting(SERVICE_START, martusServicePassword).toVector();
 	}
 	
 	public Vector restartServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.restartServices");
+		Status currentState = new Status(getStatus());
+		if(!currentState.isSuccess())
+			return currentState.toVector();
+		if(!currentState.getDetailText().equals("up"))
+			return Status.createFailure("Service is not currently up").toVector();
 		return executeWithoutWaiting(SERVICE_RESTART, martusServicePassword).toVector();
 	}
 	
 	public Vector stopServices()
 	{
 		logger.logDebug("RootHelper.stopServices");
+		Status currentState = new Status(getStatus());
+		if(!currentState.isSuccess())
+			return currentState.toVector();
+		if(!currentState.getDetailText().equals("up"))
+			return Status.createFailure("Service is not currently up").toVector();
 		Vector result = executeAndWait(SERVICE_STOP, null).toVector();		
 		return result;
 	}
