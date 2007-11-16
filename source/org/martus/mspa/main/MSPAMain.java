@@ -33,6 +33,7 @@ import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.martus.common.MartusLogger;
 import org.martus.mspa.client.core.MSPAClient;
 
 
@@ -53,7 +54,10 @@ public class MSPAMain
 		}
 
 		if(Arrays.asList(args).contains("--highport"))
+		{
+			MartusLogger.log("Using port 9984");
 			MSPAClient.DEFAULT_PORT = 9984;
+		}
 		
 		try
 		{		
