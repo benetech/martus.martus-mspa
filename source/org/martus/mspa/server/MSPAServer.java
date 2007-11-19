@@ -71,7 +71,52 @@ import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 {
+	public static void main(String[] args)
+	{
+		System.out.println("MSPA Server");
+		try
+		{					
+			System.out.println("Setting up socket connection for listener ...");
+			
+			MSPAServer server = new MSPAServer(MSPAServer.getMartusDefaultDataDirectory());
+			server.deleteRunningFile();				
+						
+			server.processCommandLine(args);
+
+			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
+				exitWithCause("Unexpected files or folders in startup directory", ServerSideUtilities.EXIT_UNEXPECTED_FILE_STARTUP);
+				
+			File serverKeyPairFile = server.getMSPAServerKeyPairFile();
+			if (!serverKeyPairFile.exists())
+				exitWithCause("File not found: " + serverKeyPairFile, ServerSideUtilities.EXIT_KEYPAIR_FILE_MISSING);
+
+			char[] passphrase = server.insecurePassword;
+			if(passphrase == null)
+				passphrase = ServerSideUtilities.getPassphraseFromConsole(server.getTriggerDirectory(),"MSPAServer.main");
+				
+			server.loadKeypairs(passphrase);
+			server.initalizeFileDatabase();			
+			server.setMagicWords();
+			server.initConfig();																						
+			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
+						
+			if(!server.deleteStartupFiles())
+				exitWithCause("Delete startup files failed", ServerSideUtilities.EXIT_UNEXPECTED_EXCEPTION);		
+				
+			server.startBackgroundTimers();		
+			ServerSideUtilities.writeSyncFile(server.getRunningFile(), "MSPAServer.main");
+			System.out.println("\nWaiting for connection...");	
 		
+		}
+		catch(Exception e) 
+		{
+			MartusLogger.logException(e);
+			exitWithCause("Unexpected Exception", ServerSideUtilities.EXIT_UNEXPECTED_EXCEPTION);			
+		}
+	}
+	
+	
+	
 	public MSPAServer(File dir) throws Exception
 	{				
 		serverDirectory = dir;			
@@ -1224,50 +1269,6 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 		throw new RuntimeException("Unknown server type: " + type);		
 	}	
-	
-	public static void main(String[] args)
-	{
-		System.out.println("MSPA Server");
-		try
-		{					
-			System.out.println("Setting up socket connection for listener ...");
-			
-			MSPAServer server = new MSPAServer(MSPAServer.getMartusDefaultDataDirectory());
-			server.deleteRunningFile();				
-						
-			server.processCommandLine(args);
-
-			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
-				exitWithCause("Unexpected files or folders in startup directory", ServerSideUtilities.EXIT_UNEXPECTED_FILE_STARTUP);
-				
-			File serverKeyPairFile = server.getMSPAServerKeyPairFile();
-			if (!serverKeyPairFile.exists())
-				exitWithCause("File not found: " + serverKeyPairFile, ServerSideUtilities.EXIT_KEYPAIR_FILE_MISSING);
-
-			char[] passphrase = server.insecurePassword;
-			if(passphrase == null)
-				passphrase = ServerSideUtilities.getPassphraseFromConsole(server.getTriggerDirectory(),"MSPAServer.main");
-				
-			server.loadKeypairs(passphrase);
-			server.initalizeFileDatabase();			
-			server.setMagicWords();
-			server.initConfig();																						
-			server.createMSPAXmlRpcServerOnPort(server.getPortToUse());	
-						
-			if(!server.deleteStartupFiles())
-				exitWithCause("Delete startup files failed", ServerSideUtilities.EXIT_UNEXPECTED_EXCEPTION);		
-				
-			server.startBackgroundTimers();		
-			ServerSideUtilities.writeSyncFile(server.getRunningFile(), "MSPAServer.main");
-			System.out.println("\nWaiting for connection...");	
-		
-		}
-		catch(Exception e) 
-		{
-			MartusLogger.logException(e);
-			exitWithCause("Unexpected Exception", ServerSideUtilities.EXIT_UNEXPECTED_EXCEPTION);			
-		}
-	}
 	
 	private static void exitWithCause(String cause, int exitStatus)
 	{
