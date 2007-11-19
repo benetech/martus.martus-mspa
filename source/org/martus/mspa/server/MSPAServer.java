@@ -44,7 +44,6 @@ import org.martus.common.Version;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusNonSSLXmlrpcClient;
@@ -59,25 +58,28 @@ import org.martus.mspa.common.RetrievePublicKey;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
 import org.martus.mspa.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.mspa.common.network.ServerSideHandler;
+import org.martus.mspa.mail.MailSender;
 import org.martus.mspa.roothelper.RootHelperHandler;
 import org.martus.mspa.roothelper.Status;
 import org.martus.util.DirectoryUtils;
 import org.martus.util.FileTransfer;
 import org.martus.util.MultiCalendar;
+import org.martus.util.UnicodeReader;
 import org.martus.util.UnicodeWriter;
+import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 
 public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 {
 		
-	public MSPAServer(File dir) 
+	public MSPAServer(File dir) throws Exception
 	{				
 		serverDirectory = dir;			
 		authorizedMartusAccounts = new Vector();
 		authorizeMSPAClients = new Vector();
 		logger = new LoggerToConsole();	
 		mspaHandler = new ServerSideHandler(this);
-								
+		mailSender = new MailSender();
 	}
 	
 	public void initConfig() throws Exception
@@ -213,7 +215,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		targetFile.createNewFile();			
 	}
 	
-	private void loadConfigurationFiles() throws IOException
+	private void loadConfigurationFiles() throws Exception
 	{						
 		clientsBanned = MartusUtilities.loadClientListAndExitOnError(getBannedFile());
 		clientsAllowedUpload = MartusUtilities.loadClientList(getAllowUploadFile());		
@@ -222,6 +224,54 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		hiddenBulletins = new HiddenBulletins(getDatabase(),security, getLogger(), getHiddenPacketsFile());
 		loadAuthorizedClients();
 		loadMagicWords();
+		loadEmailNotifications();
+	}
+
+	private void loadEmailNotifications() throws Exception
+	{
+		File emailNotifications = getEmailNotificationsFile();
+		if(!emailNotifications.exists())
+		{
+			MartusLogger.logWarning("Missing: " + emailNotifications);
+			return;
+		}
+		
+		UnicodeReader reader = new UnicodeReader(emailNotifications);
+		try
+		{
+			String line = reader.readLine();
+			while(line != null)
+			{
+				int commentAt = line.indexOf('#');
+				if(commentAt >= 0)
+					line = line.substring(0, commentAt);
+				
+				String[] parts = line.split(",");
+				if(parts.length == 2)
+				{
+					smtpHost = parts[0].trim();
+					smtpRecipient = parts[1].trim();
+				}
+				else
+				{
+					MartusLogger.logError("Ignoring illegal line in email notifications: " + line);
+				}
+				
+				line = reader.readLine();
+			}
+		}
+		finally
+		{
+			reader.close();
+		}
+		
+		MartusLogger.log("Will send email notifications to " + smtpRecipient + " at " + smtpHost);
+		mailSender.setRecipients(smtpHost, new String[] {smtpRecipient,});
+	}
+
+	private File getEmailNotificationsFile()
+	{
+		return new File(getMSPADeleteOnStartup(), EMAIL_NOTIFICATIONS_FILENAME);
 	}
 
 	private void loadAuthorizedClients() 
@@ -461,31 +511,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return results;	
 	}
 
-	public synchronized void updateComplianceFile(String accountId, String compliantsMsg)
+	public synchronized void updateComplianceFile(String accountId, String compliantsMsg) throws Exception
 	{		
 		File complianceFile = getMartusServerDataComplianceFile();		
-		try
-		{
-		
-			logAction("Update compliance file", compliantsMsg);
-			complianceFile.mkdirs();
-			backupFile(complianceFile);
-						
-			UnicodeWriter writer = new UnicodeWriter(complianceFile);
-			writer.writeln(compliantsMsg);
-			writer.close();
-			
-		}
-		catch (RemoteException e)
-		{			
-			e.printStackTrace();
-			log(" Error when try to update a compliance file."+e.toString());
-		}
-		catch (IOException e)
-		{			
-			e.printStackTrace();
-			log(" Error when try to update a compliance file."+e.toString());
-		}	
+		logAction("Update compliance file", compliantsMsg);
+		complianceFile.mkdirs();
+		backupFile(complianceFile);
+					
+		UnicodeWriter writer = new UnicodeWriter(complianceFile);
+		writer.writeln(compliantsMsg);
+		writer.close();
+		mailSender.sendMail("Modified Compliance Statement");
 	}	
 	 
 	private void writeHiddenBulletinToFile()
@@ -514,22 +550,23 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return hiddenBulletins.containHiddenUids(uid);
 	}
 	
-	public synchronized boolean hideBulletins(String accountId, Vector localIds)
+	public synchronized boolean hideBulletins(String accountId, Vector localIds) throws Exception
 	{	
-		hiddenBulletins.hideBulletins(accountId, localIds);
 		logActions("Hide Bulletins", localIds);			
-		writeHiddenBulletinToFile();		
-
+		if(!hiddenBulletins.hideBulletins(accountId, localIds))
+			return false;
+		writeHiddenBulletinToFile();
+		mailSender.sendMail(Integer.toString(localIds.size()) + " Bulletin(s) was hidden");
 		return true;
 	}
 	
-	public synchronized boolean recoverHiddenBulletins(String accountId, Vector localIds)
+	public synchronized boolean recoverHiddenBulletins(String accountId, Vector localIds) throws Exception
 	{	
+		logActions("Recover Bulletins", localIds);				
 		if (!hiddenBulletins.recoverHiddenBulletins(accountId, localIds))
 			return false;
-
-		logActions("Recover Bulletins", localIds);				
 		writeHiddenBulletinToFile();	
+		mailSender.sendMail(Integer.toString(localIds.size()) + " Bulletin(s) was unhidden");
 		return true;
 	}
 	
@@ -538,32 +575,24 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return hiddenBulletins.getListOfHiddenBulletins(accountId);
 	}
 	
-	public synchronized boolean addAvailableServer(Vector mirrorInfo)
+	public synchronized boolean addAvailableServer(Vector mirrorInfo) throws Exception
 	{	
 		if (mirrorInfo.size() > 0)
 			return false;
 
 		boolean success=true;
-		try 
-		{				
-			String ip = (String) mirrorInfo.get(0);
-			String publicCode = (String) mirrorInfo.get(1);				
-			String fileName = (String) mirrorInfo.get(2);			
-			String port = String.valueOf(getPortToUse());
+		String ip = (String) mirrorInfo.get(0);
+		String publicCode = (String) mirrorInfo.get(1);				
+		String fileName = (String) mirrorInfo.get(2);			
+		String port = String.valueOf(getPortToUse());
 
-			logActions("Add New Server<dir>"+ fileName, mirrorInfo);					 
-			
-			File outputFileName = new File(getAvailableServerDirectory(), fileName.trim());
-			RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());				 
-			
-			success = retrievePubKey.isSuccess();
-		}
-		catch (MartusSignatureException e)
-		{
-			e.printStackTrace();
-			log("MartusSignatureException: when tried to generate a publickey"+e.getMessage());
-			return false;
-		}	
+		logActions("Add New Server<dir>"+ fileName, mirrorInfo);					 
+		
+		File outputFileName = new File(getAvailableServerDirectory(), fileName.trim());
+		RetrievePublicKey retrievePubKey = new RetrievePublicKey(ip, port, publicCode, outputFileName.getPath());				 
+		
+		success = retrievePubKey.isSuccess();
+		mailSender.sendMail("Added new server to " + fileName);
 
 		return success;
 	}	
@@ -582,9 +611,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			{
 				String file = (String) mirrorInfo.get(i);
 				FileTransfer.copyFile(new File(sourceDirectory, file), new File(destDirectory, file));
-			}	
+			}
+			mailSender.sendMail("Updated server info " + destDirectory.getName());
+
 		}
-		catch (IOException e) 
+		catch (Exception e) 
 		{
 			e.printStackTrace();
 			log("(Update Mirror Server) Problem when try to update/copy files: "+ e.toString());
@@ -622,7 +653,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		backupFile(getMagicWordsFile());
 		magicWords.writeMagicWords(getMagicWordsFile(), words);
 		magicWords.loadMagicWords(getMagicWordsFile());
-			
+		mailSender.sendMail("Magic Words Updated");
+
 	}	
 	
 	public Vector getAccountAdminInfo(String manageAccountId)
@@ -635,7 +667,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return options.getOptions();
 	}
 	
-	public synchronized void updateAccountInfo(String manageAccountId, Vector accountInfo)
+	public synchronized void updateAccountInfo(String manageAccountId, Vector accountInfo) throws InvalidBase64Exception, Exception
 	{			
 		AccountAdminOptions options = new AccountAdminOptions();
 		options.setOptions(accountInfo);
@@ -644,7 +676,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		updateAccountAllowedUpload(options.canUploadSelected(), manageAccountId);
 		updateAccountSendToAmplifier(options.canSendToAmplifySelected(), manageAccountId);
 	
-		updateAccountConfigFiles();								
+		updateAccountConfigFiles();
+		mailSender.sendMail("Modified Account " + MartusCrypto.getFormattedPublicCode(manageAccountId));
 	}	
 	
 	private void updateAccountConfigFiles()
@@ -1000,7 +1033,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		Vector files = new Vector();
 		
 		files.add(getMSPAServerKeyPairFile());		
-		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));	
+		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));
+		files.add(getEmailNotificationsFile());
 		
 		return files;		
 	}
@@ -1103,9 +1137,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return executeRootHelperCommand(RootHelperHandler.RootHelperRestartServicesCommand, martusServicePassword);
 	}
 	
-	public Status stopServer()
+	public Status stopServer() throws Exception
 	{
 		logger.logDebug("stopServer");
+		mailSender.sendMail("Attempted to stop service");
 		return executeRootHelperCommand(RootHelperHandler.RootHelperStopServicesCommand);
 	}
 	
@@ -1278,6 +1313,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	HiddenBulletins hiddenBulletins;
 	Vector availabelMirrorServerPublicKeys;	
 	private String martusServicePassword;
+	private MailSender mailSender;
+	private String smtpHost;
+	private String smtpRecipient;
 	
 	private int rootHelperPort = ROOTHELPER_DEFAULT_PORT;
 		
@@ -1296,6 +1334,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "accountsNotAmplified.txt";
 	private static final String COMPLIANCE_FILE =  "compliance.txt";
+	private static final String EMAIL_NOTIFICATIONS_FILENAME = "emailnotifications.txt";
 	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "serverarguments.props";
 	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "clientsWhoCallUs"; 
 

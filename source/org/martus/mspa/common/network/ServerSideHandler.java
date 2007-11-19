@@ -198,26 +198,36 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}
 
-		Status status = executeCommand(cmdType);													
-		if(status == null)
+		try
 		{
-			results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
-			return results;
-		}
-								
-		if (status.isSuccess())
-		{	
-			results.add(NetworkInterfaceConstants.OK);
+			Status status = executeCommand(cmdType);													
+			if(status == null)
+			{
+				results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
+				return results;
+			}
+									
+			if (status.isSuccess())
+			{	
+				results.add(NetworkInterfaceConstants.OK);
+				results.add(status.getDetailText());
+				return results;
+			}
+
+			results.add(NetworkInterfaceConstants.EXEC_ERROR);		
 			results.add(status.getDetailText());
 			return results;
-		}
-
-		results.add(NetworkInterfaceConstants.EXEC_ERROR);		
-		results.add(status.getDetailText());
-		return results;	
+		} 
+		catch (Exception e)
+		{
+			MartusLogger.logException(e);
+			results.add(NetworkInterfaceConstants.EXEC_ERROR);		
+			results.add(e.getMessage());
+			return results;
+		}	
 	}
 
-	private Status executeCommand(String cmdType)
+	private Status executeCommand(String cmdType) throws Exception
 	{
 		if (cmdType.equals(NetworkInterfaceConstants.START_SERVER))
 			return server.startServer();
@@ -377,10 +387,19 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}
 				
-		server.updateComplianceFile(myAccountId, compliantsMsg);
-		results.add(NetworkInterfaceConstants.OK);
-		
-		return results;
+		try
+		{
+			server.updateComplianceFile(myAccountId, compliantsMsg);
+			results.add(NetworkInterfaceConstants.OK);
+			return results;
+		} 
+		catch (Exception e)
+		{
+			MartusLogger.logException(e);
+			results.add(NetworkInterfaceConstants.EXEC_ERROR);
+			results.add(e.getMessage());
+			return results;
+		}
 	}
 	
 	public Vector getInactiveMagicWords(String myAccountId)
@@ -451,7 +470,7 @@ public class ServerSideHandler implements NetworkInterface
 		try
 		{
 			server.updateMagicWords(magicWords);								
-			results.add(NetworkInterfaceConstants.OK);		
+			results.add(NetworkInterfaceConstants.OK);
 			return results;
 		}
 
@@ -522,12 +541,22 @@ public class ServerSideHandler implements NetworkInterface
 			return results;
 		}
 			
-		if (server.addAvailableServer(mirrorInfo))
-			results.add(NetworkInterfaceConstants.OK);
-		else
-			results.add(NetworkInterfaceConstants.NO_SERVER);
-				
-		return results;		
+		try
+		{
+			if (server.addAvailableServer(mirrorInfo))
+				results.add(NetworkInterfaceConstants.OK);
+			else
+				results.add(NetworkInterfaceConstants.NO_SERVER);
+					
+			return results;
+		} 
+		catch (Exception e)
+		{
+			MartusLogger.logException(e);
+			results.add(NetworkInterfaceConstants.EXEC_ERROR);
+			results.add(e.getMessage());
+			return results;
+		}		
 	}
 	
 	public Vector getMartusServerArguments(String myAccountId)
@@ -548,25 +577,29 @@ public class ServerSideHandler implements NetworkInterface
 	public Vector updateMartusServerArguments(String myAccountId, Vector args)
 	{
 		Vector results = new Vector();
-		if (!server.isAuthorizedMSPAClients(myAccountId))
-		{
-			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
-			return results;
-		}
+		results.add(NetworkInterfaceConstants.UNKNOWN_COMMAND);
+		return results;
 		
-		try
-		{
-			server.updateMartusServerArguments(args);					
-			results.add(NetworkInterfaceConstants.OK);		
-			return results;
-		}
-
-		catch (Exception e1)
-		{
-			e1.printStackTrace();
-			results.add(NetworkInterfaceConstants.SERVER_ERROR);
-			return results;
-		}		
+		// This is not yet hooked up in the client so has not been tested!
+//		if (!server.isAuthorizedMSPAClients(myAccountId))
+//		{
+//			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
+//			return results;
+//		}
+//		
+//		try
+//		{
+//			server.updateMartusServerArguments(args);					
+//			results.add(NetworkInterfaceConstants.OK);		
+//			return results;
+//		}
+//
+//		catch (Exception e1)
+//		{
+//			e1.printStackTrace();
+//			results.add(NetworkInterfaceConstants.SERVER_ERROR);
+//			return results;
+//		}		
 	}	
 			
 	MSPAServer server;
