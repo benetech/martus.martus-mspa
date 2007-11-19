@@ -419,7 +419,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public static File getMartusServerDeleteOnStartup()
 	{
-		return new File(getMartusServerDataDirectory(), DELETE_ON_STARTUP);
+		return new File(getLiveMartusServerDirectory(), DELETE_ON_STARTUP);
 	}
 	
 	public File getTriggerDirectory()
