@@ -269,7 +269,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public void initalizeFileDatabase()
 	{									
-		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), security);		
+		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), martusServerSecurity);		
 
 		try
 		{
@@ -295,11 +295,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}		
 	}	
 	
-	public void loadMSPAKeypair(char[] passphrase) 
+	public void loadKeypairs(char[] passphrase) 
 	{		
 		try
 		{
 			security = MartusServerUtilities.loadCurrentMartusSecurity(getMSPAServerKeyPairFile(), passphrase);
+			martusServerSecurity = MartusServerUtilities.loadCurrentMartusSecurity(getMartusServerKeyPairFile(), passphrase);
 			martusServicePassword = new String(passphrase);
 			System.out.println("Passphrase correct.");
 			System.out.println("Public code: " + MartusSecurity.computeFormattedPublicCode(security.getPublicKeyString()));
@@ -334,6 +335,11 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public static File getAuthorizedClientsDir()
 	{
 		return new File(getMSPADeleteOnStartup(),MSPA_CLIENT_AUTHORIZED_DIR );
+	}
+	
+	public File getMartusServerKeyPairFile()
+	{
+		return new File(getMartusServerDeleteOnStartup(), KEYPAIR_FILE);
 	}
 	
 	public File getMSPAServerKeyPairFile()
@@ -1207,7 +1213,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			if(passphrase == null)
 				passphrase = ServerSideUtilities.getPassphraseFromConsole(server.getTriggerDirectory(),"MSPAServer.main");
 				
-			server.loadMSPAKeypair(passphrase);
+			server.loadKeypairs(passphrase);
 			server.initalizeFileDatabase();			
 			server.setMagicWords();
 			server.initConfig();																						
@@ -1263,6 +1269,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector authorizeMSPAClients;
 	ServerFileDatabase martusDatabaseToUse;	
 	MartusCrypto security;
+	MartusCrypto martusServerSecurity;
 	LoggerInterface logger;
 	MagicWords magicWords;
 	Vector clientsBanned;
