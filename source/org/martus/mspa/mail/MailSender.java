@@ -27,6 +27,7 @@ package org.martus.mspa.mail;
 
 import java.util.Properties;
 
+import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -36,29 +37,31 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.martus.common.MartusLogger;
+import org.martus.mspa.server.EmailNotifications;
 
 public class MailSender
 {
-	public MailSender()
+	public MailSender(EmailNotifications emailNotificationToUse)
 	{
-		
-	}
-	
-	public void setRecipients(String smtpHostName, String[] recipients) throws Exception
-	{
-		smtpHost = smtpHostName;
-		recipient = new InternetAddress(recipients[0]);
-		
-		Properties props = System.getProperties();
-		props.put("mail.smtp.host", smtpHost);
-		session = Session.getDefaultInstance(props, null);
+		emailNotifications = emailNotificationToUse;
 	}
 	
 	public void sendMail(String actionSummary) throws Exception
 	{
 		MartusLogger.log("MAIL: Queueing email to send: " + actionSummary);
-		MimeMessage message = createMessage(actionSummary);
+
+		Address recipient = new InternetAddress(emailNotifications.getRecipient());
+		String smtpHost = emailNotifications.getSmtpHost();
+		MimeMessage message = createMessage(createSession(smtpHost), recipient, actionSummary);
+
 		new SenderThread(message).start();
+	}
+
+	private Session createSession(String smtpHost)
+	{
+		Properties props = System.getProperties();
+		props.put("mail.smtp.host", smtpHost);
+		return Session.getDefaultInstance(props, null);
 	}
 
 	static class SenderThread extends Thread
@@ -85,7 +88,7 @@ public class MailSender
 		MimeMessage message;
 	}
 	
-	MimeMessage createMessage(String actionSummary) throws AddressException, MessagingException
+	MimeMessage createMessage(Session session, Address recipient, String actionSummary) throws AddressException, MessagingException
 	{
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(recipient);
@@ -95,7 +98,5 @@ public class MailSender
 		return message;
 	}
 	
-	private String smtpHost;
-	private InternetAddress recipient;
-	private Session session;
+	private EmailNotifications emailNotifications;
 }

@@ -64,7 +64,6 @@ import org.martus.mspa.roothelper.Status;
 import org.martus.util.DirectoryUtils;
 import org.martus.util.FileTransfer;
 import org.martus.util.MultiCalendar;
-import org.martus.util.UnicodeReader;
 import org.martus.util.UnicodeWriter;
 import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
@@ -124,7 +123,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		authorizeMSPAClients = new Vector();
 		logger = new LoggerToConsole();	
 		mspaHandler = new ServerSideHandler(this);
-		mailSender = new MailSender();
+		emailNotifications = new EmailNotifications();
+		mailSender = new MailSender(emailNotifications);
 	}
 	
 	public void initConfig() throws Exception
@@ -274,47 +274,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 
 	private void loadEmailNotifications() throws Exception
 	{
-		File emailNotifications = getEmailNotificationsFile();
-		if(!emailNotifications.exists())
-		{
-			MartusLogger.logWarning("Missing: " + emailNotifications);
-			return;
-		}
-		
-		UnicodeReader reader = new UnicodeReader(emailNotifications);
-		try
-		{
-			String line = reader.readLine();
-			while(line != null)
-			{
-				int commentAt = line.indexOf('#');
-				if(commentAt >= 0)
-					line = line.substring(0, commentAt);
-				
-				if(line.trim().length() > 0)
-				{
-					String[] parts = line.split(",");
-					if(parts.length == 2)
-					{
-						smtpHost = parts[0].trim();
-						smtpRecipient = parts[1].trim();
-					}
-					else
-					{
-						MartusLogger.logError("Ignoring illegal line in email notifications: " + line);
-					}
-				}
-				
-				line = reader.readLine();
-			}
-		}
-		finally
-		{
-			reader.close();
-		}
-		
-		MartusLogger.log("Will send email notifications to " + smtpRecipient + " at " + smtpHost);
-		mailSender.setRecipients(smtpHost, new String[] {smtpRecipient,});
+		File emailNotificationsFile = getEmailNotificationsFile();
+		emailNotifications.loadFrom(emailNotificationsFile);
 	}
 
 	private File getEmailNotificationsFile()
@@ -1318,8 +1279,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	Vector availabelMirrorServerPublicKeys;	
 	private String martusServicePassword;
 	private MailSender mailSender;
-	private String smtpHost;
-	private String smtpRecipient;
+	private EmailNotifications emailNotifications;
 	
 	private int rootHelperPort = ROOTHELPER_DEFAULT_PORT;
 		
