@@ -28,7 +28,7 @@ package org.martus.mspa.server;
 import java.io.File;
 
 import org.martus.common.MartusLogger;
-import org.martus.mspa.mail.RecipientWithSmtpHosts;
+import org.martus.mspa.server.mail.RecipientWithSmtpHosts;
 import org.martus.util.UnicodeReader;
 
 public class EmailNotifications
