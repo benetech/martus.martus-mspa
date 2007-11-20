@@ -53,26 +53,7 @@ public class EmailNotifications
 			String line = reader.readLine();
 			while(line != null)
 			{
-				int commentAt = line.indexOf('#');
-				if(commentAt >= 0)
-					line = line.substring(0, commentAt);
-				
-				if(line.trim().length() > 0)
-				{
-					String[] parts = line.split(",");
-					if(parts.length == 2)
-					{
-						String recipient = parts[0].trim();
-						String host = parts[1].trim();
-						String[] hosts = new String[] {host,};
-						recipientWithHosts = new RecipientWithSmtpHosts(recipient, hosts);
-					}
-					else
-					{
-						MartusLogger.logError("Ignoring illegal line in email notifications: " + line);
-					}
-				}
-				
+				processLine(line);
 				line = reader.readLine();
 			}
 		}
@@ -82,6 +63,30 @@ public class EmailNotifications
 		}
 		
 		MartusLogger.log("Will send email notifications to " + recipientWithHosts.toString());
+	}
+
+	private void processLine(String line) throws Exception
+	{
+		int commentAt = line.indexOf('#');
+		if(commentAt >= 0)
+			line = line.substring(0, commentAt);
+		
+		if(line.trim().length() == 0)
+			return;
+		
+		String[] parts = line.split(",");
+		if(parts.length < 2)
+		{
+			MartusLogger.logError("Ignoring illegal line in email notifications: " + line);
+			return;
+		}
+
+		String recipient = parts[0].trim();
+		String hosts[] = new String[parts.length - 1];
+		System.arraycopy(parts, 1, hosts, 0, hosts.length);
+		for(int i = 0; i < hosts.length; ++i)
+			hosts[i] = hosts[i].trim();
+		recipientWithHosts = new RecipientWithSmtpHosts(recipient, hosts);
 	}
 
 	private RecipientWithSmtpHosts recipientWithHosts;

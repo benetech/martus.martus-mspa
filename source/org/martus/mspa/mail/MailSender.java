@@ -66,16 +66,17 @@ public class MailSender
 			for(int i = 0; i < recipientWithHosts.getHostCount(); ++i)
 			{
 				String smtpHost = recipientWithHosts.getHost(i);
+				String humanFriendlyDestination = recipient.toString() + " at " + smtpHost;
 				try
 				{
 						MimeMessage message = createMessage(createSession(smtpHost), recipient);
 						Transport.send(message);
-						MartusLogger.log("MAIL: Send completed");
+						MartusLogger.log("MAIL: Send completed to " + humanFriendlyDestination);
 						return;
 				}
 				catch (Exception e)
 				{
-					MartusLogger.log("MAIL: Failed to send to " + recipient.toString() + " at " + smtpHost);
+					MartusLogger.log("MAIL: Failed to send to " + humanFriendlyDestination);
 					MartusLogger.logException(e);
 				}
 			} 
