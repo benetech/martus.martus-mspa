@@ -27,20 +27,23 @@ package org.martus.mspa.server;
 
 import java.io.File;
 
+import javax.mail.Address;
+
 import org.martus.common.MartusLogger;
+import org.martus.mspa.mail.RecipientWithSmtpHosts;
 import org.martus.util.UnicodeReader;
 
 public class EmailNotifications
 {
 
-	public String getRecipient()
+	public Address getRecipient()
 	{
-		return smtpRecipient;
+		return recipientWithHosts.getRecipient();
 	}
 	
 	public String getSmtpHost()
 	{
-		return smtpHost;
+		return recipientWithHosts.getHost(0);
 	}
 	
 	public void loadFrom(File emailNotificationsFile) throws Exception
@@ -66,8 +69,10 @@ public class EmailNotifications
 					String[] parts = line.split(",");
 					if(parts.length == 2)
 					{
-						smtpHost = parts[0].trim();
-						smtpRecipient = parts[1].trim();
+						String recipient = parts[0].trim();
+						String host = parts[1].trim();
+						String[] hosts = new String[] {host,};
+						recipientWithHosts = new RecipientWithSmtpHosts(recipient, hosts);
 					}
 					else
 					{
@@ -83,9 +88,8 @@ public class EmailNotifications
 			reader.close();
 		}
 		
-		MartusLogger.log("Will send email notifications to " + smtpRecipient + " at " + smtpHost);
+		MartusLogger.log("Will send email notifications to " + recipientWithHosts.toString());
 	}
 
-	private String smtpRecipient;
-	private String smtpHost;
+	private RecipientWithSmtpHosts recipientWithHosts;
 }

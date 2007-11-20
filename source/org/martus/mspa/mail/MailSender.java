@@ -32,7 +32,6 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
@@ -50,7 +49,7 @@ public class MailSender
 	{
 		MartusLogger.log("MAIL: Queueing email to send: " + actionSummary);
 
-		Address recipient = new InternetAddress(emailNotifications.getRecipient());
+		Address recipient = emailNotifications.getRecipient();
 		String smtpHost = emailNotifications.getSmtpHost();
 		MimeMessage message = createMessage(createSession(smtpHost), recipient, actionSummary);
 
