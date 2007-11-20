@@ -49,31 +49,24 @@ public class MailSender
 	{
 		MartusLogger.log("MAIL: Queueing email to send: " + actionSummary);
 
-		Address recipient = emailNotifications.getRecipient();
-		String smtpHost = emailNotifications.getSmtpHost();
-		MimeMessage message = createMessage(createSession(smtpHost), recipient, actionSummary);
-
-		new SenderThread(message).start();
-	}
-
-	private Session createSession(String smtpHost)
-	{
-		Properties props = System.getProperties();
-		props.put("mail.smtp.host", smtpHost);
-		return Session.getDefaultInstance(props, null);
+		new SenderThread(emailNotifications.getRecipientWithHosts(), actionSummary).start();
 	}
 
 	static class SenderThread extends Thread
 	{
-		public SenderThread(MimeMessage messageToSend)
+		public SenderThread(RecipientWithSmtpHosts recipientWithHostsToUse, String actionSummaryToUse)
 		{
-			message = messageToSend;
+			recipientWithHosts = recipientWithHostsToUse;
+			actionSummary = actionSummaryToUse;
 		}
 		
 		public void run()
 		{
 			try
 			{
+				Address recipient = recipientWithHosts.getRecipient();
+				String smtpHost = recipientWithHosts.getHost(0);
+				MimeMessage message = createMessage(createSession(smtpHost), recipient);
 				Transport.send(message);
 				MartusLogger.log("MAIL: Send completed");
 			} 
@@ -84,17 +77,25 @@ public class MailSender
 			}
 		}
 		
-		MimeMessage message;
-	}
-	
-	MimeMessage createMessage(Session session, Address recipient, String actionSummary) throws AddressException, MessagingException
-	{
-		MimeMessage message = new MimeMessage(session);
-		message.setFrom(recipient);
-		message.setRecipient(RecipientType.TO, recipient);
-		message.setSubject("[MSPA] " + actionSummary);
-		message.setText(actionSummary);
-		return message;
+		private Session createSession(String smtpHost)
+		{
+			Properties props = System.getProperties();
+			props.put("mail.smtp.host", smtpHost);
+			return Session.getDefaultInstance(props, null);
+		}
+
+		MimeMessage createMessage(Session session, Address recipient) throws AddressException, MessagingException
+		{
+			MimeMessage message = new MimeMessage(session);
+			message.setFrom(recipient);
+			message.setRecipient(RecipientType.TO, recipient);
+			message.setSubject("[MSPA] " + actionSummary);
+			message.setText(actionSummary);
+			return message;
+		}
+		
+		private RecipientWithSmtpHosts recipientWithHosts;
+		private String actionSummary;
 	}
 	
 	private EmailNotifications emailNotifications;

@@ -27,8 +27,6 @@ package org.martus.mspa.server;
 
 import java.io.File;
 
-import javax.mail.Address;
-
 import org.martus.common.MartusLogger;
 import org.martus.mspa.mail.RecipientWithSmtpHosts;
 import org.martus.util.UnicodeReader;
@@ -36,14 +34,9 @@ import org.martus.util.UnicodeReader;
 public class EmailNotifications
 {
 
-	public Address getRecipient()
+	public RecipientWithSmtpHosts getRecipientWithHosts()
 	{
-		return recipientWithHosts.getRecipient();
-	}
-	
-	public String getSmtpHost()
-	{
-		return recipientWithHosts.getHost(0);
+		return recipientWithHosts;
 	}
 	
 	public void loadFrom(File emailNotificationsFile) throws Exception
