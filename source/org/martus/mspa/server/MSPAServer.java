@@ -1043,6 +1043,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		
 		files.add(getMSPAServerKeyPairFile());		
 		files.add(new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE));
+		files.add(getMartusServerKeyPairFile());
 		files.add(getEmailNotificationsFile());
 		
 		return files;		
