@@ -62,19 +62,24 @@ public class MailSender
 		
 		public void run()
 		{
-			try
+			Address recipient = recipientWithHosts.getRecipient();
+			for(int i = 0; i < recipientWithHosts.getHostCount(); ++i)
 			{
-				Address recipient = recipientWithHosts.getRecipient();
-				String smtpHost = recipientWithHosts.getHost(0);
-				MimeMessage message = createMessage(createSession(smtpHost), recipient);
-				Transport.send(message);
-				MartusLogger.log("MAIL: Send completed");
+				String smtpHost = recipientWithHosts.getHost(i);
+				try
+				{
+						MimeMessage message = createMessage(createSession(smtpHost), recipient);
+						Transport.send(message);
+						MartusLogger.log("MAIL: Send completed");
+						return;
+				}
+				catch (Exception e)
+				{
+					MartusLogger.log("MAIL: Failed to send to " + recipient.toString() + " at " + smtpHost);
+					MartusLogger.logException(e);
+				}
 			} 
-			catch (Exception e)
-			{
-				MartusLogger.log("MAIL: Send failed");
-				MartusLogger.logException(e);
-			}
+			MartusLogger.log("MAIL: ERROR: UNABLE TO SEND EMAIL TO " + recipient.toString());
 		}
 		
 		private Session createSession(String smtpHost)
