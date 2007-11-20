@@ -291,15 +291,18 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 				if(commentAt >= 0)
 					line = line.substring(0, commentAt);
 				
-				String[] parts = line.split(",");
-				if(parts.length == 2)
+				if(line.trim().length() > 0)
 				{
-					smtpHost = parts[0].trim();
-					smtpRecipient = parts[1].trim();
-				}
-				else
-				{
-					MartusLogger.logError("Ignoring illegal line in email notifications: " + line);
+					String[] parts = line.split(",");
+					if(parts.length == 2)
+					{
+						smtpHost = parts[0].trim();
+						smtpRecipient = parts[1].trim();
+					}
+					else
+					{
+						MartusLogger.logError("Ignoring illegal line in email notifications: " + line);
+					}
 				}
 				
 				line = reader.readLine();
@@ -1335,7 +1338,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	private static final String HIDDEN_PACKETS_FILENAME = "isHidden.txt";
 	private static final String CLIENTS_NOT_TO_AMPLIFY_FILENAME = "accountsNotAmplified.txt";
 	private static final String COMPLIANCE_FILE =  "compliance.txt";
-	private static final String EMAIL_NOTIFICATIONS_FILENAME = "emailnotifications.txt";
+	private static final String EMAIL_NOTIFICATIONS_FILENAME = "emailNotifications.txt";
 	private static final String MARTUS_ARGUMENTS_PROPERTY_FILE = "serverarguments.props";
 	private static final String MSPA_CLIENT_AUTHORIZED_DIR = "clientsWhoCallUs"; 
 
