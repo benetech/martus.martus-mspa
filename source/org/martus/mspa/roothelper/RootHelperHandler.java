@@ -48,7 +48,10 @@ public class RootHelperHandler
 		if(!currentState.isSuccess())
 			return currentState.toVector();
 		if(!currentState.getDetailText().equals("down"))
+		{
+			logger.logDebug("Refusing to start because service is " + currentState.getDetailText());
 			return Status.createFailure("Service is already starting or up").toVector();
+		}
 		return executeWithoutWaiting(SERVICE_START, martusServicePassword).toVector();
 	}
 	
@@ -59,7 +62,10 @@ public class RootHelperHandler
 		if(!currentState.isSuccess())
 			return currentState.toVector();
 		if(!currentState.getDetailText().equals("up"))
+		{
+			logger.logDebug("Refusing to restart because service is " + currentState.getDetailText());
 			return Status.createFailure("Service is not currently up").toVector();
+		}
 		return executeWithoutWaiting(SERVICE_RESTART, martusServicePassword).toVector();
 	}
 	
@@ -70,7 +76,10 @@ public class RootHelperHandler
 		if(!currentState.isSuccess())
 			return currentState.toVector();
 		if(!currentState.getDetailText().equals("up"))
+		{
+			logger.logDebug("Refusing to stop because service is " + currentState.getDetailText());
 			return Status.createFailure("Service is not currently up").toVector();
+		}
 		Vector result = executeAndWait(SERVICE_STOP, null).toVector();		
 		return result;
 	}
