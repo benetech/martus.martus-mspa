@@ -27,6 +27,7 @@ Boston, MA 02111-1307, USA.
 
 package org.martus.mspa.client.view;
 
+import java.awt.Cursor;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -49,7 +50,6 @@ public class AccountsTree
 		parentWindow = mainWin;
 			
 		DefaultTreeModel model = null;
-		JTree tree = null;
 
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode();		
 		loadAccountsToTreeNode(accounts.toArray(), top);
@@ -103,6 +103,8 @@ public class AccountsTree
 			if (node == null)
 				return;
 			
+			Cursor oldCursor = tree.getCursor();
+			tree.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try
 			{
 				if (node.isRoot())
@@ -120,10 +122,14 @@ public class AccountsTree
 				e1.printStackTrace();
 				parentWindow.exceptionDialog(e1);
 			}		
+			finally
+			{
+				tree.setCursor(oldCursor);
+			}
 		}
 	}
 
-	
+	JTree tree;
 	JScrollPane scrollPane;	
 	UiMainWindow parentWindow;
 }
