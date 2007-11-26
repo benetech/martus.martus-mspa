@@ -65,7 +65,6 @@ import org.martus.util.DirectoryUtils;
 import org.martus.util.FileTransfer;
 import org.martus.util.MultiCalendar;
 import org.martus.util.UnicodeWriter;
-import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 
 public class MSPAServer implements NetworkInterfaceXmlRpcConstants
@@ -413,7 +412,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getBannedFile()
 	{
-		return new File(getMartusServerDataDirectory(), BANNEDCLIENTS_FILENAME);
+		return new File(getMartusServerDeleteOnStartup(), BANNEDCLIENTS_FILENAME);
 	}
 	
 	public File getAllowUploadFile()
@@ -423,12 +422,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getClientsNotToAmplifiyFile()
 	{
-		return new File(getMartusServerDataDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
+		return new File(getMartusServerDeleteOnStartup(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
 	}
 	
 	public File getMagicWordsFile()
 	{
-		return new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME);		
+		return new File(getMartusServerDeleteOnStartup(), MAGICWORDS_FILENAME);		
 	}	
 	
 	public File getPacketDirectory()
@@ -443,7 +442,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private File getHiddenPacketsFile()
 	{
-		return new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME);
+		return new File(getMartusServerDeleteOnStartup(), HIDDEN_PACKETS_FILENAME);
 	}	
 	
 	public static File getServerWhoWeCallToAmplifyDirectory()
@@ -473,7 +472,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMartusServerDataComplianceFile()
 	{
-		return new File(getMartusServerDataDirectory(),COMPLIANCE_FILE );
+		return new File(getMartusServerDeleteOnStartup(),COMPLIANCE_FILE );
 	}	
 	
 	public static File getMartusServerDataDirectory()
@@ -659,9 +658,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{				
 		logActions("Update MagicWords", words);				
 							
-		backupFile(getMagicWordsFile());
-		magicWords.writeMagicWords(getMagicWordsFile(), words);
-		magicWords.loadMagicWords(getMagicWordsFile());
+		File magicWordsFile = getMagicWordsFile();
+		backupFile(magicWordsFile);
+		magicWords.writeMagicWords(magicWordsFile, words);
+		magicWords.loadMagicWords(magicWordsFile);
 		mailSender.sendMail("Magic Words Updated");
 
 	}	
@@ -676,7 +676,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		return options.getOptions();
 	}
 	
-	public synchronized void updateAccountInfo(String manageAccountId, Vector accountInfo) throws InvalidBase64Exception, Exception
+	public synchronized void updateAccountInfo(String manageAccountId, Vector accountInfo) throws Exception
 	{			
 		AccountAdminOptions options = new AccountAdminOptions();
 		options.setOptions(accountInfo);
@@ -689,24 +689,19 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		mailSender.sendMail("Modified Account " + MartusCrypto.getFormattedPublicCode(manageAccountId));
 	}	
 	
-	private void updateAccountConfigFiles()
+	private void updateAccountConfigFiles() throws Exception
 	{
 		writeListToFile(getBannedFile(), clientsBanned);
-		writeListToFile(getAllowUploadFile(), clientsAllowedUpload);
 		writeListToFile(getClientsNotToAmplifiyFile(), clientNotSendToAmplifier);
+		writeListToFile(getAllowUploadFile(), clientsAllowedUpload);
+		MartusServerUtilities.createSignatureFileFromFileOnServer(getAllowUploadFile(), martusServerSecurity);
 	}
 	
-	private void writeListToFile(File file, Vector list)
+	private void writeListToFile(File file, Vector list) throws Exception
 	{
-		try
-		{
+		if(file.exists())
 			backupFile(file);
-			MartusUtilities.writeListToFile(file, list);
-		}
-		catch (Exception ieo)
-		{	
-			log(file.getPath()+" file not found."+ ieo.toString());		
-		} 
+		MartusUtilities.writeListToFile(file, list);
 	}	
 	
 	private void updateBannedAccount(boolean isSelected, String accountId)
@@ -957,25 +952,17 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		args.writePropertyFile(propertyFile.getPath());
 	}
 	
-	public synchronized static LoadMartusServerArguments getMartusServerArguments()
+	public synchronized static LoadMartusServerArguments getMartusServerArguments() throws Exception
 	{
 		File propertyFile = new File(getMSPADeleteOnStartup(), MARTUS_ARGUMENTS_PROPERTY_FILE);
 		LoadMartusServerArguments property = null;
 
-		try
-		{
-			if (propertyFile.createNewFile())
-			{				
-				property = loadDefaultMartusServerArguments(propertyFile.getPath());			
-			}
-			else
-				property = new LoadMartusServerArguments( propertyFile.getPath());
+		if (propertyFile.createNewFile())
+		{				
+			property = loadDefaultMartusServerArguments(propertyFile.getPath());			
 		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		else
+			property = new LoadMartusServerArguments( propertyFile.getPath());
 						
 		return property;
 	}	
