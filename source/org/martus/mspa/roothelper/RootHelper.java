@@ -42,7 +42,7 @@ public class RootHelper
 	{	
 		try
 		{
-			System.out.println("***NOTE: THIS APP IS NOT YET FUNCTIONAL***");
+			System.out.println("MSPA RootHelper");
 			new RootHelper(args);
 		}
 		catch(Exception e)
