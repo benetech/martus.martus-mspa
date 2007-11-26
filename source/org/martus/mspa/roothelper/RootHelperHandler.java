@@ -151,9 +151,10 @@ public class RootHelperHandler
 		Process process = Runtime.getRuntime().exec(commandLine);
 
 		if (password != null)
-		{	
+		{
+			MartusLogger.log("Sending password to stdin");
 			BufferedWriter buffStdin = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-			buffStdin.write(password + "\r");
+			buffStdin.write(password + "\n");
 			buffStdin.flush(); 
 		}
 		
