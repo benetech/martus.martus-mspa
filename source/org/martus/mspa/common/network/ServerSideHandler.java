@@ -567,11 +567,21 @@ public class ServerSideHandler implements NetworkInterface
 			results.add(NetworkInterfaceConstants.NOT_AUTHORIZED);				
 			return results;
 		}
-				
-		LoadMartusServerArguments arguments = MSPAServer.getMartusServerArguments();	
-		results.add(NetworkInterfaceConstants.OK);
-		results.add(arguments.convertToVector());		
-		return results;		
+
+		try
+		{
+			LoadMartusServerArguments arguments = MSPAServer.getMartusServerArguments();	
+			results.add(NetworkInterfaceConstants.OK);
+			results.add(arguments.convertToVector());
+			return results;	
+		}
+		catch(Exception e)
+		{
+			MartusLogger.logException(e);
+			results.add(NetworkInterfaceConstants.EXEC_ERROR);
+			results.add(e.getMessage());
+			return results;
+		}
 	}	
 	
 	public Vector updateMartusServerArguments(String myAccountId, Vector args)
