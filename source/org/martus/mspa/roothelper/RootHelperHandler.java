@@ -47,21 +47,21 @@ public class RootHelperHandler
 		Status currentState = new Status(getStatus());
 		if(!currentState.isSuccess())
 			return currentState.toVector();
-		if(!currentState.getDetailText().equals("down"))
+		if(!isServiceDown(currentState))
 		{
 			logger.logDebug("Refusing to start because service is " + currentState.getDetailText());
 			return Status.createFailure("Service is already starting or up").toVector();
 		}
 		return executeWithoutWaiting(SERVICE_START, martusServicePassword).toVector();
 	}
-	
+
 	public Vector restartServices(String martusServicePassword)
 	{
 		logger.logDebug("RootHelper.restartServices");
 		Status currentState = new Status(getStatus());
 		if(!currentState.isSuccess())
 			return currentState.toVector();
-		if(!currentState.getDetailText().equals("up"))
+		if(!isServiceUp(currentState))
 		{
 			logger.logDebug("Refusing to restart because service is " + currentState.getDetailText());
 			return Status.createFailure("Service is not currently up").toVector();
@@ -75,7 +75,7 @@ public class RootHelperHandler
 		Status currentState = new Status(getStatus());
 		if(!currentState.isSuccess())
 			return currentState.toVector();
-		if(!currentState.getDetailText().equals("up"))
+		if(!isServiceUp(currentState))
 		{
 			logger.logDebug("Refusing to stop because service is " + currentState.getDetailText());
 			return Status.createFailure("Service is not currently up").toVector();
@@ -160,6 +160,22 @@ public class RootHelperHandler
 		return process;
 	}
 
+	private boolean isServiceDown(Status currentState)
+	{
+		return isServiceInState(currentState, "down");
+	}
+
+	private boolean isServiceUp(Status currentState)
+	{
+		return isServiceInState(currentState, "up");
+	}
+
+	private boolean isServiceInState(Status currentState, String expectedState)
+	{
+		String rawState = currentState.getDetailText();
+		return expectedState.equals(rawState.trim());
+	}
+	
 	public static String RootHelperObjectName = "RootHelper";
 	public static String RootHelperStartServicesCommand = "startServices";
 	public static String RootHelperRestartServicesCommand = "restartServices";
