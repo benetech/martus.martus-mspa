@@ -27,6 +27,7 @@ Boston, MA 02111-1307, USA.
 
 package org.martus.mspa.client.view;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
@@ -50,13 +51,8 @@ public class AccountsTree
 		DefaultTreeModel model = null;
 		JTree tree = null;
 
-		Object[] nodes = new Object[accounts.size()+1];
-	
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode();		
-		DefaultMutableTreeNode parent = top;
-		nodes[0] = top;
-		
-		loadAccountsToTreeNode(nodes, accounts.toArray(), parent);
+		loadAccountsToTreeNode(accounts.toArray(), top);
 		 		
 		model = new DefaultTreeModel(top);		
 		tree = new JTree(model);
@@ -67,8 +63,8 @@ public class AccountsTree
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION); 	
 		tree.setShowsRootHandles(true); 
 		tree.setEditable(false);
-		TreePath path = new TreePath(nodes[0]);
-		tree.setSelectionPath(path);		
+		if(tree.getRowCount() > 0)
+			tree.setSelectionRow(0);		
 
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
@@ -81,15 +77,17 @@ public class AccountsTree
 	{
 		return (DefaultMutableTreeNode)(path.getLastPathComponent());
 	}
-	private void loadAccountsToTreeNode(Object[] nodes, Object[] accountArray, DefaultMutableTreeNode parent)
-	
+
+	private void loadAccountsToTreeNode(Object[] accountArray, DefaultMutableTreeNode parent)
 	{
+		AccountNode[] nodes = new AccountNode[accountArray.length]; 
 		for (int i=0;i<accountArray.length;i++)
-		{		
-			DefaultMutableTreeNode account = new DefaultMutableTreeNode(new AccountNode((String) accountArray[i], ""));
-			parent.add(account);		
-			nodes[i+1] = account;
-		}
+			nodes[i] = new AccountNode((String) accountArray[i], "");
+		
+		Arrays.sort(nodes);
+		for(int i = 0; i < nodes.length; ++i)
+			parent.add(nodes[i]);
+		
 	}
 
 	public JScrollPane getScrollPane()
@@ -107,14 +105,19 @@ public class AccountsTree
 			
 			try
 			{
-				AccountNode selectedAccountNode = (AccountNode) node.getUserObject();
 				if (node.isRoot())
+				{
 					parentWindow.loadEmptyAccountDetailPanel();
+				}
 				else	
+				{
+					AccountNode selectedAccountNode = (AccountNode) node;
 					parentWindow.loadAccountDetailPanel(selectedAccountNode.getAccountId(), selectedAccountNode.getDisplayName());
+				}
 			} 
 			catch (Exception e1)
 			{
+				e1.printStackTrace();
 				parentWindow.exceptionDialog(e1);
 			}		
 		}

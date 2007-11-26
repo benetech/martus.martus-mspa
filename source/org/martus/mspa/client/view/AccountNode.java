@@ -26,11 +26,13 @@ Boston, MA 02111-1307, USA.
 
 package org.martus.mspa.client.view;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 
-public class AccountNode
+public class AccountNode extends DefaultMutableTreeNode implements Comparable
 {
 	public AccountNode(String accountString, String status)
 	{		
@@ -64,6 +66,11 @@ public class AccountNode
 	public String toString() 
 	{ 
 		return publicCode;
+	}
+
+	public int compareTo(Object o)
+	{
+		return toString().compareTo(o.toString());
 	}
 
 	protected String publicCode;
