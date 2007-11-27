@@ -418,7 +418,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMartusServerKeyPairFile()
 	{
-		return new File(getMartusServerDataDirectory(), KEYPAIR_FILE);
+		return new File(getMartusServerKeypairDirectory(), KEYPAIR_FILE);
 	}
 	
 	public File getMSPAServerKeyPairFile()
@@ -499,6 +499,12 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public static File getMartusServerDataDirectory()
 	{
 		return new File(getAppDirectoryPath(),MARTUS_SERVER_DATA);
+	}
+	
+	public static File getMartusServerKeypairDirectory()
+	{
+		// NOTE: This is an odd special case
+		return new File(getLiveMartusServerDirectory(), DELETE_ON_STARTUP);
 	}
 	
 	public static File getMartusServerDataBackupDirectory()
