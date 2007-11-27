@@ -95,13 +95,17 @@ public class RootHelperHandler
 	{
 		try
 		{
-			Process process = executeProcess(command, password);		
-			int exitCode = process.waitFor();
-	
-			if (exitCode == 0)
-				return Status.createSuccess("");
-			
-			return Status.createFailure(Integer.toString(exitCode));
+			Process process = executeProcess(command, password);
+			try
+			{
+				Thread.sleep(1000);
+				int exitCode = process.exitValue();
+				return Status.createFailure(Integer.toString(exitCode));
+			} 
+			catch (IllegalThreadStateException e)
+			{
+				return Status.createSuccess("Service is being (re-)started");
+			}
 		}
 		catch (Exception e)
 		{
