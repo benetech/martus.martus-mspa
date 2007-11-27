@@ -80,6 +80,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			server.deleteRunningFile();				
 						
 			server.processCommandLine(args);
+			
+			server.logAllFilePaths();
 
 			if(server.anyUnexpectedFilesOrFoldersInStartupDirectory())
 				exitWithCause("Unexpected files or folders in startup directory", ServerSideUtilities.EXIT_UNEXPECTED_FILE_STARTUP);
@@ -115,6 +117,9 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	
 	
+
+
+
 	public MSPAServer(File dir) throws Exception
 	{				
 		serverDirectory = dir;			
@@ -353,7 +358,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}		
 	}	
 	
-	public void loadKeypairs(char[] passphrase) 
+	public void loadKeypairs(char[] passphrase) throws Exception 
 	{		
 		try
 		{
@@ -370,19 +375,35 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		catch(Exception e)
 		{
-			System.err.println("Error loading keypair: " + e + "\n");
+			MartusLogger.logException(e);
 			System.exit(3);
 		}
 	}	
 	
+	private void logAllFilePaths()
+	{
+		MartusLogger.log("---PATHS USED BY THIS APP---");
+		MartusLogger.log(getRunningFile().getAbsolutePath());
+		MartusLogger.log(getShutdownFile().getAbsolutePath());
+		MartusLogger.log(getEmailNotificationsFile().getAbsolutePath());
+		
+		MartusLogger.log(getAllowUploadFile().getAbsolutePath());
+		MartusLogger.log(getPacketDirectory().getAbsolutePath());
+
+		
+		MartusLogger.log(getMartusServerKeyPairFile().getAbsolutePath());
+		MartusLogger.log(getBannedFile().getAbsolutePath());
+		MartusLogger.log(getClientsNotToAmplifiyFile().getAbsolutePath());
+		MartusLogger.log(getHiddenPacketsFile().getAbsolutePath());
+		MartusLogger.log(getMagicWordsFile().getAbsolutePath());
+		MartusLogger.log(getMartusServerDataComplianceFile().getAbsolutePath());
+		MartusLogger.log("----------------------------");
+		
+	}
+
 	public static File getMSPADeleteOnStartup()
 	{
 		return new File(getAppDirectoryPath(),DELETE_ON_STARTUP);
-	}
-	
-	public static File getMartusServerDeleteOnStartup()
-	{
-		return new File(getLiveMartusServerDirectory(), DELETE_ON_STARTUP);
 	}
 	
 	public File getTriggerDirectory()
@@ -397,7 +418,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMartusServerKeyPairFile()
 	{
-		return new File(getMartusServerDeleteOnStartup(), KEYPAIR_FILE);
+		return new File(getMartusServerDataDirectory(), KEYPAIR_FILE);
 	}
 	
 	public File getMSPAServerKeyPairFile()
@@ -412,22 +433,22 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getBannedFile()
 	{
-		return new File(getMartusServerDeleteOnStartup(), BANNEDCLIENTS_FILENAME);
+		return new File(getMartusServerDataDirectory(), BANNEDCLIENTS_FILENAME);
 	}
 	
 	public File getAllowUploadFile()
 	{
-		return new File(getMartusServerDataDirectory(), UPLOADSOK_FILENAME);
+		return new File(getLiveMartusServerDirectory(), UPLOADSOK_FILENAME);
 	}
 	
 	public File getClientsNotToAmplifiyFile()
 	{
-		return new File(getMartusServerDeleteOnStartup(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
+		return new File(getMartusServerDataDirectory(), CLIENTS_NOT_TO_AMPLIFY_FILENAME);
 	}
 	
 	public File getMagicWordsFile()
 	{
-		return new File(getMartusServerDeleteOnStartup(), MAGICWORDS_FILENAME);		
+		return new File(getMartusServerDataDirectory(), MAGICWORDS_FILENAME);		
 	}	
 	
 	public File getPacketDirectory()
@@ -442,7 +463,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	private File getHiddenPacketsFile()
 	{
-		return new File(getMartusServerDeleteOnStartup(), HIDDEN_PACKETS_FILENAME);
+		return new File(getMartusServerDataDirectory(), HIDDEN_PACKETS_FILENAME);
 	}	
 	
 	public static File getServerWhoWeCallToAmplifyDirectory()
@@ -472,7 +493,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public File getMartusServerDataComplianceFile()
 	{
-		return new File(getMartusServerDeleteOnStartup(),COMPLIANCE_FILE );
+		return new File(getMartusServerDataDirectory(),COMPLIANCE_FILE );
 	}	
 	
 	public static File getMartusServerDataDirectory()
