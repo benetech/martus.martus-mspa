@@ -188,7 +188,7 @@ public class RootHelperHandler
 	public static String RootHelperGetStatusCommand = "getStatus";
 	
 	private static final String MARTUS_SERVICE = "/etc/init.d/martus -p";
-	private static final String SERVICE_START = "start";
+	private static final String SERVICE_START = "restart";
 	private static final String SERVICE_RESTART = "restart";
 	private static final String SERVICE_STOP = "stop";
 	private static final String SERVICE_STATE = "state";
