@@ -1149,9 +1149,10 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		System.out.println("");
 	}
 
-	public Status startServer()
+	public Status startServer() throws Exception
 	{
 		logger.logDebug("startServer");
+		mailSender.sendMail("Initiated service start");
 		return executeRootHelperCommand(RootHelperHandler.RootHelperStartServicesCommand, martusServicePassword);
 	}
 
@@ -1164,7 +1165,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	public Status stopServer() throws Exception
 	{
 		logger.logDebug("stopServer");
-		mailSender.sendMail("Attempted to stop service");
+		mailSender.sendMail("Requested service stop");
 		return executeRootHelperCommand(RootHelperHandler.RootHelperStopServicesCommand);
 	}
 	
