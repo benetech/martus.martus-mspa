@@ -45,6 +45,7 @@ import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.FileDatabase;
+import org.martus.common.database.MSPAFileDatabase;
 import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusNonSSLXmlrpcClient;
 import org.martus.common.network.MartusSecureWebServer;
@@ -332,7 +333,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public void initalizeFileDatabase()
 	{									
-		martusDatabaseToUse = new ServerFileDatabase(getPacketDirectory(), martusServerSecurity);		
+		martusDatabaseToUse = new MSPAFileDatabase(getPacketDirectory(), martusServerSecurity);		
 
 		try
 		{
@@ -1283,7 +1284,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	int portToUse;
 	Vector authorizedMartusAccounts;
 	Vector authorizeMSPAClients;
-	ServerFileDatabase martusDatabaseToUse;	
+	private MSPAFileDatabase martusDatabaseToUse;	
 	MartusCrypto security;
 	MartusCrypto martusServerSecurity;
 	LoggerInterface logger;
