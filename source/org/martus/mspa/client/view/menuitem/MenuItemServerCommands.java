@@ -50,6 +50,7 @@ public class MenuItemServerCommands extends AbstractAction
 		{
 			if (menuType.equals(UiMainWindow.STATUS_MARTUS_SERVER))
 			{
+				parent.setStatusText("Checking server status...");
 				Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.GET_STATUS,"");			
 				handleQueryResults(results, "Status");			
 			}
@@ -71,7 +72,7 @@ public class MenuItemServerCommands extends AbstractAction
 					"Stop Server", JOptionPane.YES_NO_OPTION);
 				if (answer == JOptionPane.YES_OPTION) 
 				{
-					parent.setStatusText("Starting Server ...");
+					parent.setStatusText("Stopping Server ...");
 					Vector results = parent.getMSPAApp().sendCommandToServer(NetworkInterfaceConstants.STOP_SERVER,"");
 					handleCommandResults(results, "Stop");						
 				} 	
@@ -102,13 +103,13 @@ public class MenuItemServerCommands extends AbstractAction
 		String status = (String) results.get(0);
 		if (status.equals(NetworkInterfaceConstants.OK))
 		{
-			JOptionPane.showMessageDialog(parent, results.get(1), type + " Success", JOptionPane.INFORMATION_MESSAGE);
-			parent.setStatusText(type + " successful");
+			JOptionPane.showMessageDialog(parent, results.get(1), type, JOptionPane.INFORMATION_MESSAGE);
+			parent.setStatusText("");
 		}
 		else
 		{	
-			JOptionPane.showMessageDialog(parent, results.get(1), type + " Error", JOptionPane.ERROR_MESSAGE);
-			parent.setStatusText(type + " " + results.get(1));			
+			JOptionPane.showMessageDialog(parent, results.get(1), type, JOptionPane.ERROR_MESSAGE);
+			parent.setStatusText("");
 		}
 	}
 	
@@ -117,13 +118,13 @@ public class MenuItemServerCommands extends AbstractAction
 		String status = (String) results.get(0);
 		if (status.equals(NetworkInterfaceConstants.OK))
 		{
-			JOptionPane.showMessageDialog(parent, results.get(1), type + " Success", JOptionPane.INFORMATION_MESSAGE);
-			parent.setStatusText(type + ": " + (String)results.get(1));
+			JOptionPane.showMessageDialog(parent, results.get(1), type, JOptionPane.INFORMATION_MESSAGE);
+			parent.setStatusText("");
 		}
 		else
 		{	
-			JOptionPane.showMessageDialog(parent, results.get(1), status, JOptionPane.ERROR_MESSAGE);
-			parent.setStatusText(type + " " + results.get(1));			
+			JOptionPane.showMessageDialog(parent, results.get(1), type, JOptionPane.ERROR_MESSAGE);
+			parent.setStatusText("");
 		}
 	}
 	
