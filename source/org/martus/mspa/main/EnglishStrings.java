@@ -58,7 +58,8 @@ public class EnglishStrings
 "field:NormalKeyboardMsg2=For maximum security switch to the on-screen keyboard.",
 "field:confirmquestion=Are you sure you want to do this?",
 "field:confirmWarningSwitchToNormalKeyboardcause=Warning! Using the regular keyboard to enter your password greatly reduces the security of the Martus system, and could make it easier for an attacker to view your private data.",
-"field:confirmWarningSwitchToNormalKeyboardeffect=If this is a headquarters computer, it is especially important to use the on-screen keyboard, because an attacker could gain access to all the private data that you are authorized to view.",
+"field:confirmWarningSwitchToNormalKeyboardeffect=Since you are managing a shared computer, it is especially important to use the on-screen keyboard. " +
+	"Using the regular keyboard may make it easier for attackers to obtain your password.",
 
 "field:username=Username",
 "field:password=Password",
