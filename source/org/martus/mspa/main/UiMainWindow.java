@@ -35,13 +35,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -70,10 +72,13 @@ import org.martus.mspa.client.view.menuitem.MenuItemMartusServerCompliance;
 import org.martus.mspa.client.view.menuitem.MenuItemServerCommands;
 import org.martus.mspa.common.ManagingMirrorServerConstants;
 import org.martus.mspa.common.network.NetworkInterfaceConstants;
-import org.martus.swing.MartusParagraphLayout;
 import org.martus.swing.UiLabel;
+import org.martus.swing.UiParagraphPanel;
 import org.martus.swing.UiScrollPane;
 import org.martus.swing.Utilities;
+
+import com.jhlabs.awt.Alignment;
+import com.jhlabs.awt.GridLayoutPlus;
 
 public class UiMainWindow extends JFrame
 {
@@ -246,44 +251,49 @@ public class UiMainWindow extends JFrame
 		return true;
 	}
 	
-	protected JPanel createServerInfoPanel(String ipAddr, String accountId)
+	protected JPanel createServerInfoPanel(String ipAddr, String accountId) throws Exception
 	{
+		JTextField ipLabel = new JTextField(InetAddress.getByName(ipAddr).getHostAddress(),20);
+		ipLabel.setEditable(false);
+		ipLabel.setForeground(Color.BLUE);
+			
+		JTextField publicCodeLabel = new JTextField(mspaApp.getCurrentServerPublicCode(),20);
+		publicCodeLabel.setEditable(false);
+		publicCodeLabel.setForeground(Color.BLUE);
+
+		UiParagraphPanel serverDetails = new UiParagraphPanel();
+		serverDetails.addOnNewLine(new UiLabel("IP Address: "));
+		serverDetails.add(ipLabel);
+		
+		serverDetails.addOnNewLine(new UiLabel("Public Code:"));	
+		serverDetails.add(publicCodeLabel);
+		
+		serverDetails.setBorder(BorderFactory.createTitledBorder("Server"));
+		
+
 		JPanel serverInfoPanel = new JPanel();
-		serverInfoPanel.setLayout(new MartusParagraphLayout());
-		try
-		{		
-			JTextField ipLabel = new JTextField(InetAddress.getByName(ipAddr).getHostAddress(),20);
-			ipLabel.setEditable(false);
-			ipLabel.setForeground(Color.BLUE);
-				
-			JTextField publicCodeLabel = new JTextField(mspaApp.getCurrentServerPublicCode(),20);
-			publicCodeLabel.setEditable(false);
-			publicCodeLabel.setForeground(Color.BLUE);
-					
-			JLabel title = new UiLabel("MSPA Server Infomation: ");			
-			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);			
-			serverInfoPanel.add(title);	
-			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
-			serverInfoPanel.add(new UiLabel("IP Address: "));			
-			serverInfoPanel.add(ipLabel);
-			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);	
-			serverInfoPanel.add(new UiLabel("Public Code:"));	
-			serverInfoPanel.add(publicCodeLabel);
-			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
-			serverInfoPanel.add(new UiLabel("") , MartusParagraphLayout.NEW_PARAGRAPH);
-			JLabel accountListLabel = new UiLabel("Martus Client accounts on this server:");			
-			serverInfoPanel.add(accountListLabel);			
-		}
-		catch (UnknownHostException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		serverInfoPanel.setLayout(new GridLayoutPlus(0, 1));
+		serverInfoPanel.setBorder(BorderFactory.createTitledBorder("Client Accounts on Server"));
+
+		DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat time = new SimpleDateFormat("HH:mm:ss");
+		Date now = new Date();
+		serverInfoPanel.add(new UiLabel("<html>" +
+				"&nbsp;&nbsp;&nbsp;" +
+					"Last updated " +
+					"" + date.format(now) + "" +
+					" at " + 
+					"<b>" + time.format(now) + "</b> " + 
+					"<br>" +  
+				"&nbsp;&nbsp;&nbsp;<i>(to update the list, exit and " +
+					"restart this MSPA application)"));	
+		serverInfoPanel.add(accountTree.getScrollPane()); 	
 	
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout());			
-		mainPanel.add(serverInfoPanel, BorderLayout.NORTH);
-		mainPanel.add(accountTree.getScrollPane(), BorderLayout.CENTER); 	
+		GridLayoutPlus mainPanelLayout = new GridLayoutPlus(0, 1);
+		mainPanelLayout.setFill(Alignment.FILL_BOTH);
+		JPanel mainPanel = new JPanel(mainPanelLayout);
+		mainPanel.add(serverDetails);
+		mainPanel.add(serverInfoPanel);
 		return mainPanel;
 	}
 
