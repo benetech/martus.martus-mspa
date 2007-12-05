@@ -312,7 +312,8 @@ public class ManagingMirrorServersDlg extends JDialog
 			if (result)
 			{			
 				availableItems.add(mirrorFileName);
-				availableListModel.addElement(mirrorFileName);					
+				availableListModel.addElement(mirrorFileName);
+				parent.remindNeedsRestart();
 			}
 			else
 			{
@@ -348,6 +349,7 @@ public class ManagingMirrorServersDlg extends JDialog
 				
 			parent.getMSPAApp().updateManageMirrorAccounts(itemCollection, serverManageType);
 			postStatus("Update manage mirror accounts: ");
+			parent.remindNeedsRestart();
 		
 			dispose();							
 		}

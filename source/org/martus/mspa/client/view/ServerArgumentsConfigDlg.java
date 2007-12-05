@@ -209,6 +209,7 @@ public class ServerArgumentsConfigDlg extends JDialog
 		private void handleSendCommand() throws Exception
 		{								
 			parent.getMSPAApp().updateMartusServerArguments(populateData());
+			parent.remindNeedsRestart();
 			dispose();			
 		}
 	}

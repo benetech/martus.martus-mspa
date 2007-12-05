@@ -389,7 +389,8 @@ public class AccountDetailPanel extends JPanel
 
 		private void handleConfigurationAccountInfo() throws Exception
 		{								
-			app.updateAccountManageInfo(accountId, admOptions.getOptions());			
+			app.updateAccountManageInfo(accountId, admOptions.getOptions());
+			parent.remindNeedsRestart();
 		}
 
 		private void handleUnhideBulletin() throws Exception
@@ -408,6 +409,7 @@ public class AccountDetailPanel extends JPanel
 				
 				app.recoverHiddenBulletin(accountId, recoverList);
 				postStatus("Recover Hidden Bulletin :");
+				parent.remindNeedsRestart();
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
 				postStatus("List of Hidden Bulletins :");
@@ -450,6 +452,7 @@ public class AccountDetailPanel extends JPanel
 				
 				app.removeBulletin(accountId, hiddenSealedList);
 				postStatus("Hide Bulletins: ");
+				parent.remindNeedsRestart();
 						
 				Vector hiddenBulletins = app.getListOfHiddenBulletins(accountId);
 				postStatus("Get a list of Hidden Bulletins :");

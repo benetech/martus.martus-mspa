@@ -128,6 +128,7 @@ public class ServerComplianceDlg extends JDialog
 			parent.setStatusText("Update compliance to Martus server ...");
 			Vector results = parent.getMSPAApp().updateServerCompliant(complianceEditor.getText().trim());
 			parent.setStatusText((String) results.get(0));
+			parent.remindNeedsRestart();
 			dispose();			
 		}
 	}

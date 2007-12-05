@@ -376,6 +376,12 @@ public class UiMainWindow extends JFrame
 				"<em>" + e.getMessage());
 	}
 	
+	public void remindNeedsRestart()
+	{
+		notifyDialog("Restart Needed", "<html>The change you just made will not take effect until <br>" +
+				"the next time the Martus Service is started (or restarted). <br>" +
+				"This can be done from the Services menu.");
+	}
 
 	private int signIn(int mode) throws Exception
 	{
