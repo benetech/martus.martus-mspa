@@ -388,7 +388,16 @@ public class UiMainWindow extends JFrame
 	{
 		notifyDialog("Restart Reminder", "<html>If you made changes that require a restart, <br>" +
 				"but have not yet restarted the Martus service, <br>" +
-				"those changes will not yet be in effect.");
+				"those changes will not yet be in effect. <br>" +
+				"<br>" +
+				"The changes that require a restart are:" +
+				"<ul>" +
+				"<li>Changes to the Compliance Statement" +
+				"<li>Changes to Magic Words" +
+				"<li>Changes to mirroring or amplifiers (search engines)" +
+				"<li>Changes to account permissions (allow uploads, ban, etc)" +
+				"<li>Hiding or Unhiding bulletins" +
+				"</ul>");
 	}
 
 	private int signIn(int mode) throws Exception
