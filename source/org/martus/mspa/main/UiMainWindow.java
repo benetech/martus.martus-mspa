@@ -175,6 +175,7 @@ public class UiMainWindow extends JFrame
 			{
 				public void windowClosing(WindowEvent e) 
 				{
+					remindMightNeedRestart();
 					System.exit(0);
 				}
 			};
@@ -381,6 +382,13 @@ public class UiMainWindow extends JFrame
 		notifyDialog("Restart Needed", "<html>The change you just made will not take effect until <br>" +
 				"the next time the Martus Service is started (or restarted). <br>" +
 				"This can be done from the Services menu.");
+	}
+
+	public void remindMightNeedRestart()
+	{
+		notifyDialog("Restart Reminder", "<html>If you made changes that require a restart, <br>" +
+				"but have not yet restarted the Martus service, <br>" +
+				"those changes will not yet be in effect.");
 	}
 
 	private int signIn(int mode) throws Exception
