@@ -52,6 +52,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.martus.common.bulletin.BulletinConstants;
+import org.martus.common.crypto.MartusCrypto;
 import org.martus.mspa.client.core.MSPAClient;
 import org.martus.mspa.common.AccountAdminOptions;
 import org.martus.mspa.main.UiMainWindow;
@@ -64,7 +65,7 @@ import org.martus.swing.UiWrappedTextArea;
 public class AccountDetailPanel extends JPanel
 {
 	public AccountDetailPanel(UiMainWindow windowToUse, String id, Vector contactInfo, Vector hiddenBulletins, 
-			Vector bulletinIds, Vector manageAccount)
+			Vector bulletinIds, Vector manageAccount) throws Exception
 	{
 		accountId = id;	
 		parent = windowToUse;
@@ -111,11 +112,13 @@ public class AccountDetailPanel extends JPanel
 		return centerPanel;
 	}
 
-	private JPanel buildTopPanel()
+	private JPanel buildTopPanel() throws Exception
 	{
 		JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(5,5,5,5));
 		panel.setLayout(new MartusParagraphLayout());
+		
+		panel.add(new UiLabel(MartusCrypto.computeFormattedPublicCode(accountId)), MartusParagraphLayout.NEW_PARAGRAPH);
 
 		panel.add(buildCheckboxes(), MartusParagraphLayout.NEW_PARAGRAPH);
 		
