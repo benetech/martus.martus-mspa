@@ -51,19 +51,24 @@ public class CheckCellRenderer extends JCheckBox implements TableCellRenderer
 		  Object value, boolean isSelected, boolean hasFocus, 
 		  int row, int column) 
 	{	 
-	  if (value instanceof Boolean) 
-	  {
-		Boolean b = (Boolean)value;
-		setSelected(b.booleanValue());
-	  }
-			
-	  setBackground(isSelected && !hasFocus ? table.getSelectionBackground() : table.getBackground());
-	  setForeground(isSelected && !hasFocus ? table.getSelectionForeground() : table.getForeground());
-		        
-	  setFont(table.getFont());
-	  setBorder(hasFocus ? UIManager.getBorder("Table.focusCellHighlightBorder") : noFocusBorder);
+		if (value instanceof Boolean) 
+		{
+			Boolean b = (Boolean)value;
+			setSelected(b.booleanValue());
+		}
+				
+		setBackground(isSelected && !hasFocus ? table.getSelectionBackground() : table.getBackground());
+		setForeground(isSelected && !hasFocus ? table.getSelectionForeground() : table.getForeground());
+			        
+		setFont(table.getFont());
 		
-	  return this;
+		// NOTE: Rick reported a null pointer exception here.
+		// Unable to reproduce, so doing this brute-force to avoid the exception
+		Border rendererBorder = hasFocus ? UIManager.getBorder("Table.focusCellHighlightBorder") : noFocusBorder;
+		if(rendererBorder != null)
+			setBorder(rendererBorder);
+			
+		return this;
 	}	
 
 }
