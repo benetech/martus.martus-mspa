@@ -39,7 +39,7 @@ public class EnglishStrings
 "wintitle:notifyPasswordInvalid=Invalid Setup Information",
 "wintitle:notifyPasswordMatchesUserName=Invalid Setup Information",
 "wintitle:confirmWarningSwitchToNormalKeyboard=Security Warning",
-"wintitle:about=About Martus Policy Administor Application (MSPA)",
+"wintitle:about=Martus Server Policy Administrator (MSPA)",
 
 "button:VirtualKeyboardSwitchToNormal=Switch to using regular keyboard",
 "button:VirtualKeyboardSwitchToVirtual=Switch to using on-screen keyboard",
@@ -72,7 +72,7 @@ public class EnglishStrings
 "field:password1=Password",
 "field:password2=(same password again)",
 
-"field:aboutDlgVersionInfo=software version",
+"field:aboutDlgVersionInfo=Version",
 "field:aboutDlgBuildDate=Built on",
 
 	};	

@@ -56,8 +56,8 @@ public class AboutDlg extends JDialog implements ActionListener
 		JPanel panel = new JPanel();		
 		panel.setBorder(new EmptyBorder(8,8,8,8));
 
-		String versionInfo = UiConstants.programName;
-		versionInfo += " " + localization.getFieldLabel("aboutDlgVersionInfo");
+		String versionInfo = "<html><b><font size='+1'>" + UiConstants.programName + "</font></b><br>";
+		versionInfo += localization.getFieldLabel("aboutDlgVersionInfo");
 		versionInfo += " " + UiConstants.versionLabel;
 
 		String buildDate = localization.getFieldLabel("aboutDlgBuildDate");
