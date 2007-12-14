@@ -371,7 +371,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 		}
 		catch (MartusCrypto.AuthorizationFailedException e)
 		{
-			System.err.println("Error probably bad passphrase: " + e + "\n");
+			MartusLogger.log("Probably incorrect passphrase");
+			MartusLogger.logException(e);
 			System.exit(1);
 		}
 		catch(Exception e)
