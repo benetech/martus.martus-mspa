@@ -45,7 +45,6 @@ public class StreamGobbler extends Thread
 	{
 		try
 		{
-			MartusLogger.log(name + ": first getNextLine");
 			if(!getNextLine())
 				return;
 		}
@@ -70,7 +69,6 @@ public class StreamGobbler extends Thread
 	
 	private synchronized boolean getNextLine() throws IOException
 	{
-		MartusLogger.log(name + ": getNextLine");
 		String line = reader.readLine();
 		if(line == null)
 			return false;

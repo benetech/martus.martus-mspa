@@ -130,11 +130,9 @@ public class RootHelperHandler
 			int exitCode = process.waitFor();
 			errorGobbler.join(2000);
 			outputGobbler.join(2000);
-			MartusLogger.log("Closing streams");
 			process.getOutputStream().close();
 			outputGobbler.close();
 			errorGobbler.close(); 
-			MartusLogger.log("Finished closing");
 
 			if (exitCode == 0)
 				return Status.createSuccess(outputGobbler.getTextBuffer());
