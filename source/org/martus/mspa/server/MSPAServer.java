@@ -1033,7 +1033,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			deleteList.add(startupFiles[i]);
 		}
 		
-		getMartusServerKeyPairFile().delete();
+		MartusLogger.log("Deleting " + getMartusServerKeyPairFile().getAbsolutePath());
+		deleteList.add(getMartusServerKeyPairFile());
 				
 		MartusUtilities.deleteAllFiles(deleteList);
 		
