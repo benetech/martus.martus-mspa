@@ -50,6 +50,7 @@ import org.martus.common.database.ServerFileDatabase;
 import org.martus.common.network.MartusNonSSLXmlrpcClient;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
+import org.martus.common.network.mirroring.MirroringInterface;
 import org.martus.common.packet.UniversalId;
 import org.martus.common.serverside.ServerSideUtilities;
 import org.martus.common.utilities.MartusServerUtilities;
@@ -614,14 +615,14 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	
 	public synchronized boolean addAvailableServer(Vector mirrorInfo) throws Exception
 	{	
-		if (mirrorInfo.size() > 0)
+		if (mirrorInfo.size() != 3)
 			return false;
 
 		boolean success=true;
 		String ip = (String) mirrorInfo.get(0);
 		String publicCode = (String) mirrorInfo.get(1);				
 		String fileName = (String) mirrorInfo.get(2);			
-		String port = String.valueOf(getPortToUse());
+		String port = String.valueOf(MirroringInterface.MARTUS_PORT_FOR_MIRRORING);
 
 		logActions("Add New Server<dir>"+ fileName, mirrorInfo);					 
 		
