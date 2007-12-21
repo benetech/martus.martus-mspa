@@ -289,14 +289,14 @@ public class ManagingMirrorServersDlg extends JDialog
 			if (mirrorIP.length()<=0 || 
 				mirrorPublicCode.length()<=0) 
 			{	
-				JOptionPane.showMessageDialog(parent, "Ip address, public code and port are required.", 
+				JOptionPane.showMessageDialog(parent, "IP address, public code and server name are required.", 
 					"Missing Infomation", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
 			if (!isValidServerName(serverName))
 			{
-				JOptionPane.showMessageDialog(parent, "Serve Name contains invalid character(s).", 
+				JOptionPane.showMessageDialog(parent, "Server Name contains invalid character(s).", 
 					"Illegal Server Name", JOptionPane.ERROR_MESSAGE);
 				return;
 			}					
