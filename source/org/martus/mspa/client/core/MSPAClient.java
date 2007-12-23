@@ -415,6 +415,7 @@ public class MSPAClient
 	
 	public static int DEFAULT_PORT = 984;
 	final static String DEFAULT_HOST = "localHost";	
+	final static public boolean INCLUDE_AMPLIFICATION = false;
 	
 	private final static String KEYPAIR_FILE ="keypair.dat"; 
 	private static final String MSPA_SERVERS_DIRECTORY = "knownServers";

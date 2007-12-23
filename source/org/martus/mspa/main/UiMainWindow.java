@@ -436,9 +436,13 @@ public class UiMainWindow extends JFrame
 		mTool.addSeparator();
 		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_BACKUP));
 		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHO_BACKUP_OUR_DATA));
-		mTool.addSeparator();												
-		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY));
-		mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA));
+		
+		if(MSPAClient.INCLUDE_AMPLIFICATION)
+		{
+			mTool.addSeparator();												
+			mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHOSE_DATA_WE_AMPLIFY));
+			mTool.add(new MenuItemManagingMirrorServers(this, ManagingMirrorServerConstants.SERVERS_WHO_AMPLIFY_OUR_DATA));
+		}
 		menuBar.add(mTool);
 
 		JMenu mServices = new JMenu("Services");

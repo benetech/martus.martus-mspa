@@ -158,7 +158,10 @@ public class AccountDetailPanel extends JPanel
 		
 		panel.add(canUpload);
 		panel.add(banned);
-		panel.add(canSendToAmp);
+		if(MSPAClient.INCLUDE_AMPLIFICATION)
+		{
+			panel.add(canSendToAmp);
+		}
 		panel.add(saveButton);
 		
 		return panel;
