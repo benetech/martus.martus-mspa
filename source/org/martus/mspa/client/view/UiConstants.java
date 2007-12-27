@@ -32,7 +32,7 @@ public class UiConstants
 	// Also, you should search for "MSPA" in EnglishStrings.txt and any .mtf files 
 	// and change other occurances as required by the license.
 	public static final String programName = "Martus Server Policy Administrator(TM)";
-	public static final String versionLabel = "Internal 1.0-prerelease";
+	public static final String versionLabel = "1.0";
 	
 	public static final String copyright = "Copyright 2004-2007 Beneficent Technology, Inc.";
 	public static final String website = "(Benetech, at www.benetech.org)";
