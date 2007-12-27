@@ -386,6 +386,9 @@ public class UiMainWindow extends JFrame
 
 	public void remindMightNeedRestart()
 	{
+		String amplifiers = "";
+		if(MSPAClient.INCLUDE_AMPLIFICATION)
+			amplifiers = "or amplifiers (search engines)";
 		notifyDialog("Restart Reminder", "<html>If you made changes that require a restart, <br>" +
 				"but have not yet restarted the Martus service, <br>" +
 				"those changes will not yet be in effect. <br>" +
@@ -394,7 +397,7 @@ public class UiMainWindow extends JFrame
 				"<ul>" +
 				"<li>Changes to the Compliance Statement" +
 				"<li>Changes to Magic Words" +
-				"<li>Changes to mirroring or amplifiers (search engines)" +
+				"<li>Changes to mirroring " + amplifiers +
 				"<li>Changes to account permissions (allow uploads, ban, etc)" +
 				"<li>Hiding or Unhiding bulletins" +
 				"</ul>");
