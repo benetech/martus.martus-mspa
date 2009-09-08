@@ -35,10 +35,10 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.martus.clientside.PasswordHelper;
-import org.martus.clientside.UiLocalization;
 import org.martus.common.ContactInfo;
 import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
+import org.martus.common.MiniLocalization;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.MartusXmlrpcClient.SSLSocketSetupException;
@@ -51,7 +51,7 @@ import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class MSPAClient 
 {				
-	public MSPAClient(UiLocalization local) throws Exception
+	public MSPAClient(MiniLocalization local) throws Exception
 	{		
 		security = new MartusSecurity();	
 	}
@@ -408,7 +408,7 @@ public class MSPAClient
 	String ipToUse="";
 	int portToUse;
 	String serverPublicCode="";
-	UiLocalization localization;
+	MiniLocalization localization;
 	MartusCrypto security;
 	File keyPairFile;	
 	String currentStatus;
