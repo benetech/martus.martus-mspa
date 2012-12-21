@@ -813,7 +813,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		MartusLogger.log("Initializing SSL server (this can take up to a minute)...");
 		MartusSecureWebServer.security = getSecurity();
-		MartusXmlRpcServer.createSSLXmlRpcServer(getMSPAHandler(),serverObjectName, port, getMainIpAddress());
+		MartusXmlRpcServer.createSSLXmlRpcServer(getMSPAHandler(), ServerSideHandler.class, serverObjectName, port, getMainIpAddress());
 	}
 	
 	public ServerSideHandler getMSPAHandler()
