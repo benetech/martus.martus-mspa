@@ -64,7 +64,7 @@ public class RootHelper
 		try 
 		{		
 			System.out.println("Creating root helper: " + hostToBind + ":" + portToUse);
-			MartusXmlRpcServer.createNonSSLXmlRpcServer(new RootHelperHandler(logger), RootHelperHandler.RootHelperObjectName, portToUse, address);
+			MartusXmlRpcServer.createNonSSLXmlRpcServer(new RootHelperHandler(logger), RootHelperHandler.class, RootHelperHandler.RootHelperObjectName, portToUse, address);
 			System.out.println("Waiting for connections...");
 		}
 		catch(Exception e)
