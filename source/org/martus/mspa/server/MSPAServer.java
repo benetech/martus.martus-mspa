@@ -47,7 +47,7 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.FileDatabase;
 import org.martus.common.database.MSPAFileDatabase;
 import org.martus.common.database.ServerFileDatabase;
-import org.martus.common.network.MartusNonSSLXmlrpcClient;
+import org.martus.common.network.MspaNonSSLXmlrpcClient;
 import org.martus.common.network.MartusSecureWebServer;
 import org.martus.common.network.MartusXmlRpcServer;
 import org.martus.common.network.mirroring.MirroringInterface;
@@ -1198,7 +1198,7 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 	{
 		try
 		{
-			MartusNonSSLXmlrpcClient rootHelper = new MartusNonSSLXmlrpcClient(LOCALHOST, rootHelperPort);
+			MspaNonSSLXmlrpcClient rootHelper = new MspaNonSSLXmlrpcClient(LOCALHOST, rootHelperPort);
 			Vector result = (Vector)rootHelper.callserver(RootHelperHandler.RootHelperObjectName, command, parameters);
 			return new Status(result);
 		} 
