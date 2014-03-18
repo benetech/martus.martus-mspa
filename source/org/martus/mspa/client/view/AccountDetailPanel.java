@@ -119,6 +119,7 @@ public class AccountDetailPanel extends JPanel
 		panel.setLayout(new MartusParagraphLayout());
 		
 		panel.add(new UiLabel(MartusCrypto.computeFormattedPublicCode(accountId)), MartusParagraphLayout.NEW_PARAGRAPH);
+		panel.add(new UiLabel(MartusCrypto.computeFormattedPublicCode40(accountId)), MartusParagraphLayout.NEW_PARAGRAPH);
 
 		panel.add(buildCheckboxes(), MartusParagraphLayout.NEW_PARAGRAPH);
 		

@@ -152,7 +152,8 @@ public class MSPAClient
 	public void signIn(String userName, char[] userPassPhrase) throws Exception
 	{
 		getSecurity().readKeyPair(getKeypairFile(), PasswordHelper.getCombinedPassPhrase(userName, userPassPhrase));
-		MartusLogger.log("MSPA Client Public Code: " + MartusCrypto.computeFormattedPublicCode(getSecurity().getPublicKeyString()));
+		MartusLogger.log("MSPA Client Public Code (old): " + MartusCrypto.computeFormattedPublicCode(getSecurity().getPublicKeyString()));
+		MartusLogger.log("MSPA Client Public Code (new): " + MartusCrypto.computeFormattedPublicCode40(getSecurity().getPublicKeyString()));
 	}
 	
 	public String getStatus()

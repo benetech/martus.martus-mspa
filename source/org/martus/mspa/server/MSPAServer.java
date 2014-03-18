@@ -368,7 +368,8 @@ public class MSPAServer implements NetworkInterfaceXmlRpcConstants
 			martusServerSecurity = MartusServerUtilities.loadCurrentMartusSecurity(getMartusServerKeyPairFile(), passphrase);
 			martusServicePassword = new String(passphrase);
 			System.out.println("Passphrase correct.");
-			System.out.println("Public code: " + MartusSecurity.computeFormattedPublicCode(security.getPublicKeyString()));
+			System.out.println("Public code (old): " + MartusSecurity.computeFormattedPublicCode(security.getPublicKeyString()));
+			System.out.println("Public code (new): " + MartusSecurity.computeFormattedPublicCode40(security.getPublicKeyString()));
 		}
 		catch (MartusCrypto.AuthorizationFailedException e)
 		{

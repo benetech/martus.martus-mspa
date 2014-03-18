@@ -230,7 +230,8 @@ public class UiMainWindow extends JFrame
 			security.writeKeyPair(out, passphrase);
 			out.close();
 		
-			System.out.println("Public Code: " + MartusCrypto.computeFormattedPublicCode(security.getPublicKeyString()));
+			System.out.println("Public Code (old): " + MartusCrypto.computeFormattedPublicCode(security.getPublicKeyString()));
+			System.out.println("Public Code (new): " + MartusCrypto.computeFormattedPublicCode40(security.getPublicKeyString()));
 			return true;
 		}
 		finally
