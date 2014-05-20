@@ -31,9 +31,9 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.martus.clientside.UiFileChooser;
 import org.martus.mspa.client.view.ServerConnectionDlg;
 import org.martus.mspa.main.UiMainWindow;
-import org.martus.swing.UiFileChooser;
 import org.martus.util.FileTransfer;
 
 public class ImportServerPublicKeyAction extends AbstractAction
