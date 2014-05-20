@@ -87,7 +87,7 @@ public class ImportServerPublicKeyAction extends AbstractAction
 	{
 		String continueLabel = "Continue";
 		File homeDirectory = UiFileChooser.getHomeDirectoryFile();
-		UiFileChooser.FileDialogResults results = UiFileChooser.displayFileOpenDialog(mainWindow, "Import Server Public Key", null, homeDirectory, continueLabel, null);
+		UiFileChooser.FileDialogResults results = UiFileChooser.displayFileOpenDialog(mainWindow, "Import Server Public Key", homeDirectory, continueLabel, null);
 		if (results.wasCancelChoosen())
 			return null;
 	
